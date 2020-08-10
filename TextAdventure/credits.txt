@@ -1,0 +1,61 @@
+﻿
+
+Thanks!
+-------
+Programmed by Llydia Lancaster 2020.
+Help found on google and on stack overflow.
+Special thanks to Penisman, James and Saph and Eddie and Ro.
+Made this to test out C#.
+
+
+Stuff I use
+-----------
+FastNoise.cs by Jordan Peck (https://github.com/Auburn/FastNoise_CSharp)
+
+
+Changelog
+---------
+09/08/2020 
+           + added new hud
+           + added structures into the game! for now there are only a few but I will add more as I go on
+           + added new settings system which is saved to file
+           ~ tweaked and fixed various bugs
+           ~ visual improvements to the feedback area, hud as well as menu screens.
+           ~ fixed some colouring issues
+08/08/2020 
+           + added colour option. opting out of colours means theres no screen loading.
+           + added info command to show you what type of foliage something is
+           + added a new area to the right of the screen to display information
+           + added plan command which will tell you how many hunger and stanima points will be taken by a move
+           ~ tweaked the engine to be more optimised.
+           ~ fixed various bugs
+07/08/2020 
+           + added foliage 
+           + added harvesting
+           + added pretty world border
+           + added pages to help and credits screen
+           + added kind of broken zoom capability
+           + added fancy rooms and more block types
+           ~ tweaked how the world is rendered, now uses a "player camera".
+           ~ tweaked world generation
+           ~ fixed issue with window resizing
+           ~ tweaked generation commands to now accept foliage count, world width, world height and perlin noise frequency  
+06/08/2020 
+           ~ tweaked things to make it run better
+           ~ added more easy of use commands
+05/08/2020 
+           + added changelog/credits and help screen
+           + added rooms with doors and ability to open them with keys
+           + added player stanima, mana and hunger
+           + added turns which decrease the players hunger and will allow for NPCs to move in the future
+           + added dev commands
+           + added menu screen and options screen
+           
+  _               _       _______        _     _____  _____   _____ 
+ | |             | |     |__   __|      | |   |  __ \|  __ \ / ____|
+ | |    _   _  __| |___     | | _____  _| |_  | |__) | |__) | |  __ 
+ | |   | | | |/ _` / __|    | |/ _ \ \/ / __| |  _  /|  ___/| | |_ |
+ | |___| |_| | (_| \__ \    | |  __/>  <| |_  | | \ \| |    | |__| |
+ |______\__, |\__,_|___/    |_|\___/_/\_\\__| |_|  \_\_|     \_____|
+         __/ |                                                      
+        |___/                                                                                           

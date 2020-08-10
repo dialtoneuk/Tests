@@ -1,0 +1,133 @@
+﻿  _               _       _______        _     _____  _____   _____ 
+ | |             | |     |__   __|      | |   |  __ \|  __ \ / ____|
+ | |    _   _  __| |___     | | _____  _| |_  | |__) | |__) | |  __ 
+ | |   | | | |/ _` / __|    | |/ _ \ \/ / __| |  _  /|  ___/| | |_ |
+ | |___| |_| | (_| \__ \    | |  __/>  <| |_  | | \ \| |    | |__| |
+ |______\__, |\__,_|___/    |_|\___/_/\_\\__| |_|  \_\_|     \_____|
+         __/ |                                                      
+        |___/                                                       
+
+
+Basic Commands
+---------------
+
+> w/s/a/d left/right/up/down north/south/east/west
+Enter any of the following inputs to move in a direction. Moving uses up stanima and hunger.
+
+> <direction> <number_of_spaces>
+Moves in any direection a specified number of spaces, will move only one space if no number is given.
+* if a large number is entered you will move until a solid wall is met.
+
+> unlock
+Unlocks a door, requires a key.
+
+> wait <number_of_turns>
+Wait a number of specified turns, if no number given will wait for one turn.
+
+> info <range>
+Returns information on the nearest foliage available.
+
+> plan <number_of_spaces>
+Lets you know the toll of moving a number of spaces on your health and stanima.
+
+> back
+Goes back to your last position.
+
+> havest/p/pick/scavange
+Interact with foliage to replenish your hunger or gain XP. Each foliage gives a different reward.
+* b (berrys) B (blue berrys) T (Tree) O (Oak Tree) and many more for you to discover!
+
+> zoom <1,2,3>
+Changes the view window to various levels of zoom/size. Kind of broken due to the fact its all text but hey I tried!
+
+
+Advanced Commands
+---------------
+
+* these commands need to be enabled through the options and can break things!
+
+>generate <number_of_rooms> <number_of_foliage> <world_width> <world_height> <perlin_noise_frequency>
+Generates a new world map.
+
+>colours <colour_of_walls> <colour_of_floor>
+Sets the colours of the world. Number is integer value of ConsoleColor Enum. If this means nothing, max you can enter is 16.
+
+>generate_doors
+Adds doors to rooms in the world.
+
+>addxp/removexp <value>
+Adds or removes xp.
+
+>give <item>
+Gives an item (items: keys, health_potion, mana_potion).
+
+>open
+Opens a door with out needing a key.
+
+Options Screen Commands
+-----------------------
+
+>change <setting_name> <value>
+*bools do not need a value and are toggable, for instance just type change colours to flink on or off colours
+
+Page Commands
+-------------
+
+>back
+Moves back a page.
+
+>next/forward
+Moves forward a page.
+
+>page <number>
+Goes to a specific page.
+
+Turns
+-----
+Each successful action you do takes up a turn. Each turn NPC's and other things around you get a chance to move as well. 
+Its important to sit and think about your next move. Just like in real life, there is no going back!
+
+Each turn your stanima will replenish, but your hunger will also go down.
+
+
+Leveling
+--------
+By completing actions in the world, you will gain XP. XP is then divided up into levels. Having a high level gives benefits 
+such as less stanima degradation and less of a need to eat. You also do more damage to opponents. 
+
++ Having a high level lets you eat less.
++ You attack enemies with more damage.
++ You use less stanima.
++ You are really awesome.
+
+
+The World
+---------
+The world around you is a bunch of rooms with water and other obstacles in your path. 
+Closed doors can be denoted by a capital D and can be opened using a key. Keys can be aquired by conquring rooms. 
+You can also find helpful items such as food and healing items in rooms, but these items are guarded by goblins.
+* When you die, the world is lost.
+
+You can find health items by searching the world for bushes and trees! Once you have found one, you can use the eat command
+to replenish your hunger!
+
+
+Hunger, Stanima, Mana and Healing.
+---------------------------
+Your hunger, stanima, health and Mana bars can be found at the top of the window. Your hunger will decrease over time
+and when it hits zero, your health will start to decrease. Leveling up can make this happen slower. Your stanima will
+increase every round. Leveling up can make this happen faster.
+
+You can find healing items by raiding rooms, as well as food.
+
+* Keeep an eye on your hunger! if it ever reaches zero you will start losing health.
+
+ /$$$$$$$  /$$$$$$$$ /$$   /$$ /$$$$$$  /$$$$$$  /$$      /$$  /$$$$$$  /$$   /$$
+| $$__  $$| $$_____/| $$$ | $$|_  $$_/ /$$__  $$| $$$    /$$$ /$$__  $$| $$$ | $$
+| $$  \ $$| $$      | $$$$| $$  | $$  | $$  \__/| $$$$  /$$$$| $$  \ $$| $$$$| $$
+| $$$$$$$/| $$$$$   | $$ $$ $$  | $$  |  $$$$$$ | $$ $$/$$ $$| $$$$$$$$| $$ $$ $$
+| $$____/ | $$__/   | $$  $$$$  | $$   \____  $$| $$  $$$| $$| $$__  $$| $$  $$$$
+| $$      | $$      | $$\  $$$  | $$   /$$  \ $$| $$\  $ | $$| $$  | $$| $$\  $$$
+| $$      | $$$$$$$$| $$ \  $$ /$$$$$$|  $$$$$$/| $$ \/  | $$| $$  | $$| $$ \  $$
+|__/      |________/|__/  \__/|______/ \______/ |__/     |__/|__/  |__/|__/  \__/
+                                                                              

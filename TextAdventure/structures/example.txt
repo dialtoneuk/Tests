@@ -1,0 +1,40 @@
+﻿structures are simply parsed line by line by the game
+each number on the line references the int code of a block
+
+the block int codes are as follows
+
+WALL_INSVISIBLE = 0
+DOOR_CLOSED = 1
+DEEP_WATER = 2
+WALL_SOLID_HORIZONTAL = 3
+WALL_SOLID_VERTICAL = 4
+WOOD = 5
+WALL_SOLID = 6
+DOOR_OPEN = 7
+WATER = 8
+FLOOR = 9
+GRASS = 10
+SAND = 11
+DIRT = 12
+MOUNTAIN_GRASS = 13,
+STONE = 14,
+SNOW = 15
+
+you might have noticed that since each character on the line references the x coord
+of the sturcture and everyline is the Y, we cannot have more than one character occupying
+that space. I have implemented special character which will allow you to access higher numbers. Simply
+put them before the number like demonstrated below
+
+_0_0_0_0_0
+*4*4*4*4*4
+_0_0_0_0_0
+
+_ = blank character meant for improved readability
+
+*/+/^ = 10 and up
+~ = 20 and up
+. = 30 and up
+` = 40 and up
+
+
+
