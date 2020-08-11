@@ -17,7 +17,8 @@ namespace TextAdventure
             TRACK_1913,
             TRACK_1851,
             TRACK_1326,
-            TRACK_PETSCOP
+            TRACK_PETSCOP,
+            TRACK_MUGGY_SIGNALS
         }
 
         private Dictionary<Tracks, string> trackFilenames = new Dictionary<Tracks, string>
@@ -29,6 +30,7 @@ namespace TextAdventure
             {Tracks.TRACK_1851,"1851_compressed.mp3" },
             {Tracks.TRACK_1326,"1326_compressed.mp3" },
             {Tracks.TRACK_PETSCOP,"petscop.mp3" },
+            {Tracks.TRACK_MUGGY_SIGNALS,"muggy_signals.mp3" },
         };
 
         public const int JUKEBOX_INTERVAL = 600;
@@ -75,8 +77,12 @@ namespace TextAdventure
 
             if (output.PlaybackState != PlaybackState.Playing)
             {
-                output.Init(fade);
-                output.Play();
+                if(fade!=null)
+                {
+
+                    output.Init(fade);
+                    output.Play();
+                }
             }
         }
 
@@ -99,8 +105,6 @@ namespace TextAdventure
         public void changeTrack(Tracks track)
         {
 
-            if (this.currentTrack == track)
-                return;
 
             if (isPlaying())
             {
@@ -136,6 +140,12 @@ namespace TextAdventure
 
             if (output != null)
                 this.output.Volume = volume;
+        }
+
+        public Tracks getCurrentTrack()
+        {
+
+            return this.currentTrack;
         }
 
         public bool isPlaying()

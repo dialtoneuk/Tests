@@ -57,6 +57,9 @@
     <None Update="tracks\highways.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="tracks\muggy_signals.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="tracks\petscop.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

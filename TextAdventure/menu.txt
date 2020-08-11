@@ -13,19 +13,14 @@
 
                            + TYPE THE FOLLOWING CORRESPONDING LETTER TO BEGIN +
 
-                                           +=[n]ew game=+
-                               n <#rooms> <#foilage> <w> <h> <#structures>
+                                        + start a [n]ew game +
               
-                                            -=[o]ptions=-
-                                                  o    
+                                             ? [h]elp ?
 
-                                             ?=[h]elp=?
-                                                  c 
+                                            - [o]ptions -
 
-                                            -=[c]redits=-
-                                                  c    
+                                            - [c]redits -
 
-                                             -=[e]xit=-
-                                                  e    
+                                             - [e]xit -
 
-                         your command line is down here! and will always stay here!
+                       your command line is down here! and will always stay here!

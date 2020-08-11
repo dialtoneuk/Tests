@@ -11,10 +11,24 @@ Made this to test out C#.
 Stuff I use
 -----------
 FastNoise.cs by Jordan Peck (https://github.com/Auburn/FastNoise_CSharp)
+NAudio by Mark Heath (https://github.com/naudio/NAudio)
 
 
 Changelog
 ---------
+11/08/2020
+           + added inventory, items.
+           + added various commands to diplay enum types such as Blocks, Structures and tracks
+           + generate foliage, room and structure command as well as add room command
+           ~ give has been updated to now function using the item system.
+           ~ interactions updated to give items
+           ~ updated/fixed various bugs and weird glitches
+
+10/08/2020
+           + added new music system which functions exactly like minecraft
+           ~ updated turn feedback to make it more visisble when a turn has passed
+           ~ added turn counter to hud
+           ~ fixed bugs and issue with commands and turns being felt when they shouldnt be
 09/08/2020 
            + added new hud
            + added structures into the game! for now there are only a few but I will add more as I go on

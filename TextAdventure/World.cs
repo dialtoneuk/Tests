@@ -514,6 +514,18 @@ namespace TextAdventure
             Console.WriteLine("finished.");
         }
 
+        public void cleanFoliage()
+        {
+
+            this.foliage = new int[WORLD_MAX_FOLIAGE, WORLD_MAX_FOLIAGE];
+        }
+
+        public void cleanRooms()
+        {
+
+            this.rooms = new int[ROOM_MAX][];
+        }
+
         /**
          * Foliage generation
          **/

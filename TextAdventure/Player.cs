@@ -190,6 +190,10 @@ namespace TextAdventure
             else
                 this.health += (int)Math.Floor(healing_factor);
 
+            Program.addFeedback("turn cost and income.");
+            Program.addFeedback("+ S {0}", stanima_increase);
+            Program.addFeedback("- F {0}", hunger_reduction);
+
             updateLevel();
         }
 
@@ -305,6 +309,15 @@ namespace TextAdventure
             this.health += amount;
         }
 
+        public void replenish(float amount)
+        {
+
+            if (this.stanima + amount > MAX_STANIMA)
+                this.stanima = MAX_STANIMA;
+
+            this.stanima += amount;
+        }
+
         public void useItem(Items item)
         {
 
@@ -319,16 +332,20 @@ namespace TextAdventure
                     this.heal(50);
                     break;
                 case Items.GOLDEN_APPLE:
+                    Program.addFeedback("+ S 250");
                     Program.addFeedback("+ F 500");
                     Program.addFeedback("+ H 100");
                     Program.addFeedback("+ xp 100");
                     this.feed(500);
+                    this.replenish(250);
                     this.heal(100);
                     this.addXP(100);
                     break;
                 case Items.BERRIES:
+                    Program.addFeedback("+ S 5");
                     Program.addFeedback("+ F 10");
                     Program.addFeedback("+ xp 2");
+                    this.replenish(5);
                     this.feed(10);
                     this.addXP(2);
                     break;
@@ -340,7 +357,10 @@ namespace TextAdventure
                     this.addXP(4);
                     break;
                 case Items.KEY:
-                    Program.addFeedback("this must be used with the unlock command");
+                    Program.addFeedback("'use the unlock command' the key whispers");
+                    Program.addFeedback("- KEY 1");
+                    Program.addFeedback("+ KEY 1");
+                    this.addItem(Items.KEY, 1);
                     break;
             }
         }
@@ -358,7 +378,7 @@ namespace TextAdventure
                 Program.addFeedback("{0} x{1}", Enum.GetName(typeof(Items), item), this.inventory[item]);
         }
 
-        public void addItem(Items item, int amount)
+        public void addItem(Items item, int amount=1)
         {
 
             if (this.inventory.ContainsKey(item))

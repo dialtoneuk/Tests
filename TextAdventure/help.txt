@@ -1,13 +1,4 @@
-﻿  _               _       _______        _     _____  _____   _____ 
- | |             | |     |__   __|      | |   |  __ \|  __ \ / ____|
- | |    _   _  __| |___     | | _____  _| |_  | |__) | |__) | |  __ 
- | |   | | | |/ _` / __|    | |/ _ \ \/ / __| |  _  /|  ___/| | |_ |
- | |___| |_| | (_| \__ \    | |  __/>  <| |_  | | \ \| |    | |__| |
- |______\__, |\__,_|___/    |_|\___/_/\_\\__| |_|  \_\_|     \_____|
-         __/ |                                                      
-        |___/                                                       
-
-
+﻿
 Basic Commands
 ---------------
 
@@ -17,6 +8,12 @@ Enter any of the following inputs to move in a direction. Moving uses up stanima
 > <direction> <number_of_spaces>
 Moves in any direection a specified number of spaces, will move only one space if no number is given.
 * if a large number is entered you will move until a solid wall is met.
+
+> use <item_name>
+Uses an item from your inventory. Does not take up a turn.
+
+> inventory
+Displays your inventory.
 
 > unlock
 Unlocks a door, requires a key.
@@ -41,37 +38,75 @@ Interact with foliage to replenish your hunger or gain XP. Each foliage gives a 
 Changes the view window to various levels of zoom/size. Kind of broken due to the fact its all text but hey I tried!
 
 
+
+
+
+
+
+
+
+
+
 Advanced Commands
 ---------------
 
 * these commands need to be enabled through the options and can break things!
 
->generate <number_of_rooms> <number_of_foliage> <world_width> <world_height> <perlin_noise_frequency>
+>generate/n/newgame/g <number_of_rooms> <number_of_foliage> <world_width> <world_height> <perlin_noise_frequency>
 Generates a new world map.
 
 >colours <colour_of_walls> <colour_of_floor>
 Sets the colours of the world. Number is integer value of ConsoleColor Enum. If this means nothing, max you can enter is 16.
 
 >music <track>
-Plays a music track
-
->generate_doors
-Adds doors to rooms in the world.
+Plays a music track.
 
 >addxp/removexp <value>
 Adds or removes xp.
 
 >give <item>
-Gives an item (items: keys, health_potion, mana_potion).
+Gives an item (items: keys, health_potion, mana_potion.
+
+
+Developer Commands
+---------------
 
 >open
 Opens a door with out needing a key.
 
-Options Screen Commands
+>tracks
+Displays a list of available musical tracks.
+
+>foliage
+Displays a list of available foliage types.
+
+>blocks
+Displays a list of available block types.
+
+>structures
+Displays a list of available world structures.
+
+>generate_doors
+Adds doors to rooms in the world.
+
+>generate_foliage <count>
+Generate fresh foliage to the world, will delete old foliage.
+
+>generate_rooms <count>
+Generate fresh rooms to the world, will delete old rooms.
+
+>generate_structures <count>
+Adds new structures to the world, will not delete old structures.
+
+>add_rooms <count>
+Adds new rooms to the world, will not delete old rooms.
+
+
+Options Commands
 -----------------------
 
 >change <setting_name> <value>
-*bools do not need a value and are toggable, for instance just type change colours to flink on or off colours
+*bools do not need a value and are toggable, for instance just type change colours to flink on or off colours.
 
 Page Commands
 -------------
@@ -104,6 +139,10 @@ such as less stanima degradation and less of a need to eat. You also do more dam
 + You are really awesome.
 
 
+
+
+
+
 The World
 ---------
 The world around you is a bunch of rooms with water and other obstacles in your path. 
@@ -125,12 +164,3 @@ You can find healing items by raiding rooms, as well as food.
 
 * Keeep an eye on your hunger! if it ever reaches zero you will start losing health.
 
- /$$$$$$$  /$$$$$$$$ /$$   /$$ /$$$$$$  /$$$$$$  /$$      /$$  /$$$$$$  /$$   /$$
-| $$__  $$| $$_____/| $$$ | $$|_  $$_/ /$$__  $$| $$$    /$$$ /$$__  $$| $$$ | $$
-| $$  \ $$| $$      | $$$$| $$  | $$  | $$  \__/| $$$$  /$$$$| $$  \ $$| $$$$| $$
-| $$$$$$$/| $$$$$   | $$ $$ $$  | $$  |  $$$$$$ | $$ $$/$$ $$| $$$$$$$$| $$ $$ $$
-| $$____/ | $$__/   | $$  $$$$  | $$   \____  $$| $$  $$$| $$| $$__  $$| $$  $$$$
-| $$      | $$      | $$\  $$$  | $$   /$$  \ $$| $$\  $ | $$| $$  | $$| $$\  $$$
-| $$      | $$$$$$$$| $$ \  $$ /$$$$$$|  $$$$$$/| $$ \/  | $$| $$  | $$| $$ \  $$
-|__/      |________/|__/  \__/|______/ \______/ |__/     |__/|__/  |__/|__/  \__/
-                                                                              

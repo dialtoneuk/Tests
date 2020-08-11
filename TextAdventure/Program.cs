@@ -29,7 +29,9 @@ namespace TextAdventure
         public const int DEFAULT_STRUCTURE_COUNT = 316;
         public const int DEFAULT_ISLAND_VALUE = 2;
         public const int HUD_BUFFER_ZONE = 2;
-        public const bool DEVELOPER_COMMANDS = true;
+        public const bool enableScreenBuffer = false;
+
+        public static bool developerCommands = true;
 
         protected static World world;
         protected static Player player;
@@ -37,9 +39,9 @@ namespace TextAdventure
         protected static bool skipread = false;
         protected static bool skipclean = false;
         protected static bool skipturn = false;
+        protected static bool enableColours = true;
         protected static string line = "";
         protected static int turn = 0;
-        protected static bool colours = true;
         protected static List<string> feedback = new List<string>();
 
         private static State state;
@@ -48,9 +50,7 @@ namespace TextAdventure
         private static int screen_line = 0;
         private static ConsoleColor currentForegroundColour;
         private static ConsoleColor currentBackgroundColour;
-
         private static Music music;
-
         private static string[] screen_buffer = new string[WINDOW_HEIGHT];
 
         static void Main(string[] args)
@@ -73,7 +73,6 @@ namespace TextAdventure
                 skipclean = false;
                 skipturn = false;
 
-
                 if (music == null)
                 {
 
@@ -90,7 +89,7 @@ namespace TextAdventure
                     case State.WORLD:
                         //print world
                         World.printWorld(player, world, HUD_BUFFER_ZONE);
-                        player.drawHud();
+                        player.drawHud("turn " + turn);
                         break;
                     case State.HELP:
                         //prints help text file
@@ -107,20 +106,37 @@ namespace TextAdventure
                         break;
                     case State.OPTIONS:
 
-                        write("Options");
+                        write("Options (options in red you cannot change)");
+                        writeLine();
                         writeLine();
 
                         //print settings
-                        writeLine("Music Settings");
+                        writeLine("Music");
                         writeLine();
+
                         if(music!=null)
+                        {
+                            if(music.isPlaying())
+                                writeLine("playing track {0}", music.getCurrentTrack());
+
                             writeLine("volume {0}", music.getVolume());
+                        }
+                        
                         writeLine();
-                        writeLine("Graphics Settings");
+                        writeLine("Graphics");
                         writeLine();
-                        writeLine("colours {0}", colours);
+                        writeLine("colours {0}", enableColours);
+                        setColour(ConsoleColor.Red);
+                        writeLine("*screen_buffer {0}", enableScreenBuffer);
+                        writeLine("*screen_w {0}", WINDOW_WIDTH);
+                        writeLine("*screen_h {0}", WINDOW_HEIGHT);
+                        setColour(ConsoleColor.White);
                         writeLine();
-                        writeLine("[r]eturn | [h]elp | [c]redits | change <setting_name> <value if needed> (bools do not need values and are toggable)");
+                        writeLine("Advanced");
+                        writeLine();
+                        writeLine("developer_commands {0}", developerCommands);
+                        writeLine();
+                        writeLine("[r]eturn | [h]elp | [c]redits | change <setting_name> <value if needed>");
                         break;
                     case State.MENU:
 
@@ -142,7 +158,6 @@ namespace TextAdventure
                         break;
                     default:
                         setColour(ConsoleColor.Red);
-
                         writeLine("Invalid gamestate: {0}", state);
                         break;
                 }
@@ -150,12 +165,12 @@ namespace TextAdventure
                 processCommand(line);
 
                 //print feedback
-                if (getGameState() != State.MENU)
+                if (getGameState() == State.WORLD)
                     printFeedback(Player.CAMERA_WIDTH);
 
                 setColour(ConsoleColor.White);
 
-                if (!colours)
+                if (enableScreenBuffer)
                     for (int i = 0; i < screen_buffer.Length; i++)
                         Console.WriteLine("{1}", i, screen_buffer[i]);
 
@@ -164,13 +179,19 @@ namespace TextAdventure
                     write("> ");
                 retry:
                     line = Console.ReadLine();
-                    clearFeedback();
+                  
 
-                    if (line == "")
+                    if (line == "" || line.Length == 0)
                     {
-                        //writeLine("please enter something");
+                        addFeedback("please enter something");
                         goto retry;
                     }
+
+                    if (!skipturn)
+                    {
+                        clearFeedback();
+                        addFeedback("+--TURN {0}--+", turn);
+                    }             
                 }
             }
 
@@ -285,19 +306,25 @@ namespace TextAdventure
         public static void writeLine(string line = "", params object[] data)
         {
 
-            if (colours)
+            if (!enableScreenBuffer)
                 Console.WriteLine(line, data);
-
-            if (screen_line < WINDOW_HEIGHT - 1)
+            else
             {
-                screen_line++;
-                screen_buffer[screen_line] = String.Format(line, data);
-                //Advance screen line
-            }
+
+                if (screen_line < WINDOW_HEIGHT - 1)
+                {
+                    screen_line++;
+                    screen_buffer[screen_line] = String.Format(line, data);
+                    //Advance screen line
+                }
+            }    
         }
 
         public static void setColour(ConsoleColor color)
         {
+
+            if(!enableColours)
+                return;
 
             if (currentForegroundColour != color)
             {
@@ -321,7 +348,7 @@ namespace TextAdventure
         public static void write(string line = "", params object[] data)
         {
 
-            if (!colours)
+            if (enableScreenBuffer)
                 screen_buffer[screen_line] = screen_buffer[screen_line] + line;
             else
                 Console.Write(line, data);
@@ -467,27 +494,25 @@ namespace TextAdventure
                 string trimed_line = help[l + start].Trim();
 
                 if (trimed_line.StartsWith('-'))
-                    setColour(ConsoleColor.DarkGreen);
+                    setColour(ConsoleColor.Red);
 
-                if (trimed_line.StartsWith('-') || trimed_line.StartsWith("#"))
-                    setColour(ConsoleColor.Yellow);
+                if(trimed_line.StartsWith("#"))
+                    setColour(ConsoleColor.DarkBlue);
 
                 if (trimed_line.StartsWith("|"))
-                    setColour(ConsoleColor.DarkYellow);
+                    setColour(ConsoleColor.Green);
 
                 if (trimed_line.StartsWith('~'))
                     setColour(ConsoleColor.Magenta);
 
-
                 if (trimed_line.StartsWith('?'))
-                    setColour(ConsoleColor.Blue);
-
+                    setColour(ConsoleColor.Magenta);
 
                 if (trimed_line.StartsWith('*'))
-                    setColour(ConsoleColor.DarkMagenta);
+                    setColour(ConsoleColor.Blue);
 
                 if (trimed_line.StartsWith('>'))
-                    setColour(ConsoleColor.Yellow);
+                    setColour(ConsoleColor.DarkYellow);
 
                 if (trimed_line.StartsWith('+'))
                     setColour(ConsoleColor.Green);
@@ -512,6 +537,7 @@ namespace TextAdventure
             if (getGameState() == State.WORLD)
             {
                 player.processTurn();
+                addFeedback("---END OF TURN {0}---", turn);
                 turn++;
             }
         }
@@ -532,7 +558,7 @@ namespace TextAdventure
                 int difference = amount - Player.MAX_MOVE_DISTANCE;
                 amount = amount - difference;
 
-                addFeedback("too far for one turn, instead you move {0} spaces.", amount);
+                addFeedback("too far for one turn. you manage {0} spaces.", amount);
             }
 
             if (player.willExhaustPlayer(amount))
@@ -895,7 +921,7 @@ namespace TextAdventure
                     break;
             }
 
-            if (DEVELOPER_COMMANDS)
+            if (developerCommands)
                 processDevCommand(command, arguments);
 
             line = "";
@@ -910,7 +936,9 @@ namespace TextAdventure
 
             switch (command)
             {
-
+                default:
+                    skipturn = true;
+                    break;
                 case "inv":
                 case "inventory":
                     player.printInventory();
@@ -919,7 +947,7 @@ namespace TextAdventure
                     skipread = true;
                     break;
                 case "use":
-                    if (arguments.Length == 0 && arguments[0] == "")
+                    if (arguments.Length == 0 || arguments[0] == "")
                     {
                         addFeedback("you must enter the items name");
                     }
@@ -929,12 +957,17 @@ namespace TextAdventure
                         {
 
                             Player.Items item = player.getItemFromName(arguments[0].ToLower());
-                            addFeedback("using item {0} ({1} left)", item, player.getItemQuantity(item) - 1);
-                            player.useItem(item);
-                            player.removeItem(item);
+                            if (player.hasItem(item))
+                            {
+                                addFeedback("using item {0} ({1} left)", item, player.getItemQuantity(item) - 1);
+                                player.useItem(item);
+                                player.removeItem(item);
+                            }
+                            else
+                                addFeedback("you don't even have any {0} anymore", item);   
                         }
                     }
-
+                    player.updateLevel();
                     skipturn = true;
                     skipread = true;
                     break;
@@ -1239,7 +1272,7 @@ namespace TextAdventure
                         case "fastrender":
                         case "colors":
                         case "colours":
-                            colours = !colours;
+                            enableColours = !enableColours;
                             break;
                         case "volume":
                             if(_<10)
@@ -1249,6 +1282,9 @@ namespace TextAdventure
                                 music.setVolume(value);
                             }
                           
+                            break;
+                        case "developer_commands":
+                            developerCommands = !developerCommands;
                             break;
                     }
                     skipread = true;
@@ -1393,10 +1429,12 @@ namespace TextAdventure
                 case "start:":
                 case "newgame":
                 case "n":
+
+                    Console.Clear();
                     if (newgame(ref player, ref world, arguments))
                     {
-                        setSpawn(ref player, ref world);
                         setGameState(State.WORLD);
+                        setSpawn(ref player, ref world);
                     }
                     skipread = true;
                     break;
@@ -1452,10 +1490,72 @@ namespace TextAdventure
                 return;
 
             int _ = 1;
+            var counter = 0;
             switch (command)
             {
-                case "fastrender":
-                    colours = !colours;
+
+                case "tracks":
+                    var names = Enum.GetNames(typeof(Music.Tracks));
+                    counter = 0;
+
+                    foreach (string name in names)
+                    {
+                        addFeedback("{0} = {1}", name, counter);
+                        counter++;
+                    }
+                       
+                    skipread = true;
+                    break;
+                case "items":
+                    var items = Enum.GetNames(typeof(Player.Items));
+                    counter = 0;
+
+                    foreach (string name in items)
+                    {
+                        addFeedback("{0} = {1}", name, counter);
+                        counter++;
+                    }
+
+                    skipread = true;
+                    break;
+                case "blocks":
+                    var blocks = Enum.GetNames(typeof(World.Blocks));
+                    counter = 0;
+
+                    foreach (string name in blocks)
+                    {
+                        addFeedback("{0} = {1}", name, counter);
+                        counter++;
+                    }
+
+                    skipread = true;
+                    break;
+                case "foliage":
+                    var foliage  = Enum.GetNames(typeof(World.Foliage));
+                    counter = 0;
+
+                    foreach (string name in foliage)
+                    {
+                        addFeedback("{0} = {1}", name, counter);
+                        counter++;
+                    }
+
+                    skipread = true;
+                    break;
+                case "structures":
+                    var structures = Enum.GetNames(typeof(World.Structures));
+                    counter = 0;
+
+                    foreach (string name in structures)
+                    {
+                        addFeedback("{0} = {1}", name, counter);
+                        counter++;
+                    }
+
+                    skipread = true;
+                    break;
+                case "colours_off":
+                    enableColours = !enableColours;
                     skipread = true;
                     break;
                 case "open":
@@ -1475,6 +1575,53 @@ namespace TextAdventure
                     if (newgame(ref player, ref world, arguments))
                         setSpawn(ref player, ref world);
 
+                    skipread = true;
+                    break;
+                case "generate_foliage":
+                    _ = DEFAULT_FOLIAGE_COUNT;
+                    if (arguments.Length != 0 && arguments[0] != "")
+                        if (int.TryParse(arguments[0], out int parse))
+                        {
+                            if (parse != 0)
+                                _ = parse;
+                        }
+
+                    world.cleanFoliage();
+                    world.generateFoliage(_);
+                    skipread = true;
+                    break;
+                case "generate_rooms":
+                    _ = DEFAULT_ROOM_COUNT;
+                    if (arguments.Length != 0 && arguments[0] != "")
+                        if (int.TryParse(arguments[0], out int parse))
+                        {
+                            if (parse != 0)
+                                _ = parse;
+                        }
+                    world.cleanRooms();
+                    world.placeRooms(_);
+                    skipread = true;
+                    break;
+                case "generate_structures":
+                    _ = DEFAULT_STRUCTURE_COUNT;
+                    if (arguments.Length != 0 && arguments[0] != "")
+                        if (int.TryParse(arguments[0], out int parse))
+                        {
+                            if (parse != 0)
+                                _ = parse;
+                        }
+                    world.placeStructures(_);
+                    skipread = true;
+                    break;
+                case "add_rooms":
+                    _ = 1;
+                    if (arguments.Length != 0 && arguments[0] != "")
+                        if (int.TryParse(arguments[0], out int parse))
+                        {
+                            if (parse != 0)
+                                _ = parse;
+                        }
+                    world.placeRooms(_);
                     skipread = true;
                     break;
                 case "generate_doors":
@@ -1542,7 +1689,7 @@ namespace TextAdventure
                             Player.Items item = player.getItemFromName(arguments[0].ToLower());
                        
                             if(arguments.Length>1 && arguments[1] != "")
-                                if (int.TryParse(arguments[0], out int parse))
+                                if (int.TryParse(arguments[1], out int parse))
                                 {
                                     if (parse != 0)
                                         _ = parse;
