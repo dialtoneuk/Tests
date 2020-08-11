@@ -52,6 +52,9 @@ Generates a new world map.
 >colours <colour_of_walls> <colour_of_floor>
 Sets the colours of the world. Number is integer value of ConsoleColor Enum. If this means nothing, max you can enter is 16.
 
+>music <track>
+Plays a music track
+
 >generate_doors
 Adds doors to rooms in the world.
 

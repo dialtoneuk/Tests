@@ -1,20 +1,36 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TextAdventure
 {
     class Player
     {
 
+        public enum Items : int
+        {
+
+            NULL,
+            HEALTH_POTION,
+            APPLE,
+            MANA_POTION,
+            KEY,
+            HONEY,
+            BERRIES,
+            GOLDEN_APPLE
+        }
+
+        private Dictionary<Items, int> inventory = new Dictionary<Items, int>
+        {
+            
+        };
 
         public static int CAMERA_ZOOM_FACTOR = 0;
         public static int CAMERA_WIDTH = (int)(Program.WINDOW_WIDTH) - (Program.WINDOW_WIDTH / 5) - 18;
         public static int CAMERA_HEIGHT = (int)(Program.WINDOW_HEIGHT);
         public static int HUDX = CAMERA_WIDTH + 2;
 
-
         public const int MAX_MOVE_DISTANCE = 16;
         public const int MAX_HARVEST_DISTANCE = 4;
-
         public const int LEVEL_INTERVAL = 100;
         public const int MAX_HUNGER = 1000;
         public const int MAX_HEALTH = 100;
@@ -30,9 +46,7 @@ namespace TextAdventure
         public const int HUDH = 10;
         public const int HUDPADDING = 6;
 
-
         protected int health;
-        protected int keys;
         protected int[] position = new int[2];
         protected int[] last_position = new int[2];
         protected long xp;
@@ -228,12 +242,6 @@ namespace TextAdventure
             return true;
         }
 
-        public void addKey(int amount)
-        {
-
-            this.keys += amount;
-        }
-
         public void feed(int amount)
         {
 
@@ -250,12 +258,6 @@ namespace TextAdventure
                 this.mana = MAX_MANA;
 
             this.mana += amount;
-        }
-
-        public void removeKey(int amount)
-        {
-
-            this.keys -= amount;
         }
 
         public void damage(int amount)
@@ -303,6 +305,123 @@ namespace TextAdventure
             this.health += amount;
         }
 
+        public void useItem(Items item)
+        {
+
+            switch(item)
+            {
+                case Items.MANA_POTION:
+                    Program.addFeedback("+ M 50");
+                    this.charge(50);
+                    break;
+                case Items.HEALTH_POTION:
+                    Program.addFeedback("+ H 50");
+                    this.heal(50);
+                    break;
+                case Items.GOLDEN_APPLE:
+                    Program.addFeedback("+ F 500");
+                    Program.addFeedback("+ H 100");
+                    Program.addFeedback("+ xp 100");
+                    this.feed(500);
+                    this.heal(100);
+                    this.addXP(100);
+                    break;
+                case Items.BERRIES:
+                    Program.addFeedback("+ F 10");
+                    Program.addFeedback("+ xp 2");
+                    this.feed(10);
+                    this.addXP(2);
+                    break;
+                case Items.HONEY:
+                case Items.APPLE:
+                    Program.addFeedback("+ F 5");
+                    Program.addFeedback("+ xp 4");
+                    this.feed(5);
+                    this.addXP(4);
+                    break;
+                case Items.KEY:
+                    Program.addFeedback("this must be used with the unlock command");
+                    break;
+            }
+        }
+
+        public void printInventory()
+        {
+
+            var keys = this.inventory.Keys;
+
+            Program.addFeedback("");
+            Program.addFeedback("inventory");
+            Program.addFeedback("");
+
+            foreach (Items item in keys)
+                Program.addFeedback("{0} x{1}", Enum.GetName(typeof(Items), item), this.inventory[item]);
+        }
+
+        public void addItem(Items item, int amount)
+        {
+
+            if (this.inventory.ContainsKey(item))
+                this.inventory[item] = this.inventory[item] + amount;
+            else
+                this.inventory[item] = amount;
+        }
+
+        public bool itemExists(string item_name)
+        {
+
+            var names = Enum.GetNames(typeof(Items));
+
+            foreach (string name in names)
+                if (name.ToLower() == item_name.ToLower())
+                    return true;
+
+            return false;
+        }
+
+        public Items getItemFromName(string item_name)
+        {
+
+
+            var names = Enum.GetNames(typeof(Items));
+            var key = 0;
+
+            foreach (string name in names)
+            {
+                if (name.ToLower() == item_name.ToLower())
+                    return (Items)key;
+
+                key++;
+            }
+
+            return Items.NULL;
+        }
+
+        public int getItemQuantity(Items item)
+        {
+
+            return (this.inventory[item]);
+        }
+
+        public void removeItem(Items item, bool whole_item=false)
+        {
+
+            if(this.inventory.ContainsKey(item))
+            {
+
+                if (whole_item)
+                    this.inventory.Remove(item);
+                else
+                {
+
+                    if(this.inventory[item]-1>0)
+                        this.inventory[item] = this.inventory[item] - 1;
+                    else
+                        this.inventory.Remove(item);
+                }
+            }
+        }
+
         public bool willExhaustPlayer(int amount)
         {
             double stanima_decrease = (STANIMA_FACTOR + Math.Abs(this.level / 5)) * amount;
@@ -313,6 +432,16 @@ namespace TextAdventure
             return false;
         }
 
+
+        public bool hasItem(Items item)
+        {
+
+            if (this.inventory.Count == 0)
+                return false;
+
+            return (this.inventory.ContainsKey(item));
+        }
+
         public double[] getLoses(int amount)
         {
 
@@ -321,12 +450,6 @@ namespace TextAdventure
             loses[1] = (HUNGER_FACTOR + Math.Abs(this.level / 5)) * amount;
 
             return loses;
-        }
-
-        public int getKeys()
-        {
-
-            return this.keys;
         }
 
         public int getHealth()
@@ -374,10 +497,7 @@ namespace TextAdventure
         public bool canOpenDoor()
         {
 
-            if (this.keys <= 0)
-                return false;
-
-            return true;
+            return (this.hasItem(Items.KEY));
         }
 
         public string getPlayerName()

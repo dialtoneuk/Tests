@@ -99,6 +99,9 @@ namespace TextAdventure
         public void changeTrack(Tracks track)
         {
 
+            if (this.currentTrack == track)
+                return;
+
             if (isPlaying())
             {
                 fadeOut();
@@ -112,6 +115,7 @@ namespace TextAdventure
             stream.Volume = DEFAULT_VOLUME;
             fade = new FadeInOutSampleProvider(stream, true);
             fade.BeginFadeIn(2000);
+            this.currentTrack = track;
         }
 
         public void fadeOut()

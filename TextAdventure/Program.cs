@@ -698,32 +698,39 @@ namespace TextAdventure
                             {
                                 default:
                                     player.addXP(random);
+                                    addFeedback("+ xp {0}", random);
                                     world.removeFoliage(player.getXPosition() + x, player.getYPosition() + y);
                                     break;
                                 case World.Foliage.PLANT_EGGPLANT:
                                 case World.Foliage.TREE_APPLE:
+                                    player.addItem(Player.Items.APPLE, random);
+                                    player.addXP(5);
+                                    addFeedback("+ apples {0}", random);
+                                    addFeedback("+ xp 5");
+                                    world.removeFoliage(player.getXPosition() + x, player.getYPosition() + y);
+                                    return true;
                                 case World.Foliage.BUSH_BLACKBERRIES:
                                 case World.Foliage.BUSH_BLUEBERRIES:
                                 case World.Foliage.BUSH_STRAWBERRIES:
                                 case World.Foliage.BUSH_BERRIES:
-                                    player.feed(random);
+                                    player.addItem(Player.Items.BERRIES, random);
                                     player.addXP(5);
-                                    addFeedback("+ F {0}", random);
+                                    addFeedback("+ assorted berries {0}", random);
                                     addFeedback("+ xp 5");
                                     world.removeFoliage(player.getXPosition() + x, player.getYPosition() + y);
                                     return true;
                                 case World.Foliage.TREE_HONEY:
-                                    player.feed(random);
-                                    addFeedback("+ F {0}", random);
-                                    addFeedback("+ xp 10");
+                                    player.addItem(Player.Items.HONEY, random);
                                     player.addXP(10);
+                                    addFeedback("+ honey {0}", random);
+                                    addFeedback("+ xp 10");
                                     world.removeFoliage(player.getXPosition() + x, player.getYPosition() + y);
                                     return true;
                                 case World.Foliage.TREE_GOLDEN_APPLE:
-                                    player.feed(random);
-                                    addFeedback("+ F {0}", random);
-                                    addFeedback("+ xp 20");
+                                    player.addItem(Player.Items.GOLDEN_APPLE, 1);
                                     player.addXP(20);
+                                    addFeedback("+ golden apple 1");
+                                    addFeedback("+ xp 20");
                                     world.removeFoliage(player.getXPosition() + x, player.getYPosition() + y);
                                     return true;
                                 case World.Foliage.TREE_OAK:
@@ -904,8 +911,37 @@ namespace TextAdventure
             switch (command)
             {
 
-                case "changetrack":
+                case "inv":
+                case "inventory":
+                    player.printInventory();
+
+                    skipturn = true;
+                    skipread = true;
+                    break;
+                case "use":
+                    if (arguments.Length == 0 && arguments[0] == "")
+                    {
+                        addFeedback("you must enter the items name");
+                    }
+                    else
+                    {
+                        if (player.itemExists(arguments[0].ToLower()))
+                        {
+
+                            Player.Items item = player.getItemFromName(arguments[0].ToLower());
+                            addFeedback("using item {0} ({1} left)", item, player.getItemQuantity(item) - 1);
+                            player.useItem(item);
+                            player.removeItem(item);
+                        }
+                    }
+
+                    skipturn = true;
+                    skipread = true;
+                    break;
+                case "track":
+                case "changemusic":
                 case "music":
+                    _ = 0;
                     if (arguments.Length != 0 && arguments[0] != "")
                         if (int.TryParse(arguments[0], out int parse))
                         {
@@ -1102,10 +1138,10 @@ namespace TextAdventure
                         if (openDoor(ref player))
                         {
                             addFeedback("used a key to unlock a door.");
-                            addFeedback("+ xp 10");
-                            player.addXP(10);
+                            addFeedback("+ xp 60");
+                            player.addXP(60);
                             player.updateLevel();
-                            player.removeKey(1);
+                            player.removeItem(Player.Items.KEY);
                         }
                         else
                         {
@@ -1496,17 +1532,25 @@ namespace TextAdventure
                     skipread = true;
                     break;
                 case "give":
-                    if (arguments.Length != 0 && arguments[0] != "")
-                        if (arguments[0] == "key" || arguments[0] == "keys")
-                            if (arguments.Length != 1 && int.TryParse(arguments[1], out int parse))
-                            {
-                                if (parse != 0)
-                                    player.addKey(parse);
-                            }
-                            else
-                                player.addKey(1);
-                        else
-                            write("invalid");
+                    if (arguments.Length == 0 && arguments[0] == "")
+                        addFeedback("please specify an item");
+                    else
+                    {
+                        if (player.itemExists(arguments[0].ToLower()))
+                        {
+
+                            Player.Items item = player.getItemFromName(arguments[0].ToLower());
+                       
+                            if(arguments.Length>1 && arguments[1] != "")
+                                if (int.TryParse(arguments[0], out int parse))
+                                {
+                                    if (parse != 0)
+                                        _ = parse;
+                                }
+
+                            player.addItem(item, _);
+                        }
+                    }
 
                     skipread = true;
                     break;
@@ -1526,7 +1570,9 @@ namespace TextAdventure
 
             Player player = new Player(name);
             player.heal(100);
-            player.addKey(1);
+            player.addItem(Player.Items.KEY, 1);
+            player.addItem(Player.Items.HEALTH_POTION, 1);
+            player.addItem(Player.Items.MANA_POTION, 1);
             return player;
         }
     }
