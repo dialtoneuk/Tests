@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace TextAdventure
 {
-    class Music
+    public class Music
     {
 
         public enum Tracks : int
@@ -77,7 +77,7 @@ namespace TextAdventure
 
             if (output.PlaybackState != PlaybackState.Playing)
             {
-                if(fade!=null)
+                if (fade != null)
                 {
 
                     output.Init(fade);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TextAdventure
 {
-    class Player
+    public class Player
     {
 
         public enum Items : int
@@ -21,13 +21,17 @@ namespace TextAdventure
 
         private Dictionary<Items, int> inventory = new Dictionary<Items, int>
         {
-            
+
         };
 
         public static int CAMERA_ZOOM_FACTOR = 0;
         public static int CAMERA_WIDTH = (int)(Program.WINDOW_WIDTH) - (Program.WINDOW_WIDTH / 5) - 18;
         public static int CAMERA_HEIGHT = (int)(Program.WINDOW_HEIGHT);
         public static int HUDX = CAMERA_WIDTH + 2;
+
+        private int[] position = new int[2];
+
+        private static int[] last_position = new int[2];
 
         public const int MAX_MOVE_DISTANCE = 16;
         public const int MAX_HARVEST_DISTANCE = 4;
@@ -46,15 +50,23 @@ namespace TextAdventure
         public const int HUDH = 10;
         public const int HUDPADDING = 6;
 
-        protected int health;
-        protected int[] position = new int[2];
-        protected int[] last_position = new int[2];
-        protected long xp;
-        protected int level;
-        protected double hunger;
-        protected double stanima;
-        protected double mana;
-        protected string playerName;
+        private int health;
+        private long xp;
+        private int level;
+        private double hunger;
+        private double stanima;
+        private double mana;
+        private string playerName;
+
+        public static int[] LastPosition { get => last_position; set => last_position = value; }
+        public int Health { get => health; }
+        public long Xp { get => xp; }
+        public int Level { get => level; }
+        public double Hunger { get => hunger; }
+        public double Stanima { get => stanima; }
+        public double Mana { get => mana; }
+        public string PlayerName { get => playerName; set => playerName = value; }
+        public int[] Position { get => position; }
 
         public Player(string playerName)
         {
@@ -226,21 +238,15 @@ namespace TextAdventure
             current_position[0] = this.position[0];
             current_position[1] = this.position[1];
 
-            this.last_position = current_position;
+            Player.LastPosition = current_position;
             this.position[0] = x;
             this.position[1] = y;
-        }
-
-        public int[] getLastPosition()
-        {
-
-            return this.last_position;
         }
 
         public bool hasLastPosition()
         {
 
-            if (last_position[0] == 0 && last_position[1] == 0)
+            if (LastPosition[0] == 0 && LastPosition[1] == 0)
                 return false;
 
             return true;
@@ -321,7 +327,7 @@ namespace TextAdventure
         public void useItem(Items item)
         {
 
-            switch(item)
+            switch (item)
             {
                 case Items.MANA_POTION:
                     Program.addFeedback("+ M 50");
@@ -378,7 +384,7 @@ namespace TextAdventure
                 Program.addFeedback("{0} x{1}", Enum.GetName(typeof(Items), item), this.inventory[item]);
         }
 
-        public void addItem(Items item, int amount=1)
+        public void addItem(Items item, int amount = 1)
         {
 
             if (this.inventory.ContainsKey(item))
@@ -423,10 +429,10 @@ namespace TextAdventure
             return (this.inventory[item]);
         }
 
-        public void removeItem(Items item, bool whole_item=false)
+        public void removeItem(Items item, bool whole_item = false)
         {
 
-            if(this.inventory.ContainsKey(item))
+            if (this.inventory.ContainsKey(item))
             {
 
                 if (whole_item)
@@ -434,7 +440,7 @@ namespace TextAdventure
                 else
                 {
 
-                    if(this.inventory[item]-1>0)
+                    if (this.inventory[item] - 1 > 0)
                         this.inventory[item] = this.inventory[item] - 1;
                     else
                         this.inventory.Remove(item);
@@ -472,64 +478,10 @@ namespace TextAdventure
             return loses;
         }
 
-        public int getHealth()
-        {
-
-            return this.health;
-        }
-
-        public double getHunger()
-        {
-
-            return this.hunger;
-        }
-
-        public double getStanima()
-        {
-
-            return this.stanima;
-        }
-
-        public double getMana()
-        {
-
-            return this.mana;
-        }
-
-        public int getLevel()
-        {
-
-            return this.level;
-        }
-
-        public int getXPosition()
-        {
-
-            return this.position[0];
-        }
-
-        public int getYPosition()
-        {
-
-            return this.position[1];
-        }
-
         public bool canOpenDoor()
         {
 
             return (this.hasItem(Items.KEY));
-        }
-
-        public string getPlayerName()
-        {
-
-            return this.playerName;
-        }
-
-        public long getXP()
-        {
-
-            return this.xp;
         }
     }
 }

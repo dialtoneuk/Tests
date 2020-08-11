@@ -8,11 +8,16 @@
                 | |______\__, |\__,_|___/    |_|\___/_/\_\\__| |_|  \_\_|     \_____|  |
                 |         __/ |                                                        |
                 |        |___/     Created by Llydia "Lyds" Lancaster in 2020!         |
-                |                                           Written in C#!             |
+                |                                           Written in C# <3!!         |
                 #----------------------------------------------------------------------#
 
-                           + TYPE THE FOLLOWING CORRESPONDING LETTER TO BEGIN +
+                              + PRESS THE FOLLOWING KEY WITH YOUR FINGER +
 
+                                                  n
+
+                                          * AND HIT ENTER! *
+
+                #----------------------------------------------------------------------#
                                         + start a [n]ew game +
               
                                              ? [h]elp ?
@@ -22,5 +27,4 @@
                                             - [c]redits -
 
                                              - [e]xit -
-
-                       your command line is down here! and will always stay here!
+                #----------------------------------------------------------------------#

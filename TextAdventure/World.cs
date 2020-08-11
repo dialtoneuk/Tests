@@ -4,9 +4,9 @@ using System.IO;
 
 namespace TextAdventure
 {
-    class World
-    {
 
+    public class World
+    {
         public enum Blocks : int
         {
             WALL_INVISIBLE,
@@ -104,7 +104,6 @@ namespace TextAdventure
             { Foliage.PLANT_XP, ConsoleColor.Cyan },
         };
 
-
         public readonly Dictionary<Blocks, string> blockTextures = new Dictionary<Blocks, string>
         {
             { Blocks.DEEP_WATER, "/" },
@@ -146,6 +145,7 @@ namespace TextAdventure
         public const int ROOM_MAX = 2048;
         public const int ROOM_BUFFER = 12; //do not change
         public const int ROOM_DOOR_SIZE = 3;
+        public const int WORLD_MAX = 64000;
         public const int WORLD_GENERATION_TIMEOUT = 20; //seconds
         public const int ROOM_GENERATION_TIMEOUT = WORLD_GENERATION_TIMEOUT / 4; //seconds
         public const int FOLIAGE_GENERATION_TIMEOUT = WORLD_GENERATION_TIMEOUT / 4; //seconds
@@ -155,12 +155,11 @@ namespace TextAdventure
         public const int STRUCTURE_MAX_SIZE = 16;
         public const float FREQUENCY_INTERVAL = 0.0010f;
 
-
-        protected Blocks[,] world;
-        protected int[][] rooms = new int[ROOM_MAX][];
-        protected int[,] foliage = new int[WORLD_MAX_FOLIAGE, WORLD_MAX_FOLIAGE];
-        protected int worldWidth;
-        protected int worldHeight;
+        private Blocks[,] worldData = new Blocks[WORLD_MAX, WORLD_MAX];
+        private int[][] roomData = new int[ROOM_MAX][];
+        private int[,] foliageData = new int[WORLD_MAX_FOLIAGE, WORLD_MAX_FOLIAGE];
+        private int worldWidth = WORLD_MAX;
+        private int worldHeight = WORLD_MAX;
 
         private static int consoleWidth;
         private static int consoleHeight;
@@ -168,15 +167,213 @@ namespace TextAdventure
         private static int roomCount;
         private static int[] spawnRoom;
 
+        public Blocks[,] WorldData { get => worldData; }
+        public int[][] RoomData { get => roomData; }
+        public int[,] FoliageData { get => foliageData; }
+        public int WorldWidth { get => worldWidth; }
+        public int WorldHeight { get => worldHeight; }
+        public static int IslandValue { get => islandValue; }
+        public static int RoomCount { get => roomCount; }
+        public static int[] SpawnRoom { get => spawnRoom; set => spawnRoom = value; }
+
+        public World()
+        {
+
+            if (this.worldWidth == 0)
+                this.worldWidth = WORLD_MAX;
+
+            if (this.worldHeight == 0)
+                this.worldHeight = WORLD_MAX;
+        }
+
         public World(int width, int height)
         {
 
-            this.world = new Blocks[width, height];
+            this.worldData = new Blocks[width, height];
             this.worldWidth = width;
             this.worldHeight = height;
 
             consoleWidth = Console.WindowWidth;
             consoleHeight = Console.WindowHeight;
+        }
+
+        /**
+        public void save(string file_name="world1")
+        {
+            //TODO: coming soon since this is pretty damn complex tbf
+        }
+
+        private void saveWorld(World world, string file_name = "world1")
+        {
+            XmlSerializer x = CreateOverrider();
+            Stream file = new FileStream($"saves/{file_name}", FileMode.Create, FileAccess.Write);
+            x.Serialize(file, world);
+            file.Close();
+        }
+
+        private World loadWorld(string file_name = "world1")
+        {
+
+            if (File.Exists($"saves/{file_name}"))
+            {
+                XmlSerializer x = CreateOverrider();
+                Stream file = new FileStream($"saves/{file_name}", FileMode.Create, FileAccess.Write);
+                World world = (World)x.Deserialize(file);
+                return (world);
+            }
+            else
+                throw new FileNotFoundException($"saves/{file_name} not found");
+        }
+
+        private static XmlSerializer CreateOverrider()
+        {
+          
+        XmlAttributes attrs = new XmlAttributes();
+
+            attrs = new XmlAttributes();
+            attrs.XmlIgnore = true;
+            xOver.Add(typeof(World), "structures", attrs);
+            xOver.Add(typeof(World), "blockColours", attrs);
+            xOver.Add(typeof(World), "blockTextures", attrs);
+            xOver.Add(typeof(World), "foliageColours", attrs);
+            xOver.Add(typeof(World), "foliageTextures", attrs);
+
+            XmlSerializer xSer = new XmlSerializer(typeof(World), xOver);
+            return xSer;
+        }
+        **/
+
+        public static void printWorld(Player player, World world, int buffer_zone = 5)
+        {
+
+            int scale;
+            if (Player.CAMERA_ZOOM_FACTOR > 1)
+                scale = Player.CAMERA_ZOOM_FACTOR;
+            else
+                scale = 1;
+
+            if (world.worldData.Length == 0)
+                return;
+
+            int xcounter = 0;
+            int ycounter = 0;
+
+            for (int y = player.Position[1] - (((Player.CAMERA_HEIGHT - buffer_zone)) / 2 + (1 / scale)) * scale; y < player.Position[1] + (((Player.CAMERA_HEIGHT - buffer_zone)) / 2 + (1 / scale)) * scale; y++)
+            {
+
+                xcounter = 0;
+
+                if (ycounter > Program.WINDOW_HEIGHT - buffer_zone)
+                    continue;
+
+                if (ycounter > consoleHeight - buffer_zone)
+                    continue;
+
+                if (Player.CAMERA_ZOOM_FACTOR > 1)
+                    if (y % Player.CAMERA_ZOOM_FACTOR == 0)
+                        if (y != player.Position[1])
+                            continue;
+
+                for (int x = player.Position[0] - (((Player.CAMERA_WIDTH - buffer_zone)) / 2 + (1 / scale)) * scale; x < player.Position[0] + (((Player.CAMERA_WIDTH - buffer_zone)) / 2 + (1 / scale)) * scale; x++)
+                {
+
+
+
+                    if (x == player.Position[0] && y == player.Position[1])
+                    {
+                        Console.BackgroundColor = ConsoleColor.Yellow;
+                        Program.setColour(ConsoleColor.Black);
+                        Program.write("P");
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        xcounter++;
+                        continue;
+                    }
+
+                    if (Player.CAMERA_ZOOM_FACTOR > 1)
+                        if (x % Player.CAMERA_ZOOM_FACTOR == 0)
+                            continue;
+
+                    if (xcounter > Program.WINDOW_WIDTH - buffer_zone)
+                        continue;
+
+                    if (xcounter > consoleWidth - buffer_zone)
+                        continue;
+
+                    if (y >= world.worldHeight || x >= world.worldWidth)
+                    {
+
+                        Program.setColour(ConsoleColor.Gray);
+
+                        if (y % 2 == 0 && x % 2 == 0)
+                            Program.write("\\");
+                        else
+                            Program.write("/");
+
+                        continue;
+                    }
+
+                    if (y < 0 || x < 0)
+                    {
+
+                        Program.setColour(ConsoleColor.DarkGray);
+
+                        if (y % 2 == 0 && x % 2 == 0)
+                            Program.write("\\");
+                        else
+                            Program.write("/");
+                        continue;
+                    }
+
+                    if (world.hasFoliage(x, y) && world.getFoliage(x, y) != Foliage.NULL)
+                    {
+                        Foliage foliage = world.getFoliage(x, y);
+
+                        Program.setColour(world.foliageColours[foliage]);
+                        Program.write(world.foliageTextures[foliage]);
+                    }
+                    else
+                    {
+
+                        Blocks block;
+
+                        if (Player.CAMERA_ZOOM_FACTOR != 0)
+                        {
+                            if (x % Player.CAMERA_ZOOM_FACTOR + 1 == 1 && y % Player.CAMERA_ZOOM_FACTOR + 1 == 1)
+                                block = (Blocks)world.worldData[x, y];
+                            else
+                            {
+
+                                if (x - 1 > 0 && y + 1 < world.worldHeight)
+                                    block = (Blocks)world.worldData[x - 1, y + 1];
+                                else if (x + 1 < world.worldWidth && y - 1 > 0)
+                                    block = (Blocks)world.worldData[x + 1, y - 1];
+                                else if (x - 2 > 0 && y + 2 < world.worldHeight)
+                                    block = (Blocks)world.worldData[x - 2, y + 2];
+                                else if (x + 1 < world.worldWidth && y - 1 > 0)
+                                    block = (Blocks)world.worldData[x + 2, y - 2];
+                                else
+                                    block = Blocks.WALL_INVISIBLE;
+                            }
+                        }
+                        else
+                            block = (Blocks)world.worldData[x, y];
+
+                        if (world.isRoomCenter(x, y))
+                            Program.write("R");
+                        else
+                        {
+                            Program.setColour(world.getColor(block));
+                            Program.write(world.blockTextures[block]);
+                        }
+                    }
+
+                    xcounter++;
+                }
+
+                Program.writeLine();
+
+                ycounter++;
+            }
         }
 
         public void loadStructures()
@@ -281,140 +478,6 @@ namespace TextAdventure
             Console.WriteLine("finished reading structures");
         }
 
-
-        public static void printWorld(Player player, World world, int buffer_zone = 5)
-        {
-
-            int scale;
-            if (Player.CAMERA_ZOOM_FACTOR > 1)
-                scale = Player.CAMERA_ZOOM_FACTOR;
-            else
-                scale = 1;
-
-            if (world.world.Length == 0)
-                return;
-
-            int xcounter = 0;
-            int ycounter = 0;
-
-            for (int y = player.getYPosition() - (((Player.CAMERA_HEIGHT - buffer_zone)) / 2 + (1 / scale)) * scale; y < player.getYPosition() + (((Player.CAMERA_HEIGHT - buffer_zone)) / 2 + (1 / scale)) * scale; y++)
-            {
-
-                xcounter = 0;
-
-                if (ycounter > Program.WINDOW_HEIGHT - buffer_zone)
-                    continue;
-
-                if (ycounter > consoleHeight - buffer_zone)
-                    continue;
-
-                if (Player.CAMERA_ZOOM_FACTOR > 1)
-                    if (y % Player.CAMERA_ZOOM_FACTOR == 0)
-                        if (y != player.getYPosition())
-                            continue;
-
-                for (int x = player.getXPosition() - (((Player.CAMERA_WIDTH - buffer_zone)) / 2 + (1 / scale)) * scale; x < player.getXPosition() + (((Player.CAMERA_WIDTH - buffer_zone)) / 2 + (1 / scale)) * scale; x++)
-                {
-
-
-
-                    if (x == player.getXPosition() && y == player.getYPosition())
-                    {
-                        Console.BackgroundColor = ConsoleColor.Yellow;
-                        Program.setColour(ConsoleColor.Black);
-                        Program.write("P");
-                        Console.BackgroundColor = ConsoleColor.Black;
-                        xcounter++;
-                        continue;
-                    }
-
-                    if (Player.CAMERA_ZOOM_FACTOR > 1)
-                        if (x % Player.CAMERA_ZOOM_FACTOR == 0)
-                            continue;
-
-                    if (xcounter > Program.WINDOW_WIDTH - buffer_zone)
-                        continue;
-
-                    if (xcounter > consoleWidth - buffer_zone)
-                        continue;
-
-                    if (y >= world.worldHeight || x >= world.worldWidth)
-                    {
-
-                        Program.setColour(ConsoleColor.Gray);
-
-                        if (y % 2 == 0 && x % 2 == 0)
-                            Program.write("\\");
-                        else
-                            Program.write("/");
-
-                        continue;
-                    }
-
-                    if (y < 0 || x < 0)
-                    {
-
-                        Program.setColour(ConsoleColor.DarkGray);
-
-                        if (y % 2 == 0 && x % 2 == 0)
-                            Program.write("\\");
-                        else
-                            Program.write("/");
-                        continue;
-                    }
-
-                    if (world.hasFoliage(x, y) && world.getFoliage(x, y) != Foliage.NULL)
-                    {
-                        Foliage foliage = world.getFoliage(x, y);
-
-                        Program.setColour(world.foliageColours[foliage]);
-                        Program.write(world.foliageTextures[foliage]);
-                    }
-                    else
-                    {
-
-                        Blocks block;
-
-                        if (Player.CAMERA_ZOOM_FACTOR != 0)
-                        {
-                            if (x % Player.CAMERA_ZOOM_FACTOR + 1 == 1 && y % Player.CAMERA_ZOOM_FACTOR + 1 == 1)
-                                block = (Blocks)world.world[x, y];
-                            else
-                            {
-
-                                if (x - 1 > 0 && y + 1 < world.worldHeight)
-                                    block = (Blocks)world.world[x - 1, y + 1];
-                                else if (x + 1 < world.worldWidth && y - 1 > 0)
-                                    block = (Blocks)world.world[x + 1, y - 1];
-                                else if (x - 2 > 0 && y + 2 < world.worldHeight)
-                                    block = (Blocks)world.world[x - 2, y + 2];
-                                else if (x + 1 < world.worldWidth && y - 1 > 0)
-                                    block = (Blocks)world.world[x + 2, y - 2];
-                                else
-                                    block = Blocks.WALL_INVISIBLE;
-                            }
-                        }
-                        else
-                            block = (Blocks)world.world[x, y];
-
-                        if (world.isRoomCenter(x, y))
-                            Program.write("R");
-                        else
-                        {
-                            Program.setColour(world.getColor(block));
-                            Program.write(world.blockTextures[block]);
-                        }
-                    }
-
-                    xcounter++;
-                }
-
-                Program.writeLine();
-
-                ycounter++;
-            }
-        }
-
         public void generateWorld(int rooms, int foliage = 100, int island_value = 1, int structure_amount = 64)
         {
 
@@ -501,7 +564,7 @@ namespace TextAdventure
                             if (structure[x, y] == Blocks.WALL_INVISIBLE)
                                 continue;
 
-                            world[location[0] + x, location[1] + y] = structure[x, y];
+                            worldData[location[0] + x, location[1] + y] = structure[x, y];
                         }
 
 
@@ -517,13 +580,13 @@ namespace TextAdventure
         public void cleanFoliage()
         {
 
-            this.foliage = new int[WORLD_MAX_FOLIAGE, WORLD_MAX_FOLIAGE];
+            this.foliageData = new int[WORLD_MAX_FOLIAGE, WORLD_MAX_FOLIAGE];
         }
 
         public void cleanRooms()
         {
 
-            this.rooms = new int[ROOM_MAX][];
+            this.roomData = new int[ROOM_MAX][];
         }
 
         /**
@@ -551,7 +614,7 @@ namespace TextAdventure
                         if (amount == 0)
                             break;
 
-                        if ((Blocks)world[x, y] == Blocks.GRASS || (Blocks)world[x, y] == Blocks.MOUNTAIN_GRASS)
+                        if ((Blocks)worldData[x, y] == Blocks.GRASS || (Blocks)worldData[x, y] == Blocks.MOUNTAIN_GRASS)
                         {
 
                             var v = Enum.GetValues(typeof(Foliage));
@@ -611,7 +674,7 @@ namespace TextAdventure
 
                                     if (!hasFoliage(newEntity[0], newEntity[1]))
                                     {
-                                        foliage[newEntity[0], newEntity[1]] = newEntity[4];
+                                        foliageData[newEntity[0], newEntity[1]] = newEntity[4];
                                         amount--;
                                     }
                                 }
@@ -651,9 +714,9 @@ namespace TextAdventure
         public void destroyWorld()
         {
 
-            this.world = new Blocks[this.worldWidth, this.worldHeight];
-            this.rooms = new int[ROOM_MAX_SIZE][];
-            this.foliage = new int[WORLD_MAX_FOLIAGE, WORLD_MAX_FOLIAGE];
+            this.worldData = new Blocks[this.worldWidth, this.worldHeight];
+            this.roomData = new int[ROOM_MAX_SIZE][];
+            this.foliageData = new int[WORLD_MAX_FOLIAGE, WORLD_MAX_FOLIAGE];
         }
 
         public void resetColours()
@@ -676,20 +739,20 @@ namespace TextAdventure
             for (int x = 0; x < worldWidth; x++)
                 for (int y = 0; y < worldHeight; y++)
                 {
-                    if (world[x, y] == Blocks.DOOR_CLOSED)
-                        if ((x + 1 < worldWidth && world[x + 1, y] == Blocks.DOOR_CLOSED) || (x - 1 > 0 && world[x - 1, y] == Blocks.DOOR_CLOSED))
+                    if (worldData[x, y] == Blocks.DOOR_CLOSED)
+                        if ((x + 1 < worldWidth && worldData[x + 1, y] == Blocks.DOOR_CLOSED) || (x - 1 > 0 && worldData[x - 1, y] == Blocks.DOOR_CLOSED))
                         {
-                            if (y + 1 < worldHeight && world[x, y + 1] == Blocks.WALL_SOLID)
-                                world[x, y + 1] = Blocks.DOOR_CLOSED;
-                            else if (y - 1 > 0 && world[x, y - 1] == Blocks.WALL_SOLID)
-                                world[x, y - 1] = Blocks.DOOR_CLOSED;
+                            if (y + 1 < worldHeight && worldData[x, y + 1] == Blocks.WALL_SOLID)
+                                worldData[x, y + 1] = Blocks.DOOR_CLOSED;
+                            else if (y - 1 > 0 && worldData[x, y - 1] == Blocks.WALL_SOLID)
+                                worldData[x, y - 1] = Blocks.DOOR_CLOSED;
                         }
-                        else if ((y + 1 < worldHeight && world[x, y + 1] == Blocks.DOOR_CLOSED) || (y - 1 > 0 && world[x, y - 1] == Blocks.DOOR_CLOSED))
+                        else if ((y + 1 < worldHeight && worldData[x, y + 1] == Blocks.DOOR_CLOSED) || (y - 1 > 0 && worldData[x, y - 1] == Blocks.DOOR_CLOSED))
                         {
-                            if (x + 1 < worldWidth && world[x + 1, y] == Blocks.WALL_SOLID)
-                                world[x + 1, y] = Blocks.DOOR_CLOSED;
-                            else if (x - 1 > 0 && world[x - 1, y] == Blocks.WALL_SOLID)
-                                world[x - 1, y] = Blocks.DOOR_CLOSED;
+                            if (x + 1 < worldWidth && worldData[x + 1, y] == Blocks.WALL_SOLID)
+                                worldData[x + 1, y] = Blocks.DOOR_CLOSED;
+                            else if (x - 1 > 0 && worldData[x - 1, y] == Blocks.WALL_SOLID)
+                                worldData[x - 1, y] = Blocks.DOOR_CLOSED;
                         }
                 }
 
@@ -698,9 +761,6 @@ namespace TextAdventure
             Console.WriteLine("finished connecting doors...");
         }
 
-        /**
-         * Terraforming
-         **/
         public void terraform(int island_value = 1)
         {
 
@@ -777,7 +837,7 @@ namespace TextAdventure
 
             int doorsize = ROOM_DOOR_SIZE;
 
-            foreach (var room in this.rooms)
+            foreach (var room in this.roomData)
             {
 
                 if (room == null)
@@ -851,15 +911,15 @@ namespace TextAdventure
 
             if (starty == endy)
                 for (int x = 0; x < endx - startx; x++)
-                    this.world[startx + x, starty] = Blocks.DOOR_CLOSED;
+                    this.worldData[startx + x, starty] = Blocks.DOOR_CLOSED;
             else
                 if (startx == endx)
                 for (int y = 0; y < endy - starty; y++)
-                    this.world[startx, starty + y] = Blocks.DOOR_CLOSED;
+                    this.worldData[startx, starty + y] = Blocks.DOOR_CLOSED;
             else
                 for (int x = 0; x < endx - startx; x++)
                     for (int y = 0; y < endy - starty; y++)
-                        this.world[startx + x, starty + y] = Blocks.DOOR_CLOSED;
+                        this.worldData[startx + x, starty + y] = Blocks.DOOR_CLOSED;
         }
 
         public void placeRoom(int startx, int starty, int width, int height)
@@ -880,31 +940,31 @@ namespace TextAdventure
                     {
 
                         if (x == 0 && y == 0)
-                            world[startx + x, starty + y] = Blocks.WALL_SOLID;
+                            worldData[startx + x, starty + y] = Blocks.WALL_SOLID;
                         else
                         if (y == 0)
                         {
                             if (x == width - 1)
-                                world[startx + x, starty + y] = Blocks.WALL_SOLID;
+                                worldData[startx + x, starty + y] = Blocks.WALL_SOLID;
                             else
-                                world[startx + x, starty + y] = Blocks.WALL_SOLID_HORIZONTAL;
+                                worldData[startx + x, starty + y] = Blocks.WALL_SOLID_HORIZONTAL;
                         }
                         else if (x == 0)
                             if (y == height - 1)
-                                world[startx + x, starty + y] = Blocks.WALL_SOLID;
+                                worldData[startx + x, starty + y] = Blocks.WALL_SOLID;
                             else
-                                world[startx + x, starty + y] = Blocks.WALL_SOLID_VERTICAL;
+                                worldData[startx + x, starty + y] = Blocks.WALL_SOLID_VERTICAL;
                     }
                     else if (x == width - 1 && y == height - 1)
-                        world[startx + x, starty + y] = Blocks.WALL_SOLID;
+                        worldData[startx + x, starty + y] = Blocks.WALL_SOLID;
                     else if (x == 0 && y == height - 1)
-                        world[startx + x, starty + y] = Blocks.WALL_SOLID;
+                        worldData[startx + x, starty + y] = Blocks.WALL_SOLID;
                     else if (y == height - 1)
-                        world[startx + x, starty + y] = Blocks.WALL_SOLID_HORIZONTAL;
+                        worldData[startx + x, starty + y] = Blocks.WALL_SOLID_HORIZONTAL;
                     else if (x == width - 1)
-                        world[startx + x, starty + y] = Blocks.WALL_SOLID_VERTICAL;
+                        worldData[startx + x, starty + y] = Blocks.WALL_SOLID_VERTICAL;
                     else
-                        world[startx + x, starty + y] = Blocks.FLOOR;
+                        worldData[startx + x, starty + y] = Blocks.FLOOR;
                 }
             }
 
@@ -924,19 +984,19 @@ namespace TextAdventure
             if (spawnRoom == null)
                 spawnRoom = position;
 
-            this.rooms[roomCount] = position;
+            this.roomData[roomCount] = position;
         }
 
         public void setBlock(int x, int y, Blocks block)
         {
 
-            world[x, y] = block;
+            worldData[x, y] = block;
         }
 
         public void removeFoliage(int x, int y)
         {
 
-            foliage[x, y] = 0;
+            foliageData[x, y] = 0;
         }
 
         public ConsoleColor getColor(Blocks block)
@@ -948,13 +1008,7 @@ namespace TextAdventure
         public Foliage getFoliage(int x, int y)
         {
 
-            return ((Foliage)foliage[x, y]);
-        }
-
-        public int[] getSpawnRoom()
-        {
-
-            return spawnRoom;
+            return ((Foliage)foliageData[x, y]);
         }
 
         public int[] getRandomRoomSize()
@@ -979,7 +1033,9 @@ namespace TextAdventure
             }
             else
             {
+#pragma warning disable CS0162 // Unreachable code detected
                 random[0] = (int)Math.Floor(r.Next(ROOM_MIN_SIZE, ROOM_MAX_SIZE) * 2.0);
+#pragma warning restore CS0162 // Unreachable code detected
 
                 if (random[0] % 2 != 0)
                     random[0]++;
@@ -993,7 +1049,6 @@ namespace TextAdventure
 
             return random;
         }
-
 
         public int[] getRandomRoomPosition(int attempts = 1)
         {
@@ -1009,18 +1064,6 @@ namespace TextAdventure
         {
 
             return Enum.GetNames(typeof(Blocks)).Length;
-        }
-
-        public int getWorldWidth()
-        {
-
-            return this.worldWidth;
-        }
-
-        public int getWorldHeight()
-        {
-
-            return this.worldHeight;
         }
 
         public bool placeRooms(int rooms)
@@ -1074,20 +1117,19 @@ namespace TextAdventure
         public bool hasFoliage(int x, int y)
         {
 
-            return (foliage[x, y] != 0);
+            return (foliageData[x, y] != 0);
         }
-
 
         public bool isEmpty(int x, int y)
         {
 
-            return (world[x, y] == Blocks.WALL_INVISIBLE);
+            return (worldData[x, y] == Blocks.WALL_INVISIBLE);
         }
 
         public bool isRoomCenter(int roomx, int roomy)
         {
 
-            foreach (int[] room in rooms)
+            foreach (int[] room in roomData)
             {
 
                 if (room == null)
@@ -1129,10 +1171,10 @@ namespace TextAdventure
 
         public bool isWorldEmpty()
         {
-            if (world == null)
+            if (worldData == null)
                 return true;
 
-            if (world.Length == 0)
+            if (worldData.Length == 0)
                 return true;
 
             if (roomCount == 0)
@@ -1140,10 +1182,11 @@ namespace TextAdventure
 
             return false;
         }
+
         public bool isSolid(int x, int y)
         {
 
-            if ((int)world[x, y] <= (int)Blocks.WALL_SOLID)
+            if ((int)worldData[x, y] <= (int)Blocks.WALL_SOLID)
                 return true;
 
             return false;
@@ -1152,10 +1195,10 @@ namespace TextAdventure
         public bool isDoor(int x, int y)
         {
 
-            if (world[x, y] == Blocks.DOOR_OPEN)
+            if (worldData[x, y] == Blocks.DOOR_OPEN)
                 return true;
 
-            if (world[x, y] == Blocks.DOOR_CLOSED)
+            if (worldData[x, y] == Blocks.DOOR_CLOSED)
                 return true;
 
             return false;
@@ -1167,7 +1210,7 @@ namespace TextAdventure
             if (x >= worldWidth || y >= worldHeight)
                 return false;
 
-            return (world[x, y] == Blocks.DOOR_OPEN);
+            return (worldData[x, y] == Blocks.DOOR_OPEN);
         }
 
         public bool isDoorClosed(int x, int y)
@@ -1176,7 +1219,7 @@ namespace TextAdventure
             if (x >= worldWidth || y >= worldHeight)
                 return false;
 
-            return (world[x, y] == Blocks.DOOR_CLOSED);
+            return (worldData[x, y] == Blocks.DOOR_CLOSED);
         }
 
         public bool canPlace(int[] dimensions)
@@ -1184,6 +1227,7 @@ namespace TextAdventure
 
             return canPlace(dimensions[0], dimensions[1], dimensions[2], dimensions[3]);
         }
+
         public bool canPlace(int startx, int starty, int width, int height, int extra_buffer = 0)
         {
 
@@ -1210,19 +1254,19 @@ namespace TextAdventure
                     if (isSolid(startx + x, starty + y))
                         return false;
 
-                    if ((Blocks)world[startx + x, starty + y] == Blocks.FLOOR)
+                    if ((Blocks)worldData[startx + x, starty + y] == Blocks.FLOOR)
                         return false;
 
-                    if ((Blocks)world[startx + x, starty + y] == Blocks.WATER)
+                    if ((Blocks)worldData[startx + x, starty + y] == Blocks.WATER)
                         return false;
 
-                    if ((Blocks)world[startx + x, starty + y] == Blocks.SAND)
+                    if ((Blocks)worldData[startx + x, starty + y] == Blocks.SAND)
                         return false;
 
-                    if ((Blocks)world[startx + x, starty + y] == Blocks.SNOW)
+                    if ((Blocks)worldData[startx + x, starty + y] == Blocks.SNOW)
                         return false;
 
-                    if ((Blocks)world[startx + x, starty + y] == Blocks.STONE)
+                    if ((Blocks)worldData[startx + x, starty + y] == Blocks.STONE)
                         return false;
 
                     if (hasFoliage(startx + x, starty + y))
@@ -1244,19 +1288,19 @@ namespace TextAdventure
                     if (isSolid(startx - x, starty - y))
                         return false;
 
-                    if ((Blocks)world[startx - x, starty - y] == Blocks.FLOOR)
+                    if ((Blocks)worldData[startx - x, starty - y] == Blocks.FLOOR)
                         return false;
 
-                    if ((Blocks)world[startx - x, starty - y] == Blocks.WATER)
+                    if ((Blocks)worldData[startx - x, starty - y] == Blocks.WATER)
                         return false;
 
-                    if ((Blocks)world[startx - x, starty - y] == Blocks.SAND)
+                    if ((Blocks)worldData[startx - x, starty - y] == Blocks.SAND)
                         return false;
 
-                    if ((Blocks)world[startx - x, starty - y] == Blocks.SNOW)
+                    if ((Blocks)worldData[startx - x, starty - y] == Blocks.SNOW)
                         return true;
 
-                    if ((Blocks)world[startx - x, starty - y] == Blocks.STONE)
+                    if ((Blocks)worldData[startx - x, starty - y] == Blocks.STONE)
                         return false;
 
                     if (hasFoliage(startx - x, starty - y))

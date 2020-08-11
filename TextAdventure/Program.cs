@@ -1,5 +1,4 @@
-﻿using NAudio.Gui;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -80,8 +79,8 @@ namespace TextAdventure
                     music.setOutputDevice();
                 }
                 else
-                    if(getGameState() != State.MENU)
-                        music.jukebox();
+                    if (getGameState() != State.MENU)
+                    music.jukebox();
 
                 switch (state)
                 {
@@ -114,14 +113,14 @@ namespace TextAdventure
                         writeLine("Music");
                         writeLine();
 
-                        if(music!=null)
+                        if (music != null)
                         {
-                            if(music.isPlaying())
+                            if (music.isPlaying())
                                 writeLine("playing track {0}", music.getCurrentTrack());
 
                             writeLine("volume {0}", music.getVolume());
                         }
-                        
+
                         writeLine();
                         writeLine("Graphics");
                         writeLine();
@@ -171,7 +170,9 @@ namespace TextAdventure
                 setColour(ConsoleColor.White);
 
                 if (enableScreenBuffer)
+#pragma warning disable CS0162 // Unreachable code detected
                     for (int i = 0; i < screen_buffer.Length; i++)
+#pragma warning restore CS0162 // Unreachable code detected
                         Console.WriteLine("{1}", i, screen_buffer[i]);
 
                 if (skipread == false)
@@ -179,7 +180,7 @@ namespace TextAdventure
                     write("> ");
                 retry:
                     line = Console.ReadLine();
-                  
+
 
                     if (line == "" || line.Length == 0)
                     {
@@ -191,7 +192,7 @@ namespace TextAdventure
                     {
                         clearFeedback();
                         addFeedback("+--TURN {0}--+", turn);
-                    }             
+                    }
                 }
             }
 
@@ -311,19 +312,21 @@ namespace TextAdventure
             else
             {
 
+#pragma warning disable CS0162 // Unreachable code detected
                 if (screen_line < WINDOW_HEIGHT - 1)
+#pragma warning restore CS0162 // Unreachable code detected
                 {
                     screen_line++;
                     screen_buffer[screen_line] = String.Format(line, data);
                     //Advance screen line
                 }
-            }    
+            }
         }
 
         public static void setColour(ConsoleColor color)
         {
 
-            if(!enableColours)
+            if (!enableColours)
                 return;
 
             if (currentForegroundColour != color)
@@ -349,7 +352,9 @@ namespace TextAdventure
         {
 
             if (enableScreenBuffer)
+#pragma warning disable CS0162 // Unreachable code detected
                 screen_buffer[screen_line] = screen_buffer[screen_line] + line;
+#pragma warning restore CS0162 // Unreachable code detected
             else
                 Console.Write(line, data);
         }
@@ -496,7 +501,7 @@ namespace TextAdventure
                 if (trimed_line.StartsWith('-'))
                     setColour(ConsoleColor.Red);
 
-                if(trimed_line.StartsWith("#"))
+                if (trimed_line.StartsWith("#"))
                     setColour(ConsoleColor.DarkBlue);
 
                 if (trimed_line.StartsWith("|"))
@@ -545,7 +550,7 @@ namespace TextAdventure
         private static void setSpawn(ref Player player, ref World world)
         {
 
-            int[] spawn_room = world.getSpawnRoom();
+            int[] spawn_room = World.SpawnRoom;
             player.setPosition(spawn_room[0], spawn_room[1]);
         }
 
@@ -567,13 +572,13 @@ namespace TextAdventure
                 return;
             }
 
-            if (player.getStanima() < 10)
+            if (player.Stanima < 10)
             {
                 addFeedback("you are too weak to move");
                 return;
             }
 
-            if (player.getHunger() < 10)
+            if (player.Hunger < 10)
             {
                 addFeedback("you are too hungry to move");
                 return;
@@ -585,13 +590,13 @@ namespace TextAdventure
             {
 
                 case "left":
-                    while (_ < amount && player.getXPosition() - (_ + 1) > 0 && !world.isSolid(player.getXPosition() - (_ + 1), player.getYPosition()))
+                    while (_ < amount && player.Position[0] - (_ + 1) > 0 && !world.isSolid(player.Position[0] - (_ + 1), player.Position[1]))
                         _++;
 
-                    if (_ != 0 && (player.getXPosition() - _) > 0)
+                    if (_ != 0 && (player.Position[0] - _) > 0)
                     {
 
-                        player.setPosition(player.getXPosition() - _, player.getYPosition());
+                        player.setPosition(player.Position[0] - _, player.Position[1]);
                         player.decreaseHunger(_);
                         player.decreaseStanima(_);
 
@@ -608,13 +613,13 @@ namespace TextAdventure
 
                     break;
                 case "right":
-                    while (_ < amount && player.getXPosition() + (_ + 1) < world.getWorldWidth() && !world.isSolid(player.getXPosition() + (_ + 1), player.getYPosition()))
+                    while (_ < amount && player.Position[0] + (_ + 1) < world.WorldWidth && !world.isSolid(player.Position[0] + (_ + 1), player.Position[1]))
                         _++;
 
-                    if (_ != 0 && (player.getXPosition() + _) < world.getWorldWidth())
+                    if (_ != 0 && (player.Position[0] + _) < world.WorldWidth)
                     {
 
-                        player.setPosition(player.getXPosition() + _, player.getYPosition());
+                        player.setPosition(player.Position[0] + _, player.Position[1]);
                         player.decreaseHunger(_);
                         player.decreaseStanima(_);
 
@@ -633,13 +638,13 @@ namespace TextAdventure
 
                     break;
                 case "up":
-                    while (_ < amount && player.getYPosition() - (_ + 1) > 0 && !world.isSolid(player.getXPosition(), player.getYPosition() - (_ + 1)))
+                    while (_ < amount && player.Position[1] - (_ + 1) > 0 && !world.isSolid(player.Position[0], player.Position[1] - (_ + 1)))
                         _++;
 
-                    if (_ != 0 && (player.getYPosition() - _) > 0)
+                    if (_ != 0 && (player.Position[1] - _) > 0)
                     {
 
-                        player.setPosition(player.getXPosition(), player.getYPosition() - _);
+                        player.setPosition(player.Position[0], player.Position[1] - _);
                         player.decreaseHunger(_);
                         player.decreaseStanima(_);
 
@@ -656,13 +661,13 @@ namespace TextAdventure
 
                     break;
                 case "down":
-                    while (_ < amount && player.getYPosition() + (_ + 1) < world.getWorldHeight() && !world.isSolid(player.getXPosition(), player.getYPosition() + (_ + 1)))
+                    while (_ < amount && player.Position[1] + (_ + 1) < world.WorldHeight && !world.isSolid(player.Position[0], player.Position[1] + (_ + 1)))
                         _++;
 
-                    if (_ != 0 && (player.getYPosition() + _) < world.getWorldHeight())
+                    if (_ != 0 && (player.Position[1] + _) < world.WorldHeight)
                     {
 
-                        player.setPosition(player.getXPosition(), player.getYPosition() + _);
+                        player.setPosition(player.Position[0], player.Position[1] + _);
                         player.decreaseHunger(_);
                         player.decreaseStanima(_);
 
@@ -692,9 +697,9 @@ namespace TextAdventure
         {
             for (int x = 0 - scope; x < scope; x++)
                 for (int y = 0 - scope; y < scope; y++)
-                    if (x + player.getXPosition() < world.getWorldWidth() && y + player.getYPosition() < world.getWorldHeight())
-                        if (world.hasFoliage(player.getXPosition() + x, player.getYPosition() + y))
-                            return world.getFoliage(player.getXPosition() + x, player.getYPosition() + y);
+                    if (x + player.Position[0] < world.WorldWidth && y + player.Position[1] < world.WorldHeight)
+                        if (world.hasFoliage(player.Position[0] + x, player.Position[1] + y))
+                            return world.getFoliage(player.Position[0] + x, player.Position[1] + y);
 
             return World.Foliage.NULL;
         }
@@ -703,20 +708,20 @@ namespace TextAdventure
          **/
         private static bool interact(ref Player player, ref World world, int scope = 4)
         {
-            Random r = new Random((int)DateTime.UtcNow.ToBinary());;
+            Random r = new Random((int)DateTime.UtcNow.ToBinary()); ;
 
             for (int x = 0 - scope; x < scope; x++)
                 for (int y = 0 - scope; y < scope; y++)
-                    if (x + player.getXPosition() < world.getWorldWidth() && y + player.getYPosition() < world.getWorldHeight())
+                    if (x + player.Position[0] < world.WorldWidth && y + player.Position[1] < world.WorldHeight)
                     {
 
                         int random = r.Next(12, 64);
 
 
-                        if (world.hasFoliage(player.getXPosition() + x, player.getYPosition() + y))
+                        if (world.hasFoliage(player.Position[0] + x, player.Position[1] + y))
                         {
 
-                            World.Foliage foliage = world.getFoliage(player.getXPosition() + x, player.getYPosition() + y);
+                            World.Foliage foliage = world.getFoliage(player.Position[0] + x, player.Position[1] + y);
 
                             addFeedback("foraged through a {0}", Enum.GetName(typeof(World.Foliage), foliage));
 
@@ -725,7 +730,7 @@ namespace TextAdventure
                                 default:
                                     player.addXP(random);
                                     addFeedback("+ xp {0}", random);
-                                    world.removeFoliage(player.getXPosition() + x, player.getYPosition() + y);
+                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
                                     break;
                                 case World.Foliage.PLANT_EGGPLANT:
                                 case World.Foliage.TREE_APPLE:
@@ -733,7 +738,7 @@ namespace TextAdventure
                                     player.addXP(5);
                                     addFeedback("+ apples {0}", random);
                                     addFeedback("+ xp 5");
-                                    world.removeFoliage(player.getXPosition() + x, player.getYPosition() + y);
+                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
                                     return true;
                                 case World.Foliage.BUSH_BLACKBERRIES:
                                 case World.Foliage.BUSH_BLUEBERRIES:
@@ -743,45 +748,45 @@ namespace TextAdventure
                                     player.addXP(5);
                                     addFeedback("+ assorted berries {0}", random);
                                     addFeedback("+ xp 5");
-                                    world.removeFoliage(player.getXPosition() + x, player.getYPosition() + y);
+                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
                                     return true;
                                 case World.Foliage.TREE_HONEY:
                                     player.addItem(Player.Items.HONEY, random);
                                     player.addXP(10);
                                     addFeedback("+ honey {0}", random);
                                     addFeedback("+ xp 10");
-                                    world.removeFoliage(player.getXPosition() + x, player.getYPosition() + y);
+                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
                                     return true;
                                 case World.Foliage.TREE_GOLDEN_APPLE:
                                     player.addItem(Player.Items.GOLDEN_APPLE, 1);
                                     player.addXP(20);
                                     addFeedback("+ golden apple 1");
                                     addFeedback("+ xp 20");
-                                    world.removeFoliage(player.getXPosition() + x, player.getYPosition() + y);
+                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
                                     return true;
                                 case World.Foliage.TREE_OAK:
                                 case World.Foliage.TREE_PINE:
                                 case World.Foliage.TREE:
                                     player.addXP(15);
                                     addFeedback("+ xp 15");
-                                    world.removeFoliage(player.getXPosition() + x, player.getYPosition() + y);
+                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
                                     return true;
                                 case World.Foliage.PLANT_OXYGEN:
                                     player.heal(15);
                                     player.addXP(15);
                                     addFeedback("+ H 15");
-                                    world.removeFoliage(player.getXPosition() + x, player.getYPosition() + y);
+                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
                                     return true;
                                 case World.Foliage.PLANT_ROSES:
                                     player.addXP(15);
                                     addFeedback("+ xp 15");
-                                    world.removeFoliage(player.getXPosition() + x, player.getYPosition() + y);
+                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
                                     return true;
                                 case World.Foliage.PLANT_MANA:
                                     player.charge(r.Next(10, 20));
                                     player.addXP(15);
                                     addFeedback("+ xp 15");
-                                    world.removeFoliage(player.getXPosition() + x, player.getYPosition() + y);
+                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
                                     return true;
                             }
                         }
@@ -795,8 +800,8 @@ namespace TextAdventure
         private static bool openDoor(ref Player player, int scope = 5)
         {
 
-            int x = player.getXPosition() - scope / 2;
-            int y = player.getYPosition() - scope / 2;
+            int x = player.Position[0] - scope / 2;
+            int y = player.Position[1] - scope / 2;
 
             x = Math.Abs(x);
             y = Math.Abs(y);
@@ -807,7 +812,7 @@ namespace TextAdventure
 
                     int _x = x - searchx, _y = y - searchy;
 
-                    if (_x > 0 && _x < world.getWorldWidth() && _y > 0 && _y < world.getWorldHeight())
+                    if (_x > 0 && _x < world.WorldWidth && _y > 0 && _y < world.WorldHeight)
                         if (world.isDoor(_x, _y) && world.isDoorClosed(_x, _y))
                         {
 
@@ -842,7 +847,7 @@ namespace TextAdventure
                             _x = x + searchx;
                             _y = y + searchy;
 
-                            if (_x > 0 && _x < world.getWorldWidth() && _y > 0 && _y < world.getWorldHeight())
+                            if (_x > 0 && _x < world.WorldWidth && _y > 0 && _y < world.WorldHeight)
                                 if (world.isDoor(_x, _y) && world.isDoorClosed(_x, _y))
                                 {
 
@@ -933,10 +938,29 @@ namespace TextAdventure
         private static void processWorldCommand(string command, string[] arguments)
         {
             int _ = 1;
-
+            string file_name = "world";
             switch (command)
             {
                 default:
+                    skipread = true;
+                    skipturn = true;
+                    break;
+                case "save":
+                    if (arguments.Length != 0 && arguments[0] != "")
+                        file_name = arguments[0];
+
+                    addFeedback("saving world {0}", file_name);
+                    //World.saveWorld(ref world, file_name);
+                    skipread = true;
+                    skipturn = true;
+                    break;
+                case "load":
+                    if (arguments.Length != 0 && arguments[0] != "")
+                        break;
+
+                    addFeedback("loading world {0}", file_name);
+                    //world = World.loadWorld(file_name);
+                    skipread = true;
                     skipturn = true;
                     break;
                 case "inv":
@@ -964,7 +988,7 @@ namespace TextAdventure
                                 player.removeItem(item);
                             }
                             else
-                                addFeedback("you don't even have any {0} anymore", item);   
+                                addFeedback("you don't even have any {0} anymore", item);
                         }
                     }
                     player.updateLevel();
@@ -991,7 +1015,7 @@ namespace TextAdventure
                         music.changeTrack((Music.Tracks)_);
                         music.playTrack();
                     }
-                       
+
                     skipturn = true;
                     skipread = true;
                     break;
@@ -1016,18 +1040,17 @@ namespace TextAdventure
                 case "back":
                     if (player.hasLastPosition())
                     {
-                        int[] last_position = player.getLastPosition();
-
-                        if (last_position[1] == player.getYPosition())
-                            if (player.getXPosition() > last_position[0])
-                                _ = player.getXPosition() - last_position[0];
+                        int[] last_position = Player.LastPosition;
+                        if (last_position[1] == player.Position[1])
+                            if (player.Position[0] > last_position[0])
+                                _ = player.Position[0] - last_position[0];
                             else
-                                _ = last_position[0] - player.getXPosition();
+                                _ = last_position[0] - player.Position[0];
                         else
-                             if (player.getYPosition() > last_position[1])
-                            _ = player.getYPosition() - last_position[1];
+                             if (player.Position[1] > last_position[1])
+                            _ = player.Position[1] - last_position[1];
                         else
-                            _ = last_position[1] - player.getXPosition();
+                            _ = last_position[1] - player.Position[0];
 
                         player.decreaseHunger(_);
                         player.decreaseStanima(_);
@@ -1275,13 +1298,13 @@ namespace TextAdventure
                             enableColours = !enableColours;
                             break;
                         case "volume":
-                            if(_<10)
+                            if (_ < 10)
                             {
 
                                 float value = (float)(_ / 10.0f);
                                 music.setVolume(value);
                             }
-                          
+
                             break;
                         case "developer_commands":
                             developerCommands = !developerCommands;
@@ -1503,7 +1526,7 @@ namespace TextAdventure
                         addFeedback("{0} = {1}", name, counter);
                         counter++;
                     }
-                       
+
                     skipread = true;
                     break;
                 case "items":
@@ -1531,7 +1554,7 @@ namespace TextAdventure
                     skipread = true;
                     break;
                 case "foliage":
-                    var foliage  = Enum.GetNames(typeof(World.Foliage));
+                    var foliage = Enum.GetNames(typeof(World.Foliage));
                     counter = 0;
 
                     foreach (string name in foliage)
@@ -1687,8 +1710,8 @@ namespace TextAdventure
                         {
 
                             Player.Items item = player.getItemFromName(arguments[0].ToLower());
-                       
-                            if(arguments.Length>1 && arguments[1] != "")
+
+                            if (arguments.Length > 1 && arguments[1] != "")
                                 if (int.TryParse(arguments[1], out int parse))
                                 {
                                     if (parse != 0)
