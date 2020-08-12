@@ -15,6 +15,12 @@ Uses an item from your inventory. Does not take up a turn.
 > inventory
 Displays your inventory.
 
+> newturn/endturn/q/nextturn
+starts the next turn if all of your moves have been used
+
+> cls/clear
+clears the feedback area of feedback
+
 > unlock
 Unlocks a door, requires a key.
 
@@ -41,12 +47,6 @@ Changes the view window to various levels of zoom/size. Kind of broken due to th
 
 
 
-
-
-
-
-
-
 Advanced Commands
 ---------------
 
@@ -63,6 +63,12 @@ Plays a music track.
 
 >addxp/removexp <value>
 Adds or removes xp.
+
+>save <file_name>
+saves the world to file
+
+>load <file_name>
+loads a world from file
 
 >give <item>
 Gives an item (items: keys, health_potion, mana_potion.
@@ -86,6 +92,9 @@ Displays a list of available block types.
 >structures
 Displays a list of available world structures.
 
+
+
+
 >generate_doors
 Adds doors to rooms in the world.
 
@@ -103,10 +112,11 @@ Adds new rooms to the world, will not delete old rooms.
 
 
 Options Commands
------------------------
+----------------
 
 >change <setting_name> <value>
 *bools do not need a value and are toggable, for instance just type change colours to flink on or off colours.
+
 
 Page Commands
 -------------
@@ -120,12 +130,17 @@ Moves forward a page.
 >page <number>
 Goes to a specific page.
 
-Turns
------
-Each successful action you do takes up a turn. Each turn NPC's and other things around you get a chance to move as well. 
-Its important to sit and think about your next move. Just like in real life, there is no going back!
 
-Each turn your stanima will replenish, but your hunger will also go down.
+Turns and moves
+---------------
+Each action you do will take up a move. At the beginning of the game you are limited to only partaking in 4 moves before finishing
+a turn but later in the game you may upgrade this limit. Each turn an enemy or NPC can move towards you and attack you, 
+they cannot attack you or do anything to you until you've used your moves up.
+
+* Remember to type 'nextturn' or 'endturn' when all of your moves are over to finish the turn.
+* You will only use up a move when the action is successful except for when harvesting.
+* Viewing your inventory and any commands which do not move the player or afffect the world do not take up moves.
+
 
 
 Leveling
@@ -139,28 +154,34 @@ such as less stanima degradation and less of a need to eat. You also do more dam
 + You are really awesome.
 
 
-
-
-
-
 The World
 ---------
 The world around you is a bunch of rooms with water and other obstacles in your path. 
-Closed doors can be denoted by a capital D and can be opened using a key. Keys can be aquired by conquring rooms. 
-You can also find helpful items such as food and healing items in rooms, but these items are guarded by goblins.
+Closed doors can be denoted by a capital D and can be opened using a key. Keys can be aquired by conquring rooms
+as well as trading and finding them naturally or crafting them. You can also find helpful items such as food and healing items in rooms, 
+but these items are guarded by goblins.
+
 * When you die, the world is lost.
+* The world is full of bushes and tress for you to scavange items from.
+* Use the info command to find out what a foliage is, then use the havest command on it!
 
-You can find health items by searching the world for bushes and trees! Once you have found one, you can use the eat command
-to replenish your hunger!
 
-
-Hunger, Stanima, Mana and Healing.
----------------------------
+Hunger, Stanima, Mana and Healing
+---------------------------------
 Your hunger, stanima, health and Mana bars can be found at the top of the window. Your hunger will decrease over time
 and when it hits zero, your health will start to decrease. Leveling up can make this happen slower. Your stanima will
 increase every round. Leveling up can make this happen faster.
 
-You can find healing items by raiding rooms, as well as food.
-
 * Keeep an eye on your hunger! if it ever reaches zero you will start losing health.
+
+
+Inventory
+---------------------------------
+Your inventory is infinite in every possible way. It can store as many items as you like and there are no item limit caps. Items
+can be used for benefits such as food, stanima or XP. Some items are special and cannot be used with the use command.
+
+* Keys cannot be used with the use command and must be used with the unlock command
+* Golden Apples are the best healing/stanima item in the game.
+* Some items give stanima when they are eaten.
+* You can play around with the 'use' command and it will only take a move if you succesfully use an item.
 

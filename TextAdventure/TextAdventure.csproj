@@ -63,13 +63,12 @@
     <None Update="tracks\petscop.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="tracks\seeded_numbers.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="tracks\unknown.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="tracks\" />
   </ItemGroup>
 
   <ItemGroup>

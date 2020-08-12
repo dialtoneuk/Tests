@@ -27,6 +27,15 @@ NAudio by Mark Heath (https://github.com/naudio/NAudio)
 
 Changelog
 ---------
+12/08/2020
+           + added new song
+           + attempted to add world saving/loading, partially added but finishing at a later date
+           + added the move system.
+           + added newturn commands.
+           + added settings for autoclear and autoturn.
+           ~ tweaked world generation to have fading between block types
+           ~ rooms can now spawn on deepsnow
+           ~ various bug fixes and quality of life tweaks.
 11/08/2020
            + added inventory, items.
            + added new song.

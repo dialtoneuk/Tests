@@ -20,11 +20,14 @@ namespace TextAdventure
             WATER,
             FLOOR,
             GRASS,
+            GRAVEL,
             SAND,
             DIRT,
+            HILLY_GRASS,
             MOUNTAIN_GRASS,
             STONE,
             SNOW,
+            DEEP_SNOW,
         }
 
         public enum Foliage : int
@@ -40,11 +43,13 @@ namespace TextAdventure
             TREE_APPLE,
             TREE_GOLDEN_APPLE,
             TREE_HONEY,
+            TREE_PLUM,
+            TREE_PEAR,
             PLANT_EGGPLANT,
             PLANT_ROSES,
             PLANT_MANA,
             PLANT_OXYGEN,
-            PLANT_XP
+            PLANT_XP,
         }
 
         public enum Structures : int
@@ -72,6 +77,8 @@ namespace TextAdventure
             { Foliage.TREE, "T" },
             { Foliage.TREE_PINE, "T" },
             { Foliage.TREE_OAK, "T" },
+            { Foliage.TREE_PLUM, "P" },
+            { Foliage.TREE_PEAR, "p" },
             { Foliage.BUSH_BLUEBERRIES, "b" },
             { Foliage.BUSH_STRAWBERRIES, "S" },
             { Foliage.TREE_APPLE, "A" },
@@ -91,7 +98,9 @@ namespace TextAdventure
             { Foliage.BUSH_BLACKBERRIES, ConsoleColor.DarkBlue },
             { Foliage.TREE, ConsoleColor.Green },
             { Foliage.TREE_PINE, ConsoleColor.DarkGreen },
-            { Foliage.TREE_OAK, ConsoleColor.DarkGreen },
+            { Foliage.TREE_OAK, ConsoleColor.DarkGreen },   
+            { Foliage.TREE_PEAR, ConsoleColor.Green },
+            { Foliage.TREE_PLUM, ConsoleColor.Green },
             { Foliage.BUSH_BERRIES, ConsoleColor.Blue},
             { Foliage.BUSH_STRAWBERRIES,ConsoleColor.Red},
             { Foliage.TREE_APPLE, ConsoleColor.DarkGreen },
@@ -108,7 +117,7 @@ namespace TextAdventure
         {
             { Blocks.DEEP_WATER, "/" },
             { Blocks.WATER, "\\" },
-            { Blocks.WALL_SOLID, "#" },
+            { Blocks.WALL_SOLID, "0" },
             { Blocks.WALL_SOLID_HORIZONTAL, "-" },
             { Blocks.WALL_SOLID_VERTICAL, "|" },
             { Blocks.WALL_INVISIBLE, " " },
@@ -117,11 +126,14 @@ namespace TextAdventure
             { Blocks.GRASS, "'" },
             { Blocks.STONE, "`" },
             { Blocks.SNOW, "^" },
-            { Blocks.MOUNTAIN_GRASS, "," },
+            { Blocks.DEEP_SNOW, "#" },
+            { Blocks.HILLY_GRASS, "," },
+            { Blocks.MOUNTAIN_GRASS, "." },
             { Blocks.DOOR_CLOSED, "C" },
             { Blocks.DOOR_OPEN, "O" },
             { Blocks.FLOOR, "_" },
             { Blocks.WOOD, "=" },
+            { Blocks.GRAVEL, "n" },
         };
 
         private Dictionary<Blocks, ConsoleColor> blockColours = new Dictionary<Blocks, ConsoleColor>
@@ -131,29 +143,32 @@ namespace TextAdventure
             { Blocks.DIRT, ConsoleColor.DarkYellow },
             { Blocks.SAND, ConsoleColor.Yellow },
             { Blocks.GRASS, ConsoleColor.Green},
+            { Blocks.HILLY_GRASS, ConsoleColor.DarkGreen},
             { Blocks.STONE, ConsoleColor.DarkGray},
-            { Blocks.SNOW, ConsoleColor.White},
-            { Blocks.MOUNTAIN_GRASS, ConsoleColor.DarkGreen },
+            { Blocks.GRAVEL, ConsoleColor.DarkGray},
+            { Blocks.SNOW, ConsoleColor.Gray},
+            { Blocks.DEEP_SNOW, ConsoleColor.White},
+            { Blocks.MOUNTAIN_GRASS, ConsoleColor.Green },
             { Blocks.DOOR_CLOSED, ConsoleColor.Red },
             { Blocks.DOOR_OPEN, ConsoleColor.Green },
             { Blocks.WOOD, ConsoleColor.DarkYellow },
         };
 
         public const bool ROOM_SYMMETICAL = true;
-        public const int ROOM_MAX_SIZE = 32;
+        public const int ROOM_MAX_SIZE = 20;
         public const int ROOM_MIN_SIZE = 12;
         public const int ROOM_MAX = 2048;
-        public const int ROOM_BUFFER = 12; //do not change
+        public const int ROOM_BUFFER = 4; //do not change
         public const int ROOM_DOOR_SIZE = 3;
         public const int WORLD_MAX = 64000;
-        public const int WORLD_GENERATION_TIMEOUT = 20; //seconds
+        public const int WORLD_GENERATION_TIMEOUT = 200; //seconds
         public const int ROOM_GENERATION_TIMEOUT = WORLD_GENERATION_TIMEOUT / 4; //seconds
         public const int FOLIAGE_GENERATION_TIMEOUT = WORLD_GENERATION_TIMEOUT / 4; //seconds
         public const int STRUCTURE_GENERATION_TIMEOUT = WORLD_GENERATION_TIMEOUT / 4; //seconds
         public const int WORLD_BUFFER = 4; //do not change
         public const int WORLD_MAX_FOLIAGE = 64000;
         public const int STRUCTURE_MAX_SIZE = 16;
-        public const float FREQUENCY_INTERVAL = 0.0010f;
+        public const float FREQUENCY_INTERVAL = 0.000075f;
 
         private Blocks[,] worldData = new Blocks[WORLD_MAX, WORLD_MAX];
         private int[][] roomData = new int[ROOM_MAX][];
@@ -480,8 +495,8 @@ namespace TextAdventure
 
         public void generateWorld(int rooms, int foliage = 100, int island_value = 1, int structure_amount = 64)
         {
-
             roomCount = 0;
+            islandValue = islandValue;
             terraform(island_value);
 
             var later = DateTimeOffset.UtcNow.Add(TimeSpan.FromSeconds(WORLD_GENERATION_TIMEOUT));
@@ -653,6 +668,9 @@ namespace TextAdventure
                                         newEntity[1] = position[1];
                                     }
 
+                                    if (worldData[newEntity[0], newEntity[1]] == Blocks.SNOW)
+                                        continue;
+
                                     if (amount < 3000)
                                         modulas_amount = 250;
                                     if (amount < 1500)
@@ -715,8 +733,9 @@ namespace TextAdventure
         {
 
             this.worldData = new Blocks[this.worldWidth, this.worldHeight];
-            this.roomData = new int[ROOM_MAX_SIZE][];
+            this.roomData = new int[ROOM_MAX][];
             this.foliageData = new int[WORLD_MAX_FOLIAGE, WORLD_MAX_FOLIAGE];
+            spawnRoom = null;
         }
 
         public void resetColours()
@@ -770,9 +789,9 @@ namespace TextAdventure
             FastNoise noise = new FastNoise();
 
             noise.SetSeed((int)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
-            noise.SetNoiseType(FastNoise.NoiseType.PerlinFractal);
+            noise.SetNoiseType(FastNoise.NoiseType.SimplexFractal);
             noise.SetInterp(FastNoise.Interp.Quintic);
-            noise.SetFractalOctaves(2);
+            noise.SetFractalOctaves(6);
             noise.SetFractalGain(0.100f);
             noise.SetFrequency(frequency);
 
@@ -780,12 +799,23 @@ namespace TextAdventure
 
             Console.WriteLine("terraforming with frequency of {0}...", frequency);
 
+            Random r = new Random((int)DateTime.UtcNow.Ticks);
 
             for (int x = 0; x < worldWidth; x++)
                 for (int y = 0; y < worldHeight; y++)
                 {
                     value = noise.GetNoise((float)x, (float)y) * getBlockTotal();
-                    value = Math.Abs((int)Math.Floor(value));
+
+                    if (r.Next(5, 100) > 50)
+                        r.Next(0, 100);
+
+                    if(value>2.0f)
+                        if(r.Next(0,100)>50)
+                            value = Math.Abs((int)Math.Floor(value));
+                        else
+                            value = Math.Abs((int)Math.Round(value));
+                    else
+                        value = Math.Abs((int)Math.Floor(value));
 
                     if (isEmpty(x, y))
                         switch (value)
@@ -800,15 +830,19 @@ namespace TextAdventure
                                 setBlock(x, y, Blocks.SAND);
                                 break;
                             case 3:
-                            case 4:
                                 setBlock(x, y, Blocks.GRASS);
+                                break;
+                            case 4:
+                                setBlock(x, y, Blocks.HILLY_GRASS);
                                 break;
                             case 5:
                                 setBlock(x, y, Blocks.MOUNTAIN_GRASS);
                                 break;
                             case 6:
-                            case 7:
                                 setBlock(x, y, Blocks.DIRT);
+                                break;
+                            case 7:
+                                setBlock(x, y, Blocks.GRAVEL);
                                 break;
                             case 8:
                                 setBlock(x, y, Blocks.STONE);
@@ -816,6 +850,11 @@ namespace TextAdventure
                             case 9:
                             case 10:
                                 setBlock(x, y, Blocks.SNOW);
+                                break;
+                            case 11:
+                            case 12:
+                            case 13:
+                                setBlock(x, y, Blocks.DEEP_SNOW);
                                 break;
                             default:
                                 setBlock(x, y, Blocks.WALL_INVISIBLE);
@@ -1117,6 +1156,9 @@ namespace TextAdventure
         public bool hasFoliage(int x, int y)
         {
 
+            if (x < 0 || y < 0)
+                return false;
+
             return (foliageData[x, y] != 0);
         }
 
@@ -1263,9 +1305,6 @@ namespace TextAdventure
                     if ((Blocks)worldData[startx + x, starty + y] == Blocks.SAND)
                         return false;
 
-                    if ((Blocks)worldData[startx + x, starty + y] == Blocks.SNOW)
-                        return false;
-
                     if ((Blocks)worldData[startx + x, starty + y] == Blocks.STONE)
                         return false;
 
@@ -1301,6 +1340,9 @@ namespace TextAdventure
                         return true;
 
                     if ((Blocks)worldData[startx - x, starty - y] == Blocks.STONE)
+                        return false;
+
+                    if ((Blocks)worldData[startx - x, starty - y] == Blocks.GRAVEL)
                         return false;
 
                     if (hasFoliage(startx - x, starty - y))

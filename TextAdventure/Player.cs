@@ -15,8 +15,11 @@ namespace TextAdventure
             MANA_POTION,
             KEY,
             HONEY,
-            BERRIES,
-            GOLDEN_APPLE
+            BERRY,
+            PEAR,
+            PLUM,
+            GOLDEN_APPLE,
+            WOOD
         }
 
         private Dictionary<Items, int> inventory = new Dictionary<Items, int>
@@ -33,40 +36,43 @@ namespace TextAdventure
 
         private static int[] last_position = new int[2];
 
-        public const int MAX_MOVE_DISTANCE = 16;
+        public const int MAX_MOVE_DISTANCE = 18;
         public const int MAX_HARVEST_DISTANCE = 4;
         public const int LEVEL_INTERVAL = 100;
         public const int MAX_HUNGER = 1000;
         public const int MAX_HEALTH = 100;
         public const int DEFAULT_HEALTH = 100;
+        public const int DEFAULT_MOVES = 4;
         public const int MAX_STANIMA = 500;
         public const int MAX_MANA = 60;
-        public const double STANIMA_FACTOR = 2.25;
-        public const double STANIMA_INCREASE = 15;
-        public const double HUNGER_FACTOR = 1.2;
-        public const double HEALING_FACTOR = 0.25;
         public const int HUDY = Program.WINDOW_HEIGHT - 11;
         public const int HUDW = 46;
         public const int HUDH = 10;
         public const int HUDPADDING = 6;
+        public const double STANIMA_FACTOR = 2.25;
+        public const double STANIMA_INCREASE = 15;
+        public const double HUNGER_FACTOR = 2.4;
+        public const double HEALING_FACTOR = 0.25;
 
         private int health;
         private long xp;
         private int level;
+        private int moves = DEFAULT_MOVES;
         private double hunger;
         private double stanima;
         private double mana;
         private string playerName;
 
         public static int[] LastPosition { get => last_position; set => last_position = value; }
-        public int Health { get => health; }
         public long Xp { get => xp; }
         public int Level { get => level; }
+        public int Health { get => health; }
+        public int[] Position { get => position; }
         public double Hunger { get => hunger; }
         public double Stanima { get => stanima; }
         public double Mana { get => mana; }
         public string PlayerName { get => playerName; set => playerName = value; }
-        public int[] Position { get => position; }
+        public int Moves { get => moves; set => moves = value; }
 
         public Player(string playerName)
         {
@@ -243,15 +249,6 @@ namespace TextAdventure
             this.position[1] = y;
         }
 
-        public bool hasLastPosition()
-        {
-
-            if (LastPosition[0] == 0 && LastPosition[1] == 0)
-                return false;
-
-            return true;
-        }
-
         public void feed(int amount)
         {
 
@@ -324,61 +321,10 @@ namespace TextAdventure
             this.stanima += amount;
         }
 
-        public void useItem(Items item)
-        {
-
-            switch (item)
-            {
-                case Items.MANA_POTION:
-                    Program.addFeedback("+ M 50");
-                    this.charge(50);
-                    break;
-                case Items.HEALTH_POTION:
-                    Program.addFeedback("+ H 50");
-                    this.heal(50);
-                    break;
-                case Items.GOLDEN_APPLE:
-                    Program.addFeedback("+ S 250");
-                    Program.addFeedback("+ F 500");
-                    Program.addFeedback("+ H 100");
-                    Program.addFeedback("+ xp 100");
-                    this.feed(500);
-                    this.replenish(250);
-                    this.heal(100);
-                    this.addXP(100);
-                    break;
-                case Items.BERRIES:
-                    Program.addFeedback("+ S 5");
-                    Program.addFeedback("+ F 10");
-                    Program.addFeedback("+ xp 2");
-                    this.replenish(5);
-                    this.feed(10);
-                    this.addXP(2);
-                    break;
-                case Items.HONEY:
-                case Items.APPLE:
-                    Program.addFeedback("+ F 5");
-                    Program.addFeedback("+ xp 4");
-                    this.feed(5);
-                    this.addXP(4);
-                    break;
-                case Items.KEY:
-                    Program.addFeedback("'use the unlock command' the key whispers");
-                    Program.addFeedback("- KEY 1");
-                    Program.addFeedback("+ KEY 1");
-                    this.addItem(Items.KEY, 1);
-                    break;
-            }
-        }
-
         public void printInventory()
         {
 
             var keys = this.inventory.Keys;
-
-            Program.addFeedback("");
-            Program.addFeedback("inventory");
-            Program.addFeedback("");
 
             foreach (Items item in keys)
                 Program.addFeedback("{0} x{1}", Enum.GetName(typeof(Items), item), this.inventory[item]);
@@ -393,16 +339,23 @@ namespace TextAdventure
                 this.inventory[item] = amount;
         }
 
-        public bool itemExists(string item_name)
+        public void removeItem(Items item, bool whole_item = false)
         {
 
-            var names = Enum.GetNames(typeof(Items));
+            if (this.inventory.ContainsKey(item))
+            {
 
-            foreach (string name in names)
-                if (name.ToLower() == item_name.ToLower())
-                    return true;
+                if (whole_item)
+                    this.inventory.Remove(item);
+                else
+                {
 
-            return false;
+                    if (this.inventory[item] - 1 > 0)
+                        this.inventory[item] = this.inventory[item] - 1;
+                    else
+                        this.inventory.Remove(item);
+                }
+            }
         }
 
         public Items getItemFromName(string item_name)
@@ -429,23 +382,23 @@ namespace TextAdventure
             return (this.inventory[item]);
         }
 
-        public void removeItem(Items item, bool whole_item = false)
+        public double[] getLoses(int amount)
         {
 
-            if (this.inventory.ContainsKey(item))
-            {
+            double[] loses = new double[2];
+            loses[0] = (STANIMA_FACTOR + Math.Abs(this.level / 5)) * amount;
+            loses[1] = (HUNGER_FACTOR + Math.Abs(this.level / 5)) * amount;
 
-                if (whole_item)
-                    this.inventory.Remove(item);
-                else
-                {
+            return loses;
+        }
 
-                    if (this.inventory[item] - 1 > 0)
-                        this.inventory[item] = this.inventory[item] - 1;
-                    else
-                        this.inventory.Remove(item);
-                }
-            }
+        public bool hasLastPosition()
+        {
+
+            if (LastPosition[0] == 0 && LastPosition[1] == 0)
+                return false;
+
+            return true;
         }
 
         public bool willExhaustPlayer(int amount)
@@ -458,6 +411,67 @@ namespace TextAdventure
             return false;
         }
 
+        public bool itemExists(string item_name)
+        {
+
+            var names = Enum.GetNames(typeof(Items));
+
+            foreach (string name in names)
+                if (name.ToLower() == item_name.ToLower())
+                    return true;
+
+            return false;
+        }
+
+        public bool useItem(Items item)
+        {
+
+            switch (item)
+            {
+                default:
+                    Program.addFeedback("you can't use this");
+                    return false;
+                case Items.MANA_POTION:
+                    Program.addFeedback("+ M 50");
+                    this.charge(50);
+                    return true;
+                case Items.HEALTH_POTION:
+                    Program.addFeedback("+ H 50");
+                    this.heal(50);
+                    return true;
+                case Items.GOLDEN_APPLE:
+                    Program.addFeedback("+ S 250");
+                    Program.addFeedback("+ F 500");
+                    Program.addFeedback("+ H 100");
+                    Program.addFeedback("+ xp 100");
+                    this.feed(500);
+                    this.replenish(250);
+                    this.heal(100);
+                    this.addXP(100);
+                    return true;
+                case Items.BERRY:
+                    Program.addFeedback("+ S 5");
+                    Program.addFeedback("+ F 5");
+                    Program.addFeedback("+ xp 2");
+                    this.replenish(5);
+                    this.feed(10);
+                    this.addXP(2);
+                    return true;
+                case Items.PEAR:
+                case Items.PLUM:
+                case Items.HONEY:
+                case Items.APPLE:
+                    Program.addFeedback("+ S 10");
+                    Program.addFeedback("+ F 20");
+                    Program.addFeedback("+ xp 4");
+                    this.feed(5);
+                    this.addXP(4);
+                    return true;
+                case Items.KEY:
+                    Program.addFeedback("'use the unlock command' the key whispers");
+                    return false;
+            }
+        }
 
         public bool hasItem(Items item)
         {
@@ -466,16 +480,6 @@ namespace TextAdventure
                 return false;
 
             return (this.inventory.ContainsKey(item));
-        }
-
-        public double[] getLoses(int amount)
-        {
-
-            double[] loses = new double[2];
-            loses[0] = (STANIMA_FACTOR + Math.Abs(this.level / 5)) * amount;
-            loses[1] = (HUNGER_FACTOR + Math.Abs(this.level / 5)) * amount;
-
-            return loses;
         }
 
         public bool canOpenDoor()

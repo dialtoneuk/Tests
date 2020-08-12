@@ -18,7 +18,8 @@ namespace TextAdventure
             TRACK_1851,
             TRACK_1326,
             TRACK_PETSCOP,
-            TRACK_MUGGY_SIGNALS
+            TRACK_MUGGY_SIGNALS,
+            TRACK_SEEDED_NUMBERS
         }
 
         private Dictionary<Tracks, string> trackFilenames = new Dictionary<Tracks, string>
@@ -31,6 +32,7 @@ namespace TextAdventure
             {Tracks.TRACK_1326,"1326_compressed.mp3" },
             {Tracks.TRACK_PETSCOP,"petscop.mp3" },
             {Tracks.TRACK_MUGGY_SIGNALS,"muggy_signals.mp3" },
+            {Tracks.TRACK_SEEDED_NUMBERS, "seeded_numbers.mp3" },
         };
 
         public const int JUKEBOX_INTERVAL = 600;
@@ -110,6 +112,7 @@ namespace TextAdventure
             {
                 fadeOut();
                 System.Threading.Thread.Sleep(1000);
+                output.Stop();
             }
 
             if (stream != null)
