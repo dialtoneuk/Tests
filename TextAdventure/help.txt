@@ -9,41 +9,40 @@ Enter any of the following inputs to move in a direction. Moving uses up stanima
 Moves in any direection a specified number of spaces, will move only one space if no number is given.
 * if a large number is entered you will move until a solid wall is met.
 
-> use <item_name>
+>use <item_name>
 Uses an item from your inventory. Does not take up a turn.
 
-> inventory
+>inventory
 Displays your inventory.
 
-> newturn/endturn/q/nextturn
+>newturn/endturn/q/nextturn
 starts the next turn if all of your moves have been used
 
-> cls/clear
+>cls/clear
 clears the feedback area of feedback
 
-> unlock
+>unlock
 Unlocks a door, requires a key.
 
-> wait <number_of_turns>
+>wait <number_of_turns>
 Wait a number of specified turns, if no number given will wait for one turn.
 
-> info <range>
+>info <range>
 Returns information on the nearest foliage available.
 
-> plan <number_of_spaces>
-Lets you know the toll of moving a number of spaces on your health and stanima.
+>claim/capture/conqure
+Lets you claim a room as your own! this yields you a KEY and lots of XP!
+* waiting in your room yeilds twice as much stanima and health increase and no food reduction.
 
-> back
+>back
 Goes back to your last position.
 
-> havest/p/pick/scavange
+>havest/p/pick/scavange
 Interact with foliage to replenish your hunger or gain XP. Each foliage gives a different reward.
 * b (berrys) B (blue berrys) T (Tree) O (Oak Tree) and many more for you to discover!
 
-> zoom <1,2,3>
+>zoom <1,2,3>
 Changes the view window to various levels of zoom/size. Kind of broken due to the fact its all text but hey I tried!
-
-
 
 
 
@@ -73,6 +72,8 @@ loads a world from file
 >give <item>
 Gives an item (items: keys, health_potion, mana_potion.
 
+>plan <steps>
+
 
 Developer Commands
 ---------------
@@ -94,7 +95,6 @@ Displays a list of available world structures.
 
 
 
-
 >generate_doors
 Adds doors to rooms in the world.
 
@@ -108,6 +108,9 @@ Generate fresh rooms to the world, will delete old rooms.
 Adds new structures to the world, will not delete old structures.
 
 >add_rooms <count>
+Adds new rooms to the world, will not delete old rooms.
+
+>items
 Adds new rooms to the world, will not delete old rooms.
 
 

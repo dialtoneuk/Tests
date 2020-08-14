@@ -98,7 +98,7 @@ namespace TextAdventure
             { Foliage.BUSH_BLACKBERRIES, ConsoleColor.DarkBlue },
             { Foliage.TREE, ConsoleColor.Green },
             { Foliage.TREE_PINE, ConsoleColor.DarkGreen },
-            { Foliage.TREE_OAK, ConsoleColor.DarkGreen },   
+            { Foliage.TREE_OAK, ConsoleColor.DarkGreen },
             { Foliage.TREE_PEAR, ConsoleColor.Green },
             { Foliage.TREE_PLUM, ConsoleColor.Green },
             { Foliage.BUSH_BERRIES, ConsoleColor.Blue},
@@ -170,9 +170,9 @@ namespace TextAdventure
         public const int STRUCTURE_MAX_SIZE = 16;
         public const float FREQUENCY_INTERVAL = 0.000075f;
 
-        private Blocks[,] worldData = new Blocks[WORLD_MAX, WORLD_MAX];
-        private int[][] roomData = new int[ROOM_MAX][];
-        private int[,] foliageData = new int[WORLD_MAX_FOLIAGE, WORLD_MAX_FOLIAGE];
+        private Blocks[,] worldData;
+        private int[][] roomData;
+        private int[,] foliageData;
         private int worldWidth = WORLD_MAX;
         private int worldHeight = WORLD_MAX;
 
@@ -374,7 +374,10 @@ namespace TextAdventure
                             block = (Blocks)world.worldData[x, y];
 
                         if (world.isRoomCenter(x, y))
-                            Program.write("R");
+                            if(world.getRoom(x,y)[4]==1)
+                                Program.write("C");
+                            else
+                                Program.write("R");
                         else
                         {
                             Program.setColour(world.getColor(block));
@@ -495,8 +498,18 @@ namespace TextAdventure
 
         public void generateWorld(int rooms, int foliage = 100, int island_value = 1, int structure_amount = 64)
         {
+
+            if (this.roomData == null)
+                this.roomData = new int[rooms][];
+
+            if (this.foliageData == null)
+                this.foliageData = new int[foliage, foliage];
+
+            if (this.worldData == null)
+                this.worldData = new Blocks[worldWidth, worldHeight];
+
             roomCount = 0;
-            islandValue = islandValue;
+            islandValue = island_value;
             terraform(island_value);
 
             var later = DateTimeOffset.UtcNow.Add(TimeSpan.FromSeconds(WORLD_GENERATION_TIMEOUT));
@@ -732,9 +745,9 @@ namespace TextAdventure
         public void destroyWorld()
         {
 
-            this.worldData = new Blocks[this.worldWidth, this.worldHeight];
-            this.roomData = new int[ROOM_MAX][];
-            this.foliageData = new int[WORLD_MAX_FOLIAGE, WORLD_MAX_FOLIAGE];
+            this.roomData = null;
+            this.foliageData = null;
+            this.worldData = null;
             spawnRoom = null;
         }
 
@@ -783,12 +796,14 @@ namespace TextAdventure
         public void terraform(int island_value = 1)
         {
 
-            islandValue = island_value;
             float frequency = FREQUENCY_INTERVAL * island_value;
             float value;
+            Random r = new Random((int)DateTime.UtcNow.Ticks * (int)frequency);
             FastNoise noise = new FastNoise();
 
-            noise.SetSeed((int)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+            islandValue = island_value;
+
+            noise.SetSeed((int)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()/2*r.Next(10,100));
             noise.SetNoiseType(FastNoise.NoiseType.SimplexFractal);
             noise.SetInterp(FastNoise.Interp.Quintic);
             noise.SetFractalOctaves(6);
@@ -799,18 +814,16 @@ namespace TextAdventure
 
             Console.WriteLine("terraforming with frequency of {0}...", frequency);
 
-            Random r = new Random((int)DateTime.UtcNow.Ticks);
-
             for (int x = 0; x < worldWidth; x++)
                 for (int y = 0; y < worldHeight; y++)
                 {
-                    value = noise.GetNoise((float)x, (float)y) * getBlockTotal();
+                    value = noise.GetNoise((float)x, (float)y) * getBlockTotal() + 1;
 
                     if (r.Next(5, 100) > 50)
                         r.Next(0, 100);
 
-                    if(value>2.0f)
-                        if(r.Next(0,100)>50)
+                    if (value > 2.0f)
+                        if (r.Next(0, 100) > 50)
                             value = Math.Abs((int)Math.Floor(value));
                         else
                             value = Math.Abs((int)Math.Round(value));
@@ -1011,14 +1024,20 @@ namespace TextAdventure
             roomCount++;
         }
 
-        public void saveRoomPosition(int roomx, int roomy, int room_width, int room_height)
+        public void saveRoomPosition(int roomx, int roomy, int room_width, int room_height, bool claimed = false)
         {
 
-            int[] position = new int[4];
+            int _ = 0;
+
+            if (claimed)
+                _ = 1;
+
+            int[] position = new int[5];
             position[0] = roomx;
             position[1] = roomy;
             position[2] = room_width;
             position[3] = room_height;
+            position[4] = _;
 
             if (spawnRoom == null)
                 spawnRoom = position;
@@ -1099,10 +1118,85 @@ namespace TextAdventure
             return random;
         }
 
+        public int[] getRoom(int roomx, int roomy)
+        {
+
+            foreach (int[] room in roomData)
+            {
+
+                if (room == null)
+                    continue;
+
+                if (room[0] == roomx && room[1] == roomy)
+                    return room;
+            }
+
+            return null;
+        }
+
         public int getBlockTotal()
         {
 
             return Enum.GetNames(typeof(Blocks)).Length;
+        }
+
+        public bool claimRoom(Player player)
+        {
+
+            foreach (int[] room in roomData)
+                if (isInRoom(player, room))
+                {
+
+                    room[4] = 1;
+                    return true;
+                }
+
+            return false;
+        }
+
+        public bool isInRoomAndClaimed(Player player)
+        {
+
+            foreach (int[] room in roomData)
+            {
+
+                if (!isInRoom(player, room))
+                    continue;
+
+                if (room[4] == 1)
+                    return true;
+            }
+                
+            return false;
+        }
+
+        public bool isInRoom(Player player, int[] room)
+        {
+
+
+            if (player.Position[0] < (room[0]+room[2]/2) &&
+               player.Position[0] + 1 > (room[0]-room[2]/2) &&
+               player.Position[1] < (room[1]+room[3]/ 2) &&
+               player.Position[1] + 1 > (room[1]-room[3]/2))
+                return true;
+
+            return false;
+        }
+
+        public bool roomClaimed(int key)
+        {
+
+            int[] room = roomData[key];
+
+            return (room[4] == 1);
+        }
+
+        public bool roomClaimed(int roomx, int roomy)
+        {
+
+            int[] room = getRoom(roomx, roomy);
+
+            return (room[4] == 1);
         }
 
         public bool placeRooms(int rooms)

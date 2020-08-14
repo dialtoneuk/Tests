@@ -12,7 +12,7 @@ namespace NQueens_Problem
             Console.WriteLine("NQueens Problem Solver written by Lyds");
             Console.BackgroundColor = ConsoleColor.Black;
             Console.WriteLine("- enter how many queens on your board/how big your board is. Large numbers can take a very long time.");
-        top:
+            top:
             Console.WriteLine("- memory allocated {0}bytes", (MemoryUsage() / 1024f) / 1024);
             Console.Write("type something: ");
             string line = Console.ReadLine();
@@ -27,7 +27,7 @@ namespace NQueens_Problem
                 }
 
                 Queen.queenCount = Math.Abs(queens);
-                new Queen(0, Int32.MinValue, null).walkThrough();
+                new Queen(0, Int32.MinValue, null).WalkThrough();
 
                 Console.WriteLine();
                 Console.WriteLine("finished!");

@@ -183,20 +183,31 @@ namespace TextAdventure
             Console.SetCursorPosition(currentx, currenty);
         }
 
-        public void processTurn()
+        public void processTurn(bool in_base=false)
         {
 
             double hunger_reduction = HUNGER_FACTOR - Math.Abs(this.level / 10);
             double stanima_increase = STANIMA_INCREASE + Math.Abs(this.level / 10);
             double healing_factor = HEALING_FACTOR + Math.Abs(this.level / 10);
 
-            if (this.hunger - hunger_reduction <= 0.0)
+
+            if(!in_base)
             {
-                this.hunger = 0.0;
-                this.health -= 1;
+                if (this.hunger - hunger_reduction <= 0.0)
+                {
+                    this.hunger = 0.0;
+                    this.health -= 1;
+                }
+                else
+                    this.hunger -= hunger_reduction;
             }
             else
-                this.hunger -= hunger_reduction;
+            {
+
+                stanima_increase = stanima_increase * 2;
+                healing_factor = healing_factor * 2;
+            }
+    
 
             if (this.stanima + stanima_increase > MAX_STANIMA)
                 this.stanima = MAX_STANIMA;
@@ -208,10 +219,22 @@ namespace TextAdventure
             else
                 this.health += (int)Math.Floor(healing_factor);
 
-            Program.addFeedback("turn cost and income.");
-            Program.addFeedback("+ S {0}", stanima_increase);
-            Program.addFeedback("- F {0}", hunger_reduction);
+            if(!in_base)
+            {
 
+                Program.addFeedback("turn cost and income.");
+                Program.addFeedback("+ H {0}", healing_factor);
+                Program.addFeedback("+ S {0}", stanima_increase);
+                Program.addFeedback("- F {0}", hunger_reduction);
+            }
+            else
+            {
+
+                Program.addFeedback("hiding in your base for a turn...");
+                Program.addFeedback("+ H {0}", healing_factor);
+                Program.addFeedback("+ S {0}", stanima_increase);
+            }
+             
             updateLevel();
         }
 

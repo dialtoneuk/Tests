@@ -8,7 +8,8 @@ namespace NQueens_Problem
         public static int queenCount = 12;
         public static int solutionsFound = 0;
         private static Queen queenAbove;
-        private int line, row;
+        private readonly int line;
+        private readonly int row;
         private Queen parent;
 
         public Queen(int line, int row, Queen parent)
@@ -19,7 +20,7 @@ namespace NQueens_Problem
             this.parent = parent;
         }
 
-        public void walkThrough()
+        public void WalkThrough()
         {
 
             if (line == queenCount)
@@ -38,7 +39,7 @@ namespace NQueens_Problem
                        && queenAbove.row - r != line + 1 - queenAbove.line)
                     queenAbove = queenAbove.parent;
                 if (queenAbove.line == 0)
-                    new Queen(line + 1, r, this).walkThrough();
+                    new Queen(line + 1, r, this).WalkThrough();
             }
         }
 
