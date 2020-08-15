@@ -20,6 +20,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="credits.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -29,58 +44,61 @@
     <None Update="menu.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="structures\example.txt">
+    <None Update="Structures\example.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="structures\null.st">
+    <None Update="Structures\null.st">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="structures\pond_large.st">
+    <None Update="Structures\pond_large.st">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="structures\ruin_huge.st">
+    <None Update="Structures\ruin_huge.st">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="structures\pond.st">
+    <None Update="Structures\pond.st">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="structures\ruin_medium.st">
+    <None Update="Structures\ruin_medium.st">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="structures\ruin_large.st">
+    <None Update="Structures\ruin_large.st">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="structures\ruin_small.st">
+    <None Update="Structures\ruin_small.st">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="tracks\1326_compressed.mp3">
+    <None Update="Tracks\1326_compressed.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="tracks\1851.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="tracks\1851_compressed.mp3">
+    <None Update="Tracks\1851_compressed.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="tracks\1913.mp3">
+    <None Update="Tracks\1913.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="tracks\acidhills.mp3">
+    <None Update="Tracks\2310.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="tracks\highways.mp3">
+    <None Update="Tracks\acidhills.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="tracks\muggy_signals.mp3">
+    <None Update="Tracks\highways.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="tracks\petscop.mp3">
+    <None Update="Tracks\muggy_signals.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="tracks\seeded_numbers.mp3">
+    <None Update="Tracks\petscop.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="tracks\unknown.mp3">
+    <None Update="Tracks\seeded_numbers.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Tracks\unknown.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -27,6 +27,12 @@ NAudio by Mark Heath (https://github.com/naudio/NAudio)
 
 Changelog
 ---------
+15/08/2020
+           + added base claiming and "claim command".
+           + added new track
+           ~ tweaked stuff and fixed various bugs
+           ~ added claim command
+           ~ fixed world generation to now define a foliage array equal to the size of the world to save memory
 12/08/2020
            + added new song
            + attempted to add world saving/loading, partially added but finishing at a later date

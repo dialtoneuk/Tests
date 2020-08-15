@@ -36,23 +36,23 @@ namespace TextAdventure
 
         private static int[] last_position = new int[2];
 
-        public const int MAX_MOVE_DISTANCE = 18;
-        public const int MAX_HARVEST_DISTANCE = 4;
-        public const int LEVEL_INTERVAL = 100;
-        public const int MAX_HUNGER = 1000;
+        public const int MAX_MOVE_DISTANCE = 30;
+        public const int MAX_HARVEST_DISTANCE = 6;
+        public const int LEVEL_INTERVAL = 250;
+        public const int MAX_HUNGER = 2000;
         public const int MAX_HEALTH = 100;
         public const int DEFAULT_HEALTH = 100;
         public const int DEFAULT_MOVES = 4;
-        public const int MAX_STANIMA = 500;
-        public const int MAX_MANA = 60;
+        public const int MAX_STANIMA = 1000;
+        public const int MAX_MANA = 100;
         public const int HUDY = Program.WINDOW_HEIGHT - 11;
         public const int HUDW = 46;
         public const int HUDH = 10;
         public const int HUDPADDING = 6;
-        public const double STANIMA_FACTOR = 2.25;
+        public const double STANIMA_FACTOR = 1.65;
         public const double STANIMA_INCREASE = 15;
         public const double HUNGER_FACTOR = 2.4;
-        public const double HEALING_FACTOR = 0.25;
+        public const double HEALING_FACTOR = 0.75;
 
         private int health;
         private long xp;
@@ -183,7 +183,7 @@ namespace TextAdventure
             Console.SetCursorPosition(currentx, currenty);
         }
 
-        public void processTurn(bool in_base=false)
+        public void processTurn(bool in_base=true)
         {
 
             double hunger_reduction = HUNGER_FACTOR - Math.Abs(this.level / 10);
@@ -488,6 +488,7 @@ namespace TextAdventure
                     Program.addFeedback("+ F 20");
                     Program.addFeedback("+ xp 4");
                     this.feed(5);
+                    this.replenish(10);
                     this.addXP(4);
                     return true;
                 case Items.KEY:

@@ -19,14 +19,14 @@ namespace TextAdventure
             GAMEOVER
         }
 
-        public const int DEFAULT_WORLD_WIDTH = 1024;
-        public const int DEFAULT_WORLD_HEIGHT = 1024;
-        public const int WINDOW_WIDTH = 160;
+        public const int DEFAULT_WORLD_WIDTH = 800;
+        public const int DEFAULT_WORLD_HEIGHT = 800;
+        public const int WINDOW_WIDTH = 162;
         public const int WINDOW_HEIGHT = 50;
-        public const int DEFAULT_FOLIAGE_COUNT = World.WORLD_MAX_FOLIAGE / 3;
-        public const int DEFAULT_ROOM_COUNT = 124;
-        public const int DEFAULT_STRUCTURE_COUNT = 416;
-        public const int DEFAULT_ISLAND_VALUE = 2;
+        public const int DEFAULT_FOLIAGE_COUNT = World.WORLD_MAX_FOLIAGE / 4;
+        public const int DEFAULT_ROOM_COUNT = 64;
+        public const int DEFAULT_STRUCTURE_COUNT = 104;
+        public const int DEFAULT_ISLAND_VALUE = 1;
         public const int HUD_BUFFER_ZONE = 2;
         public const bool enableScreenBuffer = false;
 
@@ -174,6 +174,9 @@ namespace TextAdventure
                 //print feedback
                 if (getGameState() == State.WORLD)
                     printFeedback(Player.CAMERA_WIDTH + 1);
+
+                if (player != null)
+                    player.updateLevel();
 
                 setColour(ConsoleColor.White);
 
@@ -565,6 +568,7 @@ namespace TextAdventure
                 moves = player.Moves;
                 player.processTurn(world.isInRoomAndClaimed(player));
 
+                addFeedback(" ");
                 addFeedback("* END OF TURN {0} *", turn);
                 addFeedback(" ");
                 addFeedback("+ TURN {0} +", ++turn);
@@ -579,7 +583,7 @@ namespace TextAdventure
             player.setPosition(spawn_room[0], spawn_room[1]);
         }
 
-        private static void movePlayer(ref Player player, string direction, int amount = 1)
+        private static bool movePlayer(ref Player player, string direction, int amount = 1)
         {
 
             if (moves == 0)
@@ -587,7 +591,7 @@ namespace TextAdventure
 
                 addFeedback("* you have no moves left type 'newturn'");
                 skipmove = true;
-                return;
+                return true;
             }
 
             if (amount > Player.MAX_MOVE_DISTANCE)
@@ -602,19 +606,19 @@ namespace TextAdventure
             if (player.willExhaustPlayer(amount))
             {
                 addFeedback("this will make you too weak to move");
-                return;
+                return false;
             }
 
             if (player.Stanima < 10)
             {
                 addFeedback("you are too weak to move");
-                return;
+                return false;
             }
 
             if (player.Hunger < 10)
             {
                 addFeedback("you are too hungry to move");
-                return;
+                return false;
             }
 
             int _ = 0;
@@ -724,6 +728,8 @@ namespace TextAdventure
                 addFeedback("- S {0}", loses[0]);
                 addFeedback("- F {0}", loses[1]);
             }
+
+            return true;
         }
 
         private static World.Foliage query(ref Player player, ref World world, int scope = 4)
@@ -743,8 +749,8 @@ namespace TextAdventure
         {
             Random r = new Random((int)DateTime.UtcNow.ToBinary()); ;
 
-            for (int x = 0 - scope; x < scope; x++)
-                for (int y = 0 - scope; y < scope; y++)
+            for (int y = 0 - scope; y < scope; y++)
+                for (int x = 0 - scope; x < scope; x++)            
                     if (x + player.Position[0] < world.WorldWidth && y + player.Position[1] < world.WorldHeight)
                     {
 
@@ -1202,8 +1208,8 @@ namespace TextAdventure
                     {
 
                         addFeedback("this is a {0}", Enum.GetName(typeof(World.Foliage), foliage));
-                        addFeedback("its texture is {0}", world.foliageTextures[foliage]);
-                        addFeedback("its colour is {0}", world.foliageColours[foliage]);
+                        addFeedback("its texture is {0}", World.foliageTextures[foliage]);
+                        addFeedback("its colour is {0}", World.foliageColours[foliage]);
                     }
                     skipmove = true;
                     skipread = true;
@@ -1330,7 +1336,9 @@ namespace TextAdventure
                                 _ = parse;
                         }
 
-                    movePlayer(ref player, "left", _);
+                    if (!movePlayer(ref player, "left", _))
+                        skipmove = true;
+
                     skipread = true;
                     break;
                 case "d":
@@ -1343,7 +1351,9 @@ namespace TextAdventure
                                 _ = parse;
                         }
 
-                    movePlayer(ref player, "right", _);
+                    if (!movePlayer(ref player, "right", _))
+                        skipmove = true;
+
                     skipread = true;
                     break;
                 case "w":
@@ -1356,7 +1366,9 @@ namespace TextAdventure
                                 _ = parse;
                         }
 
-                    movePlayer(ref player, "up", _);
+                    if (!movePlayer(ref player, "up", _))
+                        skipmove = true;
+
                     skipread = true;
                     break;
                 case "s":
@@ -1369,7 +1381,9 @@ namespace TextAdventure
                                 _ = parse;
                         }
 
-                    movePlayer(ref player, "down", _);
+                    if (!movePlayer(ref player, "down", _))
+                        skipmove = true;
+
                     skipread = true;
                     break;
             }

@@ -19,7 +19,8 @@ namespace TextAdventure
             TRACK_1326,
             TRACK_PETSCOP,
             TRACK_MUGGY_SIGNALS,
-            TRACK_SEEDED_NUMBERS
+            TRACK_SEEDED_NUMBERS,
+            TRACK_2310
         }
 
         private Dictionary<Tracks, string> trackFilenames = new Dictionary<Tracks, string>
@@ -33,6 +34,7 @@ namespace TextAdventure
             {Tracks.TRACK_PETSCOP,"petscop.mp3" },
             {Tracks.TRACK_MUGGY_SIGNALS,"muggy_signals.mp3" },
             {Tracks.TRACK_SEEDED_NUMBERS, "seeded_numbers.mp3" },
+            {Tracks.TRACK_2310, "2310.mp3" },
         };
 
         public const int JUKEBOX_INTERVAL = 600;
