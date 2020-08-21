@@ -49,7 +49,8 @@ Changes the view window to various levels of zoom/size. Kind of broken due to th
 Advanced Commands
 ---------------
 
-* these commands need to be enabled through the options and can break things!
+>plan <spaces>
+Tells you how much a move will cost in stanima and calories.
 
 >generate/n/newgame/g <number_of_rooms> <number_of_foliage> <world_width> <world_height> <perlin_noise_frequency>
 Generates a new world map.
@@ -72,11 +73,11 @@ loads a world from file
 >give <item>
 Gives an item (items: keys, health_potion, mana_potion.
 
->plan <steps>
 
 
 Developer Commands
 ---------------
+* these commands need to be enabled through the options and can break things!
 
 >open
 Opens a door with out needing a key.

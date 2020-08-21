@@ -136,7 +136,7 @@ namespace TextAdventure
             { Blocks.GRAVEL, "n" },
         };
 
-        public static Dictionary<Blocks, ConsoleColor> blockColours = new Dictionary<Blocks, ConsoleColor>
+        public Dictionary<Blocks, ConsoleColor> blockColours = new Dictionary<Blocks, ConsoleColor>
         {
             { Blocks.DEEP_WATER, ConsoleColor.DarkBlue },
             { Blocks.WATER, ConsoleColor.Blue},
@@ -155,18 +155,18 @@ namespace TextAdventure
         };
 
         public const bool ROOM_SYMMETICAL = true;
-        public const int ROOM_MAX_SIZE = 20;
-        public const int ROOM_MIN_SIZE = 12;
-        public const int ROOM_MAX = 648;
-        public const int ROOM_BUFFER = 2; //do not change
-        public const int ROOM_DOOR_SIZE = 3;
-        public const int WORLD_MAX = 1000;
+        public const int ROOM_MAX_SIZE = 28;
+        public const int ROOM_MIN_SIZE = 18;
+        public const int ROOM_MAX = 640;
+        public const int ROOM_BUFFER = 1; //do not change
+        public const int ROOM_DOOR_SIZE = 4;
+        public const int WORLD_MAX = 5000;
         public const int WORLD_GENERATION_TIMEOUT = 120; //seconds
         public const int ROOM_GENERATION_TIMEOUT = WORLD_GENERATION_TIMEOUT / 4; //seconds
         public const int FOLIAGE_GENERATION_TIMEOUT = WORLD_GENERATION_TIMEOUT / 4; //seconds
         public const int STRUCTURE_GENERATION_TIMEOUT = WORLD_GENERATION_TIMEOUT / 4; //seconds
         public const int WORLD_BUFFER = 4; //do not change
-        public const int WORLD_MAX_FOLIAGE = 64000;
+        public const int WORLD_MAX_FOLIAGE = 92000;
         public const int STRUCTURE_MAX_SIZE = 16;
         public const float FREQUENCY_INTERVAL = 0.000090f;
 
@@ -672,7 +672,7 @@ namespace TextAdventure
                                     newEntity[3] = 1;
                                     newEntity[4] = (int)entity;
 
-                                    while ((!canPlace(newEntity, ROOM_BUFFER * 2) || hasFoliage(newEntity[0], newEntity[1])) && DateTimeOffset.UtcNow.Add(TimeSpan.FromSeconds(5)) > DateTime.UtcNow)
+                                    while ((!canPlace(newEntity, ROOM_BUFFER) || hasFoliage(newEntity[0], newEntity[1])) && DateTimeOffset.UtcNow.Add(TimeSpan.FromSeconds(5)) > DateTime.UtcNow)
                                     {
 
                                         int[] position = getRandomRoomPosition();
@@ -1379,9 +1379,9 @@ namespace TextAdventure
             if (starty + height + ROOM_BUFFER + extra_buffer > worldHeight || starty + height < 0 || starty < 0)
                 return false;
 
-            for (int x = 0; x < width + ROOM_BUFFER + extra_buffer; x++)
+            for (int x = 0 - width - (ROOM_BUFFER + extra_buffer); x < width + ROOM_BUFFER + extra_buffer; x++)
             {
-                for (int y = 0; y < height + ROOM_BUFFER + extra_buffer; y++)
+                for (int y = 0 - height - (ROOM_BUFFER + extra_buffer); y < height + ROOM_BUFFER + extra_buffer; y++)
                 {
 
                     if (starty + y > worldHeight)
@@ -1389,6 +1389,13 @@ namespace TextAdventure
 
                     if (startx + x > worldWidth)
                         continue;
+
+                    if (starty + y < 0)
+                        continue;
+
+                    if (startx + x < 0)
+                        continue;
+
 
                     if (isSolid(startx + x, starty + y))
                         return false;
@@ -1410,9 +1417,9 @@ namespace TextAdventure
                 }
             }
 
-            for (int x = width - ROOM_BUFFER - extra_buffer; x > (0 - (ROOM_BUFFER - extra_buffer)*2); x--)
+            for (int x = width + ROOM_BUFFER + extra_buffer; x > (0 - width - (ROOM_BUFFER - extra_buffer)); x--)
             {
-                for (int y = height - ROOM_BUFFER - extra_buffer; y > (0 - (ROOM_BUFFER - extra_buffer)*2); y--)
+                for (int y = height + ROOM_BUFFER + extra_buffer; y > (0 - height - (ROOM_BUFFER - extra_buffer)); y--)
                 {
 
                     if (starty - y < 0)

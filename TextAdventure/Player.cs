@@ -19,7 +19,8 @@ namespace TextAdventure
             PEAR,
             PLUM,
             GOLDEN_APPLE,
-            WOOD
+            WOOD,
+            NICE_SOUP
         }
 
         private Dictionary<Items, int> inventory = new Dictionary<Items, int>
@@ -36,19 +37,19 @@ namespace TextAdventure
 
         private static int[] last_position = new int[2];
 
-        public const int MAX_MOVE_DISTANCE = 30;
-        public const int MAX_HARVEST_DISTANCE = 6;
+        public const int MAX_MOVE_DISTANCE = 32;
+        public const int MAX_HARVEST_DISTANCE = 8;
         public const int LEVEL_INTERVAL = 250;
         public const int MAX_HUNGER = 2000;
         public const int MAX_HEALTH = 100;
         public const int DEFAULT_HEALTH = 100;
-        public const int DEFAULT_MOVES = 4;
+        public const int DEFAULT_MOVES = 5;
         public const int MAX_STANIMA = 1000;
         public const int MAX_MANA = 100;
         public const int HUDY = Program.WINDOW_HEIGHT - 11;
         public const int HUDW = 46;
         public const int HUDH = 10;
-        public const int HUDPADDING = 6;
+        public const int HUDPADDING = 2;
         public const double STANIMA_FACTOR = 1.65;
         public const double STANIMA_INCREASE = 15;
         public const double HUNGER_FACTOR = 2.4;
@@ -461,6 +462,14 @@ namespace TextAdventure
                 case Items.HEALTH_POTION:
                     Program.addFeedback("+ H 50");
                     this.heal(50);
+                    return true;
+                case Items.NICE_SOUP:
+                    Program.addFeedback("+ S 500");
+                    Program.addFeedback("+ F 1000");
+                    Program.addFeedback("+ H 100");
+                    this.feed(1000);
+                    this.replenish(500);
+                    this.heal(100);
                     return true;
                 case Items.GOLDEN_APPLE:
                     Program.addFeedback("+ S 250");

@@ -8,7 +8,7 @@ namespace TextAdventure
     class Program
     {
 
-        public enum State : int
+        public enum States : int
         {
             INVALID,
             WORLD,
@@ -19,14 +19,14 @@ namespace TextAdventure
             GAMEOVER
         }
 
-        public const int DEFAULT_WORLD_WIDTH = 800;
-        public const int DEFAULT_WORLD_HEIGHT = 800;
+        public const int DEFAULT_WORLD_WIDTH = 2028;
+        public const int DEFAULT_WORLD_HEIGHT = 2028;
         public const int WINDOW_WIDTH = 162;
         public const int WINDOW_HEIGHT = 50;
-        public const int DEFAULT_FOLIAGE_COUNT = World.WORLD_MAX_FOLIAGE / 4;
-        public const int DEFAULT_ROOM_COUNT = 64;
-        public const int DEFAULT_STRUCTURE_COUNT = 104;
-        public const int DEFAULT_ISLAND_VALUE = 1;
+        public const int DEFAULT_FOLIAGE_COUNT = World.WORLD_MAX_FOLIAGE / 2;
+        public const int DEFAULT_ROOM_COUNT = World.ROOM_MAX / 4;
+        public const int DEFAULT_STRUCTURE_COUNT = 164;
+        public const int DEFAULT_ISLAND_VALUE = 2;
         public const int HUD_BUFFER_ZONE = 2;
         public const bool enableScreenBuffer = false;
 
@@ -35,7 +35,7 @@ namespace TextAdventure
         protected static World world;
         protected static Player player;
         protected static bool running = true;
-        protected static bool autoclear = true;
+        protected static bool autoscroll = true;
         protected static bool autoturn = true;
         protected static bool skipmove = false;
         protected static bool enableColours = true;
@@ -43,7 +43,7 @@ namespace TextAdventure
         protected static int turn = 0;
         protected static List<string> feedback = new List<string>();
 
-        private static State state;
+        private static States state;
         private static ConsoleColor currentForegroundColour;
         private static ConsoleColor currentBackgroundColour;
         private static Music music;
@@ -62,7 +62,7 @@ namespace TextAdventure
             Console.SetWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
             Console.SetBufferSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-            setGameState(State.MENU);
+            setGameState(States.MENU);
 
             while (running)
             {
@@ -82,31 +82,31 @@ namespace TextAdventure
                     music.setOutputDevice();
                 }
                 else
-                    if (getGameState() != State.MENU)
+                    if (getGameState() != States.MENU)
                     music.jukebox();
 
                 switch (state)
                 {
 
-                    case State.WORLD:
+                    case States.WORLD:
                         //print world
                         World.printWorld(player, world, HUD_BUFFER_ZONE);
                         player.drawHud("turn " + turn + $" / moves remaining {moves}");
                         break;
-                    case State.HELP:
+                    case States.HELP:
                         //prints help text file
                         printFile("help.txt");
 
                         writeLine("[r]eturn | [h]elp | [o]ptions | [d]onate | [w]ebsite | [p]age <number> / [n]ext / [b]ack");
                         break;
-                    case State.CREDITS:
+                    case States.CREDITS:
                         //prints credits text file
                         printFile("credits.txt");
 
                         writeLine();
                         writeLine("[r]eturn | [h]elp | [o]ptions | [d]onate | [w]ebsite | [p]age <number> / [n]ext / [b]ack");
                         break;
-                    case State.OPTIONS:
+                    case States.OPTIONS:
 
                         write("Options (options in red you cannot change)");
                         writeLine();
@@ -136,7 +136,7 @@ namespace TextAdventure
                         writeLine();
                         writeLine("Gameplay");
                         writeLine();
-                        writeLine("auto_clear {0}", autoclear);
+                        writeLine("auto_clear {0}", autoscroll);
                         writeLine("auto_turn {0}", autoturn);
                         writeLine();
                         writeLine("Advanced");
@@ -145,7 +145,7 @@ namespace TextAdventure
                         writeLine();
                         writeLine("[r]eturn | [h]elp | [c]redits | change <setting_name> <value if needed>");
                         break;
-                    case State.MENU:
+                    case States.MENU:
 
                         if (world != null && !world.isWorldEmpty())
                         {
@@ -172,7 +172,7 @@ namespace TextAdventure
                 processCommand(line);
 
                 //print feedback
-                if (getGameState() == State.WORLD)
+                if (getGameState() == States.WORLD)
                     printFeedback(Player.CAMERA_WIDTH + 1);
 
                 if (player != null)
@@ -209,7 +209,7 @@ namespace TextAdventure
             feedback.Add(String.Format(line, objects));
         }
 
-        public static void printFeedback(int startx, int starty = 1, int width = 49)
+        public static void printFeedback(int startx, int starty = 1, int width = 49, int start=0, int count=12)
         {
 
             int y = 0;
@@ -233,6 +233,12 @@ namespace TextAdventure
 
             bool function(int i1)
             {
+
+                i1 = start + i1;
+
+                if (i1 > feedback.Count)
+                    return false;
+
                 string line = feedback[i1];
                 setColour(ConsoleColor.White);
 
@@ -256,11 +262,16 @@ namespace TextAdventure
                 if (line == "" || line == null)
                     return true;
 
-                for (int i = 0; i < line.Length; i++)
+                for (int i = 0; i < width; i++)
                 {
+                    string sline;
+                    if (line.Length - 1 < i)
+                        sline = " ";
+                    else
+                        sline = line[i].ToString();
 
                     if (x < width)
-                        write(line[i].ToString());
+                        write(sline);
                     else
                     {
 
@@ -268,8 +279,8 @@ namespace TextAdventure
                         {
 
                             x = 0;
-                            Console.SetCursorPosition(startx, starty + ++y);
-                            write(line[i].ToString());
+                            Console.SetCursorPosition(startx, starty + y);
+                            write(line);
                             continue;
                         }
                         else
@@ -278,13 +289,13 @@ namespace TextAdventure
 
                     if (y >= Player.HUDY - 3)
                     {
-                        if (!autoclear)
-                            writeLine("too much feedback. please clear screen...");
-                        else
-                            clearFeedback();
-
+                        if (autoscroll)
+                        {
+                            start = i;
+                        }
+      
                         y = 0;
-                        return false;
+                                         
                     }
                     x++;
                 }
@@ -378,7 +389,7 @@ namespace TextAdventure
                 Console.Write(line, data);
         }
 
-        public static State getGameState()
+        public static States getGameState()
         {
 
             return state;
@@ -549,7 +560,7 @@ namespace TextAdventure
             }
         }
 
-        public static void setGameState(State gamestate)
+        public static void setGameState(States gamestate)
         {
 
             page = 0;
@@ -560,10 +571,7 @@ namespace TextAdventure
         public static void newTurn()
         {
 
-            if (autoclear)
-                clearFeedback();
-
-            if (getGameState() == State.WORLD)
+            if (getGameState() == States.WORLD)
             {
                 moves = player.Moves;
                 player.processTurn(world.isInRoomAndClaimed(player));
@@ -961,22 +969,22 @@ namespace TextAdventure
             switch (state)
             {
 
-                case State.WORLD:
+                case States.WORLD:
                     processWorldCommand(command, arguments);
                     break;
-                case State.OPTIONS:
+                case States.OPTIONS:
                     processOptionsCommand(command, arguments);
                     break;
-                case State.MENU:
+                case States.MENU:
                     processMenuCommand(command, arguments);
                     break;
-                case State.HELP:
+                case States.HELP:
                     processHelpCommand(command, arguments);
                     break;
-                case State.CREDITS:
+                case States.CREDITS:
                     processCreditsCommand(command, arguments);
                     break;
-                case State.GAMEOVER:
+                case States.GAMEOVER:
                     //processGameoverCommand(command, arguments);
                     break;
             }
@@ -1093,6 +1101,7 @@ namespace TextAdventure
                     }
 
                     player.updateLevel();
+                    skipmove = true;
                     skipread = true;
                     break;
                 case "track":
@@ -1268,19 +1277,19 @@ namespace TextAdventure
                     break;
                 case "h":
                 case "help":
-                    setGameState(State.HELP);
+                    setGameState(States.HELP);
                     skipmove = true;
                     skipread = true;
                     break;
                 case "o":
                 case "options":
-                    setGameState(State.OPTIONS);
+                    setGameState(States.OPTIONS);
                     skipmove = true;
                     skipread = true;
                     break;
                 case "m":
                 case "menu":
-                    setGameState(State.MENU);
+                    setGameState(States.MENU);
                     skipmove = true;
                     skipread = true;
                     break;
@@ -1442,7 +1451,7 @@ namespace TextAdventure
                             developerCommands = !developerCommands;
                             break;
                         case "auto_clear":
-                            autoclear = !autoclear;
+                            autoscroll = !autoscroll;
                             break;
                         case "auto_turn":
                             autoturn = !autoturn;
@@ -1453,19 +1462,19 @@ namespace TextAdventure
                 case "r":
                 case "return":
                     if (world != null && !world.isWorldEmpty())
-                        setGameState(State.WORLD);
+                        setGameState(States.WORLD);
                     else
-                        setGameState(State.MENU);
+                        setGameState(States.MENU);
                     skipread = true;
                     break;
                 case "c":
                 case "credits":
-                    setGameState(State.CREDITS);
+                    setGameState(States.CREDITS);
                     skipread = true;
                     break;
                 case "h":
                 case "help":
-                    setGameState(State.HELP);
+                    setGameState(States.HELP);
                     skipread = true;
                     break;
             }
@@ -1479,19 +1488,19 @@ namespace TextAdventure
                 case "r":
                 case "return":
                     if (world != null && !world.isWorldEmpty())
-                        setGameState(State.WORLD);
+                        setGameState(States.WORLD);
                     else
-                        setGameState(State.MENU);
+                        setGameState(States.MENU);
                     skipread = true;
                     break;
                 case "o":
                 case "options":
-                    setGameState(State.OPTIONS);
+                    setGameState(States.OPTIONS);
                     skipread = true;
                     break;
                 case "c":
                 case "credits":
-                    setGameState(State.CREDITS);
+                    setGameState(States.CREDITS);
                     skipread = true;
                     break;
             }
@@ -1546,19 +1555,19 @@ namespace TextAdventure
                 case "r":
                 case "return":
                     if (world != null && !world.isWorldEmpty())
-                        setGameState(State.WORLD);
+                        setGameState(States.WORLD);
                     else
-                        setGameState(State.MENU);
+                        setGameState(States.MENU);
                     skipread = true;
                     break;
                 case "o":
                 case "options":
-                    setGameState(State.OPTIONS);
+                    setGameState(States.OPTIONS);
                     skipread = true;
                     break;
                 case "h":
                 case "help":
-                    setGameState(State.HELP);
+                    setGameState(States.HELP);
                     skipread = true;
                     break;
                 case "w":
@@ -1590,24 +1599,24 @@ namespace TextAdventure
                     Console.Clear();
                     if (newgame(ref player, ref world, arguments))
                     {
-                        setGameState(State.WORLD);
+                        setGameState(States.WORLD);
                         setSpawn(ref player, ref world);
                     }
                     skipread = true;
                     break;
                 case "o":
                 case "options":
-                    setGameState(State.OPTIONS);
+                    setGameState(States.OPTIONS);
                     skipread = true;
                     break;
                 case "c":
                 case "credits":
-                    setGameState(State.CREDITS);
+                    setGameState(States.CREDITS);
                     skipread = true;
                     break;
                 case "h":
                 case "help":
-                    setGameState(State.HELP);
+                    setGameState(States.HELP);
                     skipread = true;
                     break;
                 case "load":
@@ -1617,7 +1626,7 @@ namespace TextAdventure
                     if (world == null || world.isWorldEmpty())
                         break;
                     else
-                        setGameState(State.WORLD);
+                        setGameState(States.WORLD);
                     skipread = true;
                     break;
                 case "d":
