@@ -59,7 +59,7 @@ namespace TextAdventure
         public Music(Tracks startingTrack = Tracks.UNKNOWN)
         {
             this.currentTrack = startingTrack;
-            stream = new AudioFileReader("tracks/" + trackFilenames[this.currentTrack]);
+            stream = new AudioFileReader("music/" + trackFilenames[this.currentTrack]);
             stream.Volume = DEFAULT_VOLUME;
         }
 

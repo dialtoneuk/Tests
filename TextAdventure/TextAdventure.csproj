@@ -68,52 +68,52 @@
     <None Update="Structures\ruin_small.st">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Tracks\1326_compressed.mp3">
+    <None Update="Music\1326_compressed.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="tracks\1851.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Tracks\1851_compressed.mp3">
+    <None Update="Music\1851_compressed.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Tracks\1913.mp3">
+    <None Update="Music\1913.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Tracks\2310.mp3">
+    <None Update="Music\2310.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Tracks\acidhills.mp3">
+    <None Update="Music\acidhills.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Tracks\bad.mp3">
+    <None Update="Music\bad.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Tracks\buxton.mp3">
+    <None Update="Music\buxton.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Tracks\highways.mp3">
+    <None Update="Music\highways.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Tracks\jellica.mp3">
+    <None Update="Music\jellica.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Tracks\liquid_rhythm.mp3">
+    <None Update="Music\liquid_rhythm.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Tracks\muggy_signals.mp3">
+    <None Update="Music\muggy_signals.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Tracks\petscop.mp3">
+    <None Update="Music\petscop.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Tracks\seeded_numbers.mp3">
+    <None Update="Music\seeded_numbers.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Tracks\tanjent.mp3">
+    <None Update="Music\tanjent.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Tracks\unknown.mp3">
+    <None Update="Music\unknown.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

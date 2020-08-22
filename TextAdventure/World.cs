@@ -478,7 +478,7 @@ namespace TextAdventure
 
                 Blocks[,] structure = new Blocks[STRUCTURE_MAX_SIZE, STRUCTURE_MAX_SIZE];
 
-                string file_name = "structures/" + Enum.GetName(typeof(Structures), s).ToLower() + ".st";
+                string file_name = "Structures/" + Enum.GetName(typeof(Structures), s).ToLower() + ".st";
 
                 if (System.IO.File.Exists(file_name))
                 {
