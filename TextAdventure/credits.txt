@@ -1,12 +1,12 @@
 ﻿
- _______  _______  _       _________ _______  _______  _______  _______ _________          _______  _______  _______ 
-(  ____ )(  ____ \( (    /|\__   __/(  ____ \(  ____ \(  ___  )(  ____ \\__   __/|\     /|(  ___  )(  ____ )(  ____ \
-| (    )|| (    \/|  \  ( |   ) (   | (    \/| (    \/| (   ) || (    \/   ) (   | )   ( || (   ) || (    )|| (    \/
-| (____)|| (__    |   \ | |   | |   | (_____ | (_____ | |   | || (__       | |   | | _ | || (___) || (____)|| (__    
-|  _____)|  __)   | (\ \) |   | |   (_____  )(_____  )| |   | ||  __)      | |   | |( )| ||  ___  ||     __)|  __)   
-| (      | (      | | \   |   | |         ) |      ) || |   | || (         | |   | || || || (   ) || (\ (   | (      
-| )      | (____/\| )  \  |___) (___/\____) |/\____) || (___) || )         | |   | () () || )   ( || ) \ \__| (____/\
-|/       (_______/|/    )_)\_______/\_______)\_______)(_______)|/          )_(   (_______)|/     \||/   \__/(_______/ 2020
+ _______  _______  _       _________ _______    _______  _______  _______ _________          _______  _______  _______ 
+(  ____ )(  ____ \( (    /|\__   __/(  ____ \  (  ____ \(  ___  )(  ____ \\__   __/|\     /|(  ___  )(  ____ )(  ____ \
+| (    )|| (    \/|  \  ( |   ) (   | (    \/  | (    \/| (   ) || (    \/   ) (   | )   ( || (   ) || (    )|| (    \/
+| (____)|| (__    |   \ | |   | |   | (_____   | (_____ | |   | || (__       | |   | | _ | || (___) || (____)|| (__    
+|  _____)|  __)   | (\ \) |   | |   (_____  )  (_____  )| |   | ||  __)      | |   | |( )| ||  ___  ||     __)|  __)   
+| (      | (      | | \   |   | |         ) |        ) || |   | || (         | |   | || || || (   ) || (\ (   | (      
+| )      | (____/\| )  \  |___) (___/\____) |  /\____) || (___) || )         | |   | () () || )   ( || ) \ \__| (____/\
+|/       (_______/|/    )_)\_______/\_______)  \_______)(_______)|/          )_(   (_______)|/     \||/   \__/(_______/ 2020
                                                                                                                      
 
 Thanks!
@@ -21,6 +21,7 @@ Music
     - FrownPaper
 
 
+
 Dependencies
 -----------
 FastNoise.cs by Jordan Peck (https://github.com/Auburn/FastNoise_CSharp)
@@ -29,6 +30,14 @@ NAudio by Mark Heath (https://github.com/naudio/NAudio)
 
 Changelog
 ---------
+22/08/2020 - ALPHA BUILD 0.1.1 RELEASE
+           + added discovery mechanic
+           + added discovery commands
+           + added * wild card to move max distance or harvest max distance
+           + new title screen
+           ~ fixed an isssue with the help file cutting lines.
+           ~ fixed an issue with the tracks pointing to the wrong folder
+           ~ fixed issue with Alpha not even running lol.         
 22/08/2020
            + added some new items.
            + added new foliage types.
@@ -36,6 +45,8 @@ Changelog
            ~ game will now be able to withstand the display resolution of the PC changing.
            ~ fixed various bugs
            ~ fixed a small bug with printFile again...
+           ~ renamed filepaths
+           ~fixed an issue with alpha build not working
 21/08/2020 // Computer fixed!
            + added two new songs (thanks Jellica!).
            + added new commands to navigate through feedback pages.

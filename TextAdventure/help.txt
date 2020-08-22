@@ -1,30 +1,44 @@
 ﻿--------------
 Basic Commands
 --------------
-> w/s/a/d or left/right/up/down or north/south/east/west <number_of_spaces>
+> w/s/a/d or left/right/up/down or north/south/east/west <number_of_spaces or * (for maximum spaces)>
  Moves in any direection a specified number of spaces, will move only one space if no number is given.
   * if a large number is entered you will move until a solid wall is met.
   * eg d 10 (right 10 spaces)
->craft/nake <recepie_name>
+  * using '*' you will move in any direction the maximum possible length
+
+>craft/make <recepie_name>
  Crafts an item using a recepie.
+
 >blueprints/recepies
  Shows you what recepies you have learned.
+
 >blueprint/recepie <recepie_name>
  Tells you how to craft a recepie.
+
 >use <item_name>
  Uses an item from your inventory. Does not take up a turn.
+
 >inventory
  Displays your inventory.
+
 >newturn/endturn/q/nextturn
  Starts the next turn if all of your moves have been used
+
 >unlock
  Unlocks a door, requires a key.
+
 >wait <number_of_turns>
  Wait a number of specified turns, if no number given will wait for one turn.
+
 >claim/capture/conqure
  Lets you claim a room as your own! this yields you a KEY and lots of XP!
   * waiting in your room yeilds twice as much stanima and health increase and no food reduction.
->havest/p/pick/scavange
+
+>discover
+ Discover a room/structure for an XP reward! Can be used while inside buildings or near structures.
+
+>havest/p/pick/scavange <range or *>
  Interact with foliage to replenish your hunger or gain XP. Each foliage gives a different reward.
   * b (berrys) B (blue berrys) T (Tree) O (Oak Tree) and many more for you to discover!
 
@@ -34,26 +48,37 @@ Advanced Commands
 -----------------
 >plan <spaces>
  Tells you how much a move will cost in stanima and calories.
+
 >generate/n/newgame/g <number_of_rooms> <number_of_foliage> <world_width> <world_height> <perlin_noise_frequency>
  Generates a new world map.
+
 >colours <colour_of_walls> <colour_of_floor>
  Sets the colours of the world. Number is integer value of ConsoleColor Enum. Max you can enter is 16.
+
 >music <track>
  Plays a music track.
+
 >addxp/removexp <value>
  Adds or removes xp.
+
 >save <file_name>
  Saves the world to file
+
 >load <file_name>
  Loads a world from file
+
 >give <item>
  Gives an item (items: keys, health_potion, mana_potion.
->zoom <1,2,3>
- Changes the view window to various levels of zoom/size. Kind of broken due to the fact its all text but hey I tried!
+
+>zoom <1,2,3> (!broken kinda)
+ Changes the view window to various levels of zoom/size.
+
 >back
  Goes back to your last position.
+
 >info <range>
  Returns information on the nearest foliage available.
+
 >cls/clear
  Clears the feedback area of feedback
 
@@ -64,6 +89,7 @@ Options Commands
 >change <setting_name> <value>
  Changes a setting to a new value.
  * bools do not need a value and are toggable, for instance just type change colours to flink on or off colours.
+
 >default
  Resets settings.
 
@@ -73,20 +99,28 @@ Page Commands and Feedback Commands
 -----------------------------------
 >back
  Moves back a page.
+
 >next/forward
  Moves forward a page.
+
 >page <number>
  Goes to a specific page.
+
 >present/+
  Moves forward a feedback page.
+
 >past/-
  Moves backwards a feedback page.
+
 >latest/++/=
  Moves to the latest feedback.
+
 >oldest/--
  Moves to the oldest feedback.
+
 >autoscroll
  Always scrolls to the latest feedback.
+
 >page <number>
  Goes to a specific page.
 
@@ -133,6 +167,10 @@ increase every round. Leveling up can make this happen faster.
 * Keeep an eye on your hunger! if it ever reaches zero you will start losing health.
 
 
+
+
+
+
 ----------------------
 Inventory and crafting
 ----------------------
@@ -155,24 +193,35 @@ Developer Commands
 
 >open
  Opens a door with out needing a key.
+
 >tracks
  Displays a list of available musical tracks.
+
 >foliage
  Displays a list of available foliage types.
+
 >blocks
  Displays a list of available block types.
+
 >structures
  Displays a list of available world structures.
+
 >generate_doors
  Adds doors to rooms in the world.
+
 >generate_foliage <count>
  Generate fresh foliage to the world, will delete old foliage.
+
 >generate_rooms <count>
  Generate fresh rooms to the world, will delete old rooms.
+
 >generate_structures <count>
  Adds new structures to the world, will not delete old structures.
+
 >add_rooms <count>
  Adds new rooms to the world, will not delete old rooms.
+
 >items
  Adds new rooms to the world, will not delete old rooms.
+
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace TextAdventure
 {
@@ -22,7 +21,60 @@ namespace TextAdventure
 
         public Dictionary<CraftingRecepies, Dictionary<Player.Items, int>> recepies = new Dictionary<CraftingRecepies, Dictionary<Player.Items, int>>
         {
-
+            {
+                CraftingRecepies.NICE_SOUP,
+                new Dictionary<Player.Items, int>(){
+                    {Player.Items.PLUM, 20},
+                    {Player.Items.APPLE, 10},
+                    {Player.Items.BERRY, 5}
+                }
+            },
+            {
+                CraftingRecepies.NICE_SALAD,
+                new Dictionary<Player.Items, int>(){
+                    {Player.Items.PLUM, 25},
+                    {Player.Items.APPLE, 25},
+                    {Player.Items.BERRY, 25},
+                    {Player.Items.EGGPLANT, 5},
+                    {Player.Items.HONEY, 5}
+                }
+            },
+            {
+                CraftingRecepies.WOOD_CHIPPINGS,
+                new Dictionary<Player.Items, int>(){
+                    {Player.Items.WOOD, 2}
+                }
+            },
+            {
+                CraftingRecepies.TWIG,
+                new Dictionary<Player.Items, int>(){
+                    {Player.Items.WOOD, 5}
+                }
+            },
+            {
+                CraftingRecepies.MANA_POTION,
+                new Dictionary<Player.Items, int>(){
+                    {Player.Items.PURE_MANA, 50}
+                }
+            },
+            {
+                CraftingRecepies.HEALTH_POTION,
+                new Dictionary<Player.Items, int>(){
+                    {Player.Items.PURE_OXYGEN, 50}
+                }
+            },
+            {
+                CraftingRecepies.STANIMA_POTION,
+                new Dictionary<Player.Items, int>(){
+                    {Player.Items.LIQUID_STANIMA, 10}
+                }
+            },
+            {
+                CraftingRecepies.XP_VIAL,
+                new Dictionary<Player.Items, int>(){
+                    {Player.Items.LIQUID_EXPERIENCE, 5}
+                }
+            },
         };
 
         public Dictionary<CraftingRecepies, Player.Items> craftingRewards = new Dictionary<CraftingRecepies, Player.Items>
@@ -36,57 +88,6 @@ namespace TextAdventure
             { CraftingRecepies.XP_VIAL, Player.Items.XP_VIAL},
             { CraftingRecepies.STANIMA_POTION, Player.Items.STANIMA_POTION},
         };
-
-        public Crafting()
-        {
-
-            //Hard coded recepies
-            recepies.Add(CraftingRecepies.NICE_SOUP, new Dictionary<Player.Items, int>()
-            {
-                {Player.Items.PLUM, 20},
-                {Player.Items.APPLE, 10},
-                {Player.Items.BERRY, 5}
-            });     
-            
-            recepies.Add(CraftingRecepies.NICE_SALAD, new Dictionary<Player.Items, int>()
-            {
-                {Player.Items.PLUM, 25},
-                {Player.Items.APPLE, 25},
-                {Player.Items.BERRY, 25},
-                {Player.Items.EGGPLANT, 5},
-                {Player.Items.HONEY, 5}
-            });
-
-            recepies.Add(CraftingRecepies.WOOD_CHIPPINGS, new Dictionary<Player.Items, int>()
-            {
-                {Player.Items.WOOD, 2}
-            });
-
-            recepies.Add(CraftingRecepies.TWIG, new Dictionary<Player.Items, int>()
-            {
-                {Player.Items.WOOD, 5}
-            });
-
-            recepies.Add(CraftingRecepies.MANA_POTION, new Dictionary<Player.Items, int>()
-            {
-                {Player.Items.PURE_MANA, 50}
-            });
-
-            recepies.Add(CraftingRecepies.HEALTH_POTION, new Dictionary<Player.Items, int>()
-            {
-                {Player.Items.PURE_OXYGEN, 50}
-            });
-
-            recepies.Add(CraftingRecepies.STANIMA_POTION, new Dictionary<Player.Items, int>()
-            {
-                {Player.Items.LIQUID_STANIMA, 10}
-            });
-
-            recepies.Add(CraftingRecepies.XP_VIAL, new Dictionary<Player.Items, int>()
-            {
-                {Player.Items.LIQUID_EXPERIENCE, 5}
-            });
-        }
 
         public void craft(CraftingRecepies recepie, ref Player player)
         {
@@ -141,7 +142,7 @@ namespace TextAdventure
                     return true;
 
             return false;
-        }    
+        }
 
         public bool canCraft(CraftingRecepies recepie, ref Player player)
         {

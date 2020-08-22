@@ -59,7 +59,7 @@ namespace TextAdventure
         public Music(Tracks startingTrack = Tracks.UNKNOWN)
         {
             this.currentTrack = startingTrack;
-            stream = new AudioFileReader("music/" + trackFilenames[this.currentTrack]);
+            stream = new AudioFileReader("Music/" + trackFilenames[this.currentTrack]);
             stream.Volume = DEFAULT_VOLUME;
         }
 
@@ -131,7 +131,7 @@ namespace TextAdventure
             if (stream != null)
                 stream.Dispose();
 
-            stream = new AudioFileReader("tracks/" + trackFilenames[track]);
+            stream = new AudioFileReader("Music/" + trackFilenames[track]);
             stream.Volume = DEFAULT_VOLUME;
             fade = new FadeInOutSampleProvider(stream, true);
             fade.BeginFadeIn(2000);

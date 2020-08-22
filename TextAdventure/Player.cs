@@ -33,9 +33,114 @@ namespace TextAdventure
             STANIMA_POTION
         }
 
+        public enum YielType : int
+        {
+
+            STANIMA,
+            HEALTH,
+            MANA,
+            XP,
+            HUNGER
+        }
+
         private Dictionary<Items, int> inventory = new Dictionary<Items, int>
         {
 
+        };
+
+        public static readonly Dictionary<Items, Dictionary<YielType, int>> itemYields = new Dictionary<Items, Dictionary<YielType, int>>
+        {
+            {
+                Items.HEALTH_POTION, new Dictionary<YielType, int>()
+                {
+                    {YielType.HEALTH, 50}
+                }
+            },
+            {
+                Items.MANA_POTION, new Dictionary<YielType, int>()
+                {
+                    {YielType.MANA, 100}
+                }
+            },
+            {
+                Items.STANIMA_POTION, new Dictionary<YielType, int>()
+                {
+                    {YielType.STANIMA, 500}
+                }
+            },
+            {
+                Items.XP_VIAL, new Dictionary<YielType, int>()
+                {
+                    {YielType.XP, 125}
+                }
+            },
+            {
+                Items.NICE_SOUP, new Dictionary<YielType, int>()
+                {
+                    {YielType.XP, 125},
+                    {YielType.STANIMA, 355},
+                    {YielType.HUNGER, 555},
+                    {YielType.HEALTH, 50},
+                }
+            },
+            {
+                Items.NICE_SALAD, new Dictionary<YielType, int>()
+                {
+                    {YielType.XP, 250},
+                    {YielType.STANIMA, 500},
+                    {YielType.HUNGER, 1064},
+                    {YielType.HEALTH, 100},
+                }
+            },
+            {
+                Items.BERRY, new Dictionary<YielType, int>()
+                {
+                    {YielType.XP, 5},
+                    {YielType.STANIMA, 20},
+                    {YielType.HUNGER, 50},
+                }
+            },
+            {
+                Items.APPLE, new Dictionary<YielType, int>()
+                {
+                    {YielType.XP, 10},
+                    {YielType.STANIMA, 40},
+                    {YielType.HUNGER, 20},
+                }
+            },
+            {
+                Items.PLUM, new Dictionary<YielType, int>()
+                {
+                    {YielType.XP, 25},
+                    {YielType.STANIMA, 60},
+                    {YielType.HUNGER, 20},
+                }
+            },
+            {
+                Items.HONEY, new Dictionary<YielType, int>()
+                {
+                    {YielType.XP, 30},
+                    {YielType.STANIMA, 80},
+                    {YielType.HUNGER, 40},
+                }
+            },
+            {
+                Items.EGGPLANT, new Dictionary<YielType, int>()
+                {
+                    {YielType.XP, 30},
+                    {YielType.STANIMA, 120},
+                    {YielType.HUNGER, 80},
+                }
+            },
+            {
+                Items.GOLDEN_APPLE, new Dictionary<YielType, int>()
+                {
+                    {YielType.XP, 500},
+                    {YielType.STANIMA, 500},
+                    {YielType.HUNGER, 500},
+                    {YielType.HEALTH, 100},
+                }
+            },
         };
 
         public static int CAMERA_ZOOM_FACTOR = 0;
@@ -46,22 +151,21 @@ namespace TextAdventure
         public static int HUDW = (int)(CAMERA_WIDTH / 2.5);
 
         private int[] position = new int[2];
-
         private static int[] last_position = new int[2];
 
         public const int MAX_MOVE_DISTANCE = 32;
         public const int MAX_HARVEST_DISTANCE = 8;
         public const int LEVEL_INTERVAL = 250;
         public const int MAX_HUNGER = 2000;
-        public const int MAX_HEALTH = 100;
+        public const int MAX_HEALTH = 201;
         public const int DEFAULT_HEALTH = 100;
         public const int DEFAULT_MOVES = 5;
         public const int MAX_STANIMA = 1000;
         public const int MAX_MANA = 100;
         public const int HUDH = 10;
         public const int HUDPADDING = 2;
-        public const double STANIMA_FACTOR = 1.65;
-        public const double STANIMA_INCREASE = 15;
+        public const double STANIMA_FACTOR = 1.10;
+        public const double STANIMA_INCREASE = 20;
         public const double HUNGER_FACTOR = 2.4;
         public const double HEALING_FACTOR = 0.75;
 
@@ -72,8 +176,10 @@ namespace TextAdventure
         private double hunger;
         private double stanima;
         private double mana;
-        private string playerName;
+        private string ame;
         private Crafting crafting;
+
+        private List<int> discovereies;
 
         public static int[] LastPosition { get => last_position; set => last_position = value; }
         public long Xp { get => xp; }
@@ -83,14 +189,15 @@ namespace TextAdventure
         public double Hunger { get => hunger; }
         public double Stanima { get => stanima; }
         public double Mana { get => mana; }
-        public string PlayerName { get => playerName; set => playerName = value; }
+        public string PlayerName { get => ame; set => ame = value; }
         public int Moves { get => moves; set => moves = value; }
         public Crafting Crafting { get => crafting; }
+        public List<int> Discovereies { get => discovereies; }
 
-        public Player(string playerName)
+        public Player(string ame)
         {
 
-            this.playerName = playerName;
+            this.ame = ame;
             this.crafting = new Crafting();
         }
 
@@ -113,7 +220,96 @@ namespace TextAdventure
             this.mana = MAX_MANA;
         }
 
-        public void drawHud(string header = "[player details]")
+        public void drawDiscoveries(ref World world)
+        {
+
+            int currentx = Console.CursorLeft;
+            int currenty = Console.CursorTop;
+            int scale;
+            if (Player.CAMERA_ZOOM_FACTOR > 1)
+                scale = Player.CAMERA_ZOOM_FACTOR;
+            else
+                scale = 1;
+
+            if (discovereies == null || discovereies.Count == 0)
+                return;
+
+            Program.setColour(ConsoleColor.White);
+
+            foreach (int key in discovereies)
+            {
+
+                object[] discovery = world.getDiscovery(key);
+
+                int startx = (int)discovery[0];
+                int starty = (int)discovery[1];
+                int xcounter = 0;
+                int ycounter = 0;
+                int positionx = -1;
+                int positiony = -1;
+
+                for (int y = Position[1] - (((Player.CAMERA_HEIGHT - Program.HUD_BUFFER_ZONE)) / 2 + (1 / scale)) * scale; y < Position[1] + (((Player.CAMERA_HEIGHT - Program.HUD_BUFFER_ZONE)) / 2 + (1 / scale)) * scale; y++)
+                {
+
+                    if (ycounter > Program.windowHeight)
+                        continue;
+
+                    if (Player.CAMERA_ZOOM_FACTOR > 1)
+                        if (y % Player.CAMERA_ZOOM_FACTOR == 0)
+                            if (y != Position[1] || y != starty)
+                                continue;
+
+                    if (positionx == -1)
+                        for (int x = Position[0] - (((Player.CAMERA_WIDTH - Program.HUD_BUFFER_ZONE)) / 2 + (1 / scale)) * scale; x < Position[0] + (((Player.CAMERA_WIDTH - Program.HUD_BUFFER_ZONE)) / 2 + (1 / scale)) * scale; x++)
+                        {
+
+                            if (Player.CAMERA_ZOOM_FACTOR > 1)
+                                if (x % Player.CAMERA_ZOOM_FACTOR == 0)
+                                    if (x != Position[1] || x != startx )
+                                        continue;
+
+                            if (xcounter > Program.windowWidth)
+                                continue;
+
+                            if (y < 0 || x < 0)
+                                continue;
+
+                            if (startx == x)
+                            {
+                                positionx = xcounter;
+                                break;
+                            }
+
+
+                            xcounter++;
+                        }
+
+                    if (starty == y)
+                    {
+                        positiony = ycounter;
+                        break;
+                    }
+
+                    ycounter++;
+                }
+
+                if (positionx != -1 && positiony != -1)
+                {
+
+                    string name = world.getName(discovery);
+
+                    if (positionx - name.Length / 2 > 0)
+                        positionx = positionx - name.Length / 2;
+
+                    Console.SetCursorPosition(positionx, positiony - 2);
+                    Program.write(name);
+                }
+            }
+
+            Console.SetCursorPosition(currentx, currenty);
+        }
+
+        public void drawHud(string header = "[details]")
         {
 
             int currentx = Console.CursorLeft;
@@ -125,7 +321,7 @@ namespace TextAdventure
                 for (int x = 0; x < HUDW; x++)
                 {
 
-                    if(HUDX+x<Console.WindowWidth&&HUDY+y<Console.WindowHeight)
+                    if (HUDX + x < Console.WindowWidth && HUDY + y < Console.WindowHeight)
                         Console.SetCursorPosition(HUDX + x, HUDY + y);
 
                     if (y == 0 && x == 0)
@@ -207,7 +403,7 @@ namespace TextAdventure
             Console.SetCursorPosition(currentx, currenty);
         }
 
-        public void processTurn(bool in_base=true)
+        public void processTurn(bool in_base = true)
         {
 
             double hunger_reduction = HUNGER_FACTOR - Math.Abs(this.level / 10);
@@ -215,7 +411,7 @@ namespace TextAdventure
             double healing_factor = HEALING_FACTOR + Math.Abs(this.level / 10);
 
 
-            if(!in_base)
+            if (!in_base)
             {
                 if (this.hunger - hunger_reduction <= 0.0)
                 {
@@ -231,7 +427,7 @@ namespace TextAdventure
                 stanima_increase = stanima_increase * 2;
                 healing_factor = healing_factor * 2;
             }
-    
+
 
             if (this.stanima + stanima_increase > MAX_STANIMA)
                 this.stanima = MAX_STANIMA;
@@ -397,7 +593,7 @@ namespace TextAdventure
                 this.inventory[item] = amount;
         }
 
-        public void removeItem(Items item, bool whole_item = false, int amount=1)
+        public void removeItem(Items item, bool whole_item = false, int amount = 1)
         {
 
             if (this.inventory.ContainsKey(item))
@@ -414,6 +610,15 @@ namespace TextAdventure
                         this.inventory.Remove(item);
                 }
             }
+        }
+
+        public void addDiscovery(int key)
+        {
+
+            if (discovereies == null)
+                discovereies = new List<int>();
+
+            discovereies.Add(key);
         }
 
         public Items getItemFromName(string item_name)
@@ -434,12 +639,6 @@ namespace TextAdventure
             return Items.NULL;
         }
 
-        public int getItemQuantity(Items item)
-        {
-
-            return (this.inventory[item]);
-        }
-
         public double[] getLoses(int amount)
         {
 
@@ -448,6 +647,12 @@ namespace TextAdventure
             loses[1] = (HUNGER_FACTOR + Math.Abs(this.level / 5)) * amount;
 
             return loses;
+        }
+
+        public int getItemQuantity(Items item)
+        {
+
+            return (this.inventory[item]);
         }
 
         public bool hasLastPosition()
@@ -479,6 +684,46 @@ namespace TextAdventure
                     return true;
 
             return false;
+        }
+
+        public bool newUseItem(Items item)
+        {
+
+            if (!itemYields.ContainsKey(item))
+                return false;
+            else
+            {
+
+                var yield = itemYields[item];
+
+                foreach(KeyValuePair<YielType, int> keyValuePair in yield)
+                {
+
+                    switch(keyValuePair.Key)
+                    {
+                        case YielType.STANIMA:
+                            charge(keyValuePair.Value);
+                            Program.addFeedback("+ S {0}", keyValuePair.Value);
+                            break;
+                        case YielType.HEALTH:
+                            heal(keyValuePair.Value);
+                            Program.addFeedback("+ H {0}", keyValuePair.Value);
+                            break;
+                        case YielType.HUNGER:
+                            feed(keyValuePair.Value);
+                            Program.addFeedback("+ F {0}", keyValuePair.Value);
+                            break;
+                        case YielType.XP:
+                            addXP(keyValuePair.Value);
+                            Program.addFeedback("+ xp {0}", keyValuePair.Value);
+                            break;
+                        default:
+                            return false;
+                    }
+                }
+
+                return true;
+            }
         }
 
         //TODO: Update to use a Dictionary<Player.Items, int>
