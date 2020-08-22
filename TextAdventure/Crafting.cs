@@ -12,7 +12,12 @@ namespace TextAdventure
             NULL,
             NICE_SOUP,
             WOOD_CHIPPINGS,
-            TWIG
+            TWIG,
+            MANA_POTION,
+            HEALTH_POTION,
+            NICE_SALAD,
+            XP_VIAL,
+            STANIMA_POTION
         }
 
         public Dictionary<CraftingRecepies, Dictionary<Player.Items, int>> recepies = new Dictionary<CraftingRecepies, Dictionary<Player.Items, int>>
@@ -25,6 +30,11 @@ namespace TextAdventure
             { CraftingRecepies.NICE_SOUP, Player.Items.NICE_SOUP },
             { CraftingRecepies.WOOD_CHIPPINGS, Player.Items.WOOD_CHIPPINGS },
             { CraftingRecepies.TWIG, Player.Items.TWIG },
+            { CraftingRecepies.MANA_POTION, Player.Items.MANA_POTION },
+            { CraftingRecepies.HEALTH_POTION, Player.Items.HEALTH_POTION },
+            { CraftingRecepies.NICE_SALAD, Player.Items.NICE_SALAD },
+            { CraftingRecepies.XP_VIAL, Player.Items.XP_VIAL},
+            { CraftingRecepies.STANIMA_POTION, Player.Items.STANIMA_POTION},
         };
 
         public Crafting()
@@ -36,6 +46,15 @@ namespace TextAdventure
                 {Player.Items.PLUM, 20},
                 {Player.Items.APPLE, 10},
                 {Player.Items.BERRY, 5}
+            });     
+            
+            recepies.Add(CraftingRecepies.NICE_SALAD, new Dictionary<Player.Items, int>()
+            {
+                {Player.Items.PLUM, 25},
+                {Player.Items.APPLE, 25},
+                {Player.Items.BERRY, 25},
+                {Player.Items.EGGPLANT, 5},
+                {Player.Items.HONEY, 5}
             });
 
             recepies.Add(CraftingRecepies.WOOD_CHIPPINGS, new Dictionary<Player.Items, int>()
@@ -46,6 +65,26 @@ namespace TextAdventure
             recepies.Add(CraftingRecepies.TWIG, new Dictionary<Player.Items, int>()
             {
                 {Player.Items.WOOD, 5}
+            });
+
+            recepies.Add(CraftingRecepies.MANA_POTION, new Dictionary<Player.Items, int>()
+            {
+                {Player.Items.PURE_MANA, 50}
+            });
+
+            recepies.Add(CraftingRecepies.HEALTH_POTION, new Dictionary<Player.Items, int>()
+            {
+                {Player.Items.PURE_OXYGEN, 50}
+            });
+
+            recepies.Add(CraftingRecepies.STANIMA_POTION, new Dictionary<Player.Items, int>()
+            {
+                {Player.Items.LIQUID_STANIMA, 10}
+            });
+
+            recepies.Add(CraftingRecepies.XP_VIAL, new Dictionary<Player.Items, int>()
+            {
+                {Player.Items.LIQUID_EXPERIENCE, 5}
             });
         }
 

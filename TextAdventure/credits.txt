@@ -29,7 +29,10 @@ NAudio by Mark Heath (https://github.com/naudio/NAudio)
 Changelog
 ---------
 22/08/2020
-           + added crafting and a few recepies
+           + added some new items.
+           + added new foliage types.
+           + added crafting and a few recepies.
+           ~ game will now be able to withstand the display resolution of the PC changing.
            ~ fixed various bugs
            ~ fixed a small bug with printFile again...
 21/08/2020 // Computer fixed!

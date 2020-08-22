@@ -228,6 +228,9 @@ namespace TextAdventure
         public static void update()
         {
 
+            windowWidth = Console.LargestWindowWidth / 2 + (Console.LargestWindowWidth / 4);
+            windowHeight = Console.LargestWindowHeight / 2 + (Console.LargestWindowHeight / 3);
+
             if(Console.WindowHeight!=windowHeight||Console.WindowWidth!=windowWidth)
             {
                 Console.SetWindowSize(windowWidth, windowHeight);
@@ -911,117 +914,6 @@ namespace TextAdventure
 
             return World.Foliage.NULL;
         }
-        /**
-         * Code for interactions with foliage
-         * 
-         * moves this to world class file maybe?
-         **/
-        private static bool interact(ref Player player, ref World world, int scope = 4)
-        {
-            Random r = new Random((int)DateTime.UtcNow.ToBinary()); ;
-
-            for (int y = 0 - scope; y < scope; y++)
-                for (int x = 0 - scope; x < scope; x++)            
-                    if (x + player.Position[0] < world.WorldWidth && y + player.Position[1] < world.WorldHeight)
-                    {
-
-                        int random = r.Next(6, 30);
-
-
-                        if (world.hasFoliage(player.Position[0] + x, player.Position[1] + y))
-                        {
-
-                            World.Foliage foliage = world.getFoliage(player.Position[0] + x, player.Position[1] + y);
-
-                            addFeedback("foraged through a {0}", Enum.GetName(typeof(World.Foliage), foliage));
-
-                            switch (foliage)
-                            {
-                                default:
-                                    player.addXP(random);
-                                    addFeedback("+ xp {0}", random);
-                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
-                                    break;
-                                case World.Foliage.PLANT_EGGPLANT:
-                                case World.Foliage.TREE_APPLE:
-                                    player.addItem(Player.Items.APPLE, random);
-                                    player.addXP(5);
-                                    addFeedback("+ apples {0}", random);
-                                    addFeedback("+ xp 5");
-                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
-                                    return true;
-                                case World.Foliage.BUSH_BLACKBERRIES:
-                                case World.Foliage.BUSH_BLUEBERRIES:
-                                case World.Foliage.BUSH_STRAWBERRIES:
-                                case World.Foliage.BUSH_BERRIES:
-                                    player.addItem(Player.Items.BERRY, random);
-                                    player.addXP(5);
-                                    addFeedback("+ berries {0}", random);
-                                    addFeedback("+ xp 5");
-                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
-                                    return true;
-                                case World.Foliage.TREE_HONEY:
-                                    player.addItem(Player.Items.HONEY, random);
-                                    player.addXP(10);
-                                    addFeedback("+ honey {0}", random);
-                                    addFeedback("+ xp 10");
-                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
-                                    return true;
-                                case World.Foliage.TREE_GOLDEN_APPLE:
-                                    player.addItem(Player.Items.GOLDEN_APPLE, 1);
-                                    player.addXP(20);
-                                    addFeedback("+ golden apple 1");
-                                    addFeedback("+ xp 20");
-                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
-                                    return true;
-                                case World.Foliage.TREE_OAK:
-                                case World.Foliage.TREE_PINE:
-                                case World.Foliage.TREE:
-                                    player.addItem(Player.Items.WOOD, random);
-                                    player.addXP(15);
-                                    addFeedback("+ wood {0}", random);
-                                    addFeedback("+ xp 15");
-                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
-                                    return true;
-                                case World.Foliage.TREE_PEAR:
-                                    player.addItem(Player.Items.PEAR, random);
-                                    player.addXP(15);
-                                    addFeedback("+ pears {0}", random);
-                                    addFeedback("+ xp 15");
-                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
-                                    return true;
-                                case World.Foliage.TREE_PLUM:
-                                    player.addItem(Player.Items.PLUM, random);
-                                    player.addXP(15);
-                                    addFeedback("+ plums {0}", random);
-                                    addFeedback("+ xp 15");
-                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
-                                    return true;
-                                case World.Foliage.PLANT_OXYGEN:
-                                    player.heal(15);
-                                    player.addXP(15);
-                                    addFeedback("+ H 15");
-                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
-                                    return true;
-                                case World.Foliage.PLANT_ROSES:
-                                    player.addXP(15);
-                                    addFeedback("+ xp 15");
-                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
-                                    return true;
-                                case World.Foliage.PLANT_MANA:
-                                    player.charge(r.Next(10, 20));
-                                    player.addXP(15);
-                                    addFeedback("+ xp 15");
-                                    world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
-                                    return true;
-                            }
-                        }
-
-                    }
-
-
-            return false;
-        }
 
         private static bool openDoor(ref Player player, int scope = 5)
         {
@@ -1207,26 +1099,20 @@ namespace TextAdventure
                 case "make":
                 case "craft":
                     if (arguments.Length == 0 || arguments[0] == "")
-                    {
-                        addFeedback("you must enter the recepie name");
-                    }
+                        addFeedback("you must enter the recepie name"); 
                     else
                     {
                         _ = 1;
                         if(arguments.Length>1)
                             if(arguments[1]!="")
-                                if (int.TryParse(arguments[0], out int parse))
+                                if (int.TryParse(arguments[1], out int parse))
                                 {
                                     if (parse != 0)
                                         _ = Math.Abs(parse);
                                 }
 
                         if(_>4)
-                        {
-
                             addFeedback("you can only craft a maximum of 4 items");
-                            skipMove = true;
-                        }
                         else
                         {
 
@@ -1242,23 +1128,18 @@ namespace TextAdventure
                                         addFeedback("crafting {0}", recepie);
                                         player.Crafting.craft(recepie, ref player);
                                         addFeedback("+ {0}", player.Crafting.getReward(recepie));
-                                    }
-                                    else
-                                    {
-                                        addFeedback("you cannot craft that!");
                                         skipMove = true;
                                     }
-                                     
+                                    else
+                                        addFeedback("you cannot craft that!");
+
                                 }
                                 else
-                                {
                                     addFeedback("item does not exist {0}", arguments[0].ToLower());
-                                    skipMove = true;
-                                }
-                                  
                             }
                         }
                     }
+                    skipMove = true;
                     skipRead = true;
                     break;
                 case "conqure":
@@ -1551,7 +1432,7 @@ namespace TextAdventure
                     double[] pick_loses = player.getLoses(2);
                     double[] pick_loses_two = player.getLoses(20);
 
-                    if (interact(ref player, ref world, _))
+                    if (world.newInteraction(ref player, _))
                     {
                         player.decreaseHunger(2);
                         player.decreaseStanima(20);

@@ -50,6 +50,7 @@ namespace TextAdventure
             PLANT_MANA,
             PLANT_OXYGEN,
             PLANT_XP,
+            PLANT_CHARGE
         }
 
         public enum Structures : int
@@ -89,6 +90,12 @@ namespace TextAdventure
             { Foliage.PLANT_MANA, "M" },
             { Foliage.PLANT_OXYGEN, "+" },
             { Foliage.PLANT_XP, "$" },
+            { Foliage.PLANT_CHARGE, "C" },
+        };
+
+        public static readonly Dictionary<Foliage, Dictionary<Player.Items, int>> foliageRewards = new Dictionary<Foliage, Dictionary<Player.Items, int>>
+        {
+           //
         };
 
         public static readonly Dictionary<Foliage, ConsoleColor> foliageColours = new Dictionary<Foliage, ConsoleColor>
@@ -111,6 +118,7 @@ namespace TextAdventure
             { Foliage.PLANT_MANA, ConsoleColor.Blue },
             { Foliage.PLANT_OXYGEN, ConsoleColor.Red },
             { Foliage.PLANT_XP, ConsoleColor.Cyan },
+            { Foliage.PLANT_CHARGE, ConsoleColor.Yellow },
         };
 
         public static readonly Dictionary<Blocks, string> blockTextures = new Dictionary<Blocks, string>
@@ -199,6 +207,115 @@ namespace TextAdventure
 
             if (this.worldHeight == 0)
                 this.worldHeight = WORLD_MAX;
+
+            addDefaultFoliageRewards();
+        }
+
+        public void addDefaultFoliageRewards()
+        {
+
+            Program.writeLine("adding foliage rewards..");
+
+            foliageRewards.Add(Foliage.TREE, new Dictionary<Player.Items, int>
+            {
+                {Player.Items.WOOD, 20 }
+            });
+
+            foliageRewards.Add(Foliage.TREE_OAK, new Dictionary<Player.Items, int>
+            {
+                {Player.Items.WOOD, 40 }
+            });
+
+            foliageRewards.Add(Foliage.TREE_PEAR, new Dictionary<Player.Items, int>
+            {
+                {Player.Items.PEAR, 40 }
+            });
+
+            foliageRewards.Add(Foliage.TREE_HONEY, new Dictionary<Player.Items, int>
+            {
+                {Player.Items.HONEY, 20 },
+                {Player.Items.WOOD, 40 }
+            });
+
+            foliageRewards.Add(Foliage.TREE_PLUM, new Dictionary<Player.Items, int>
+            {
+                {Player.Items.PLUM, 100 },
+                {Player.Items.WOOD, 40 }
+            });
+
+            foliageRewards.Add(Foliage.PLANT_OXYGEN, new Dictionary<Player.Items, int>
+            {
+                {Player.Items.PURE_OXYGEN, 40 },
+                {Player.Items.TWIG, 10 }
+            });
+
+
+            foliageRewards.Add(Foliage.PLANT_XP, new Dictionary<Player.Items, int>
+            {
+                {Player.Items.LIQUID_EXPERIENCE, 40 },
+                {Player.Items.TWIG, 10 }
+            });
+
+            foliageRewards.Add(Foliage.PLANT_CHARGE, new Dictionary<Player.Items, int>
+            {
+                {Player.Items.LIQUID_STANIMA, 40 },
+                {Player.Items.TWIG, 10 }
+            });
+
+            foliageRewards.Add(Foliage.PLANT_MANA, new Dictionary<Player.Items, int>
+            {
+                {Player.Items.PURE_MANA, 60 },
+                {Player.Items.TWIG, 10 }
+            });
+
+            foliageRewards.Add(Foliage.PLANT_EGGPLANT, new Dictionary<Player.Items, int>
+            {
+                {Player.Items.EGGPLANT, 2 },
+                {Player.Items.TWIG, 40 }
+            });
+
+            foliageRewards.Add(Foliage.TREE_APPLE, new Dictionary<Player.Items, int>
+            {
+                {Player.Items.APPLE, 10 }
+            });
+
+            foliageRewards.Add(Foliage.TREE_GOLDEN_APPLE, new Dictionary<Player.Items, int>
+            {
+                {Player.Items.LIQUID_EXPERIENCE, 2 },
+                {Player.Items.GOLDEN_APPLE, 2 }
+            });
+
+            foliageRewards.Add(Foliage.TREE_PINE, new Dictionary<Player.Items, int>
+            {
+                {Player.Items.WOOD, 30 },
+                {Player.Items.TWIG, 40 }
+            });
+
+            foliageRewards.Add(Foliage.BUSH_BERRIES, new Dictionary<Player.Items, int>
+            {
+                {Player.Items.BERRY, 10 },
+                {Player.Items.TWIG, 40 }
+            });
+
+            foliageRewards.Add(Foliage.BUSH_BLACKBERRIES, new Dictionary<Player.Items, int>
+            {
+                {Player.Items.TWIG, 40 },
+                {Player.Items.BERRY, 20 }
+            });
+
+            foliageRewards.Add(Foliage.BUSH_BLUEBERRIES, new Dictionary<Player.Items, int>
+            {
+                {Player.Items.TWIG, 40 },
+                {Player.Items.BERRY, 30 }
+            });
+
+            foliageRewards.Add(Foliage.BUSH_STRAWBERRIES, new Dictionary<Player.Items, int>
+            {
+                {Player.Items.TWIG, 40 },
+                {Player.Items.BERRY, 40 }
+            });
+
+            Program.writeLine("done foliage rewards..");
         }
 
         public World(int width, int height)
@@ -210,53 +327,9 @@ namespace TextAdventure
 
             consoleWidth = Console.WindowWidth;
             consoleHeight = Console.WindowHeight;
+
+            addDefaultFoliageRewards();
         }
-
-        /**
-        public void save(string file_name="world1")
-        {
-            //TODO: coming soon since this is pretty damn complex tbf
-        }
-
-        private void saveWorld(World world, string file_name = "world1")
-        {
-            XmlSerializer x = CreateOverrider();
-            Stream file = new FileStream($"saves/{file_name}", FileMode.Create, FileAccess.Write);
-            x.Serialize(file, world);
-            file.Close();
-        }
-
-        private World loadWorld(string file_name = "world1")
-        {
-
-            if (File.Exists($"saves/{file_name}"))
-            {
-                XmlSerializer x = CreateOverrider();
-                Stream file = new FileStream($"saves/{file_name}", FileMode.Create, FileAccess.Write);
-                World world = (World)x.Deserialize(file);
-                return (world);
-            }
-            else
-                throw new FileNotFoundException($"saves/{file_name} not found");
-        }
-
-        private static XmlSerializer CreateOverrider()
-        {
-          
-        XmlAttributes attrs = new XmlAttributes();
-
-            attrs = new XmlAttributes();
-            attrs.XmlIgnore = true;
-            xOver.Add(typeof(World), "structures", attrs);
-            xOver.Add(typeof(World), "blockColours", attrs);
-            xOver.Add(typeof(World), "blockTextures", attrs);
-            xOver.Add(typeof(World), "foliageColours", attrs);
-            xOver.Add(typeof(World), "foliageTextures", attrs);
-
-            XmlSerializer xSer = new XmlSerializer(typeof(World), xOver);
-            return xSer;
-        }
-        **/
 
         public static void printWorld(Player player, World world, int buffer_zone = 5)
         {
@@ -343,8 +416,8 @@ namespace TextAdventure
                     {
                         Foliage foliage = world.getFoliage(x, y);
 
-                        Program.setColour(World.foliageColours[foliage]);
-                        Program.write(World.foliageTextures[foliage]);
+                        Program.setColour(foliageColours[foliage]);
+                        Program.write(foliageTextures[foliage]);
                     }
                     else
                     {
@@ -381,7 +454,7 @@ namespace TextAdventure
                         else
                         {
                             Program.setColour(world.getColor(block));
-                            Program.write(World.blockTextures[block]);
+                            Program.write(blockTextures[block]);
                         }
                     }
 
@@ -654,13 +727,13 @@ namespace TextAdventure
 
                                     Foliage entity;
 
-                                    if (r.Next(60) < 30)
+                                    if (r.Next(1,100) > 50)
                                     {
                                         var length = Enum.GetValues(typeof(Foliage)).Length;
                                         entity = (Foliage)Enum.GetValues(typeof(Foliage)).GetValue(r.Next(1, length - 1));
                                     }
                                     else
-                                        if (r.Next(10) > 5)
+                                    if (r.Next(10) > 5)
                                         entity = Foliage.TREE_OAK;
                                     else
                                         entity = Foliage.TREE;
@@ -1138,6 +1211,49 @@ namespace TextAdventure
         {
 
             return Enum.GetNames(typeof(Blocks)).Length;
+        }
+
+        public bool newInteraction(ref Player player, int scope = 4)
+        {
+
+            World world = this;
+            Random r = new Random((int)DateTime.UtcNow.ToBinary()); ;
+
+            for (int y = 0 - scope; y < scope; y++)
+                for (int x = 0 - scope; x < scope; x++)
+                    if (x + player.Position[0] < world.WorldWidth && y + player.Position[1] < world.WorldHeight)
+                    {
+
+                        Foliage foliage;
+                        if (world.hasFoliage(player.Position[0] + x, player.Position[1] + y))
+                            foliage = world.getFoliage(player.Position[0] + x, player.Position[1] + y);
+                        else
+                            continue;
+
+                        if (foliageRewards.ContainsKey(foliage))
+                        {
+
+                            foreach (KeyValuePair<Player.Items, int> keyValuePair in foliageRewards[foliage])
+                            {
+                                int random = r.Next(1, keyValuePair.Value);
+                                player.addItem(keyValuePair.Key, random);
+                                Program.addFeedback("+ {0} x{1}", keyValuePair.Key, random);
+                            }
+
+                            world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
+                            return true;
+                        }
+                        else
+                        {
+                            int random = r.Next(6, 30);
+                            player.addXP(random);
+                            Program.addFeedback("+ {0} into xp {1}", foliage, random);
+                            world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
+                            return true;
+                        }
+                    }
+
+            return false;
         }
 
         public bool claimRoom(Player player)

@@ -22,7 +22,15 @@ namespace TextAdventure
             WOOD,
             NICE_SOUP,
             WOOD_CHIPPINGS,
-            TWIG
+            TWIG,
+            PURE_MANA,
+            PURE_OXYGEN,
+            EGGPLANT,
+            NICE_SALAD,
+            LIQUID_STANIMA,
+            LIQUID_EXPERIENCE,
+            XP_VIAL,
+            STANIMA_POTION
         }
 
         private Dictionary<Items, int> inventory = new Dictionary<Items, int>
@@ -117,8 +125,8 @@ namespace TextAdventure
                 for (int x = 0; x < HUDW; x++)
                 {
 
-                    Console.SetCursorPosition(HUDX + x, HUDY + y);
-
+                    if(HUDX+x<Console.WindowWidth&&HUDY+y<Console.WindowHeight)
+                        Console.SetCursorPosition(HUDX + x, HUDY + y);
 
                     if (y == 0 && x == 0)
                     {
@@ -374,6 +382,7 @@ namespace TextAdventure
         {
 
             var keys = this.inventory.Keys;
+            Program.addFeedback("[inventory] ");
 
             foreach (Items item in keys)
                 Program.addFeedback("{0} x{1}", Enum.GetName(typeof(Items), item), this.inventory[item]);
@@ -472,29 +481,46 @@ namespace TextAdventure
             return false;
         }
 
+        //TODO: Update to use a Dictionary<Player.Items, int>
         public bool useItem(Items item)
         {
 
             switch (item)
             {
                 default:
-                    Program.addFeedback("you can't use this");
+                    Program.addFeedback("you can't use this, it may need crafting");
                     return false;
                 case Items.MANA_POTION:
                     Program.addFeedback("+ M 50");
                     this.charge(50);
                     return true;
+                case Items.STANIMA_POTION:
+                    Program.addFeedback("+ S 500");
+                    this.charge(500);
+                    return true;
+                case Items.XP_VIAL:
+                    Program.addFeedback("+ xp 125");
+                    this.addXP(125);
+                    return true;
                 case Items.HEALTH_POTION:
                     Program.addFeedback("+ H 50");
                     this.heal(50);
+                    return true;
+                case Items.NICE_SALAD:
+                    Program.addFeedback("+ S 1000");
+                    Program.addFeedback("+ F 1000");
+                    Program.addFeedback("+ H 100");
+                    this.feed(1000);
+                    this.replenish(1000);
+                    this.heal(100);
                     return true;
                 case Items.NICE_SOUP:
                     Program.addFeedback("+ S 500");
                     Program.addFeedback("+ F 1000");
                     Program.addFeedback("+ H 100");
-                    this.feed(1000);
+                    this.feed(500);
                     this.replenish(500);
-                    this.heal(100);
+                    this.heal(50);
                     return true;
                 case Items.GOLDEN_APPLE:
                     Program.addFeedback("+ S 250");
