@@ -21,7 +21,6 @@ Music
     - FrownPaper
 
 
-
 Dependencies
 -----------
 FastNoise.cs by Jordan Peck (https://github.com/Auburn/FastNoise_CSharp)
@@ -31,13 +30,14 @@ NAudio by Mark Heath (https://github.com/naudio/NAudio)
 Changelog
 ---------
 22/08/2020 - ALPHA BUILD 0.1.1 RELEASE
-           + added discovery mechanic
-           + added discovery commands
-           + added * wild card to move max distance or harvest max distance
-           + new title screen
+           + added discovery mechanic.
+           + added discovery commands.
+           + added * wild card to move max distance or harvest max distance.
+           + new title screen.
            ~ fixed an isssue with the help file cutting lines.
-           ~ fixed an issue with the tracks pointing to the wrong folder
+           ~ fixed an issue with the tracks pointing to the wrong folder.
            ~ fixed issue with Alpha not even running lol.         
+           ~ fixed an issue with multiple discoveries not rendering.
 22/08/2020
            + added some new items.
            + added new foliage types.

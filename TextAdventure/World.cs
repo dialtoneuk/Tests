@@ -316,6 +316,68 @@ namespace TextAdventure
         private static int islandValue;
         private static int roomCount;
         private static int[] spawnRoom;
+        private static readonly string[] firstnames =
+        {
+            "Brown",
+            "Blue",
+            "Green",
+            "Red",
+            "Yellow",
+            "Old",
+            "New",
+            "Young",
+            "Classy",
+            "Creepy",
+            "Kind",
+            "Bubbling",
+            "Crystal",
+            "Purple",
+            "Butt",
+            "Great",
+            "South",
+            "North",
+            "East",
+            "West",
+            "Wood",
+            "Water",
+            "Bake",
+            "Kindle",
+            "Forgotten",
+            "Abandoned",
+            "Slimey",
+            "Barren",
+            "Poor",
+            "Lesser"
+        };
+        private static readonly string[] secondnames =
+        {
+            "Creek",
+            "Palace",
+            "Water",
+            "Side",
+            "Field",
+            "Way",
+            "Place",
+            "Docile",
+            "Battleground",
+            "Burial Site",
+            "Peaks",
+            "Castle",
+            "Pile",
+            "Hell",
+            "Lane",
+            "Heaven",
+            "Forest",
+            "Hill",
+            "Ruins",
+            "Alley",
+            "Abbey",
+            "Marker",
+            "Stead",
+            "Hamlet",
+            "Wood",
+            "River"
+         };
 
         public int[,] WorldData { get => worldData; }
         public int[][] RoomData { get => roomData; }
@@ -1303,6 +1365,8 @@ namespace TextAdventure
                     discoveryData[key] = objects;
                     return key;
                 }
+
+                key++;
             }
 
             throw new Exception("player is not in a room");
@@ -1310,43 +1374,6 @@ namespace TextAdventure
 
         public string getRandomName()
         {
-
-            string[] firstnames =
-            {
-                "Brown",
-                "Blue",
-                "Green",
-                "Red",
-                "Yellow",
-                "Old",
-                "New",
-                "Young",
-                "Classy",
-                "Creepy",
-                "Kind",
-                "Bubbling",
-                "Crystal",
-                "Purple"
-            };
-
-
-            string[] secondnames =
-            {
-                "Creek",
-                "Palace",
-                "Water",
-                "Side",
-                "Field",
-                "Way",
-                "Place",
-                "Docile",
-                "Battleground",
-                "Burial Site",
-                "Peaks",
-                "Castle",
-                "Pile",
-                "Hell"
-            };
 
             Random r = new Random();
 

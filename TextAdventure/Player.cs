@@ -290,6 +290,7 @@ namespace TextAdventure
                         break;
                     }
 
+                    xcounter = 0;
                     ycounter++;
                 }
 
