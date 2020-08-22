@@ -20,7 +20,9 @@ namespace TextAdventure
             PLUM,
             GOLDEN_APPLE,
             WOOD,
-            NICE_SOUP
+            NICE_SOUP,
+            WOOD_CHIPPINGS,
+            TWIG
         }
 
         private Dictionary<Items, int> inventory = new Dictionary<Items, int>
@@ -29,9 +31,11 @@ namespace TextAdventure
         };
 
         public static int CAMERA_ZOOM_FACTOR = 0;
-        public static int CAMERA_WIDTH = (int)(Program.WINDOW_WIDTH) - (Program.WINDOW_WIDTH / 5) - 18;
-        public static int CAMERA_HEIGHT = (int)(Program.WINDOW_HEIGHT);
+        public static int CAMERA_WIDTH = (int)(Program.windowWidth) - (Program.windowWidth / 5) - 18;
+        public static int CAMERA_HEIGHT = (int)(Program.windowHeight) - 2;
         public static int HUDX = CAMERA_WIDTH + 2;
+        public static int HUDY = Program.windowHeight - 11;
+        public static int HUDW = (int)(CAMERA_WIDTH / 2.5);
 
         private int[] position = new int[2];
 
@@ -46,8 +50,6 @@ namespace TextAdventure
         public const int DEFAULT_MOVES = 5;
         public const int MAX_STANIMA = 1000;
         public const int MAX_MANA = 100;
-        public const int HUDY = Program.WINDOW_HEIGHT - 11;
-        public const int HUDW = 46;
         public const int HUDH = 10;
         public const int HUDPADDING = 2;
         public const double STANIMA_FACTOR = 1.65;
@@ -63,6 +65,7 @@ namespace TextAdventure
         private double stanima;
         private double mana;
         private string playerName;
+        private Crafting crafting;
 
         public static int[] LastPosition { get => last_position; set => last_position = value; }
         public long Xp { get => xp; }
@@ -74,11 +77,23 @@ namespace TextAdventure
         public double Mana { get => mana; }
         public string PlayerName { get => playerName; set => playerName = value; }
         public int Moves { get => moves; set => moves = value; }
+        public Crafting Crafting { get => crafting; }
 
         public Player(string playerName)
         {
 
             this.playerName = playerName;
+            this.crafting = new Crafting();
+        }
+
+        public void update()
+        {
+
+            CAMERA_WIDTH = (int)(Program.windowWidth) - (Program.windowWidth / 5) - 18;
+            CAMERA_HEIGHT = (int)(Program.windowHeight);
+            HUDX = CAMERA_WIDTH + 2;
+            HUDY = Program.windowHeight - 11;
+            updateLevel();
         }
 
         public void reset()
@@ -220,27 +235,21 @@ namespace TextAdventure
             else
                 this.health += (int)Math.Floor(healing_factor);
 
-            if(!in_base)
+            int[] array =
             {
+                (int)stanima_increase,
+                0 - (int)hunger_reduction,
+                (int)healing_factor
+            };
 
-                Program.addFeedback("turn cost and income.");
-                Program.addFeedback("+ H {0}", healing_factor);
-                Program.addFeedback("+ S {0}", stanima_increase);
-                Program.addFeedback("- F {0}", hunger_reduction);
-            }
-            else
-            {
+            Program.addChange(array);
 
-                Program.addFeedback("hiding in your base for a turn...");
-                Program.addFeedback("+ H {0}", healing_factor);
-                Program.addFeedback("+ S {0}", stanima_increase);
-            }
-             
             updateLevel();
         }
 
         public void decreaseStanima(int amount)
         {
+
 
             double stanima_decrease = (STANIMA_FACTOR + Math.Abs(this.level / 5)) * amount;
 
@@ -248,6 +257,8 @@ namespace TextAdventure
                 this.stanima = 0;
 
             this.stanima -= stanima_decrease;
+
+            Program.addChange("stanima", 0 - (int)stanima_decrease);
         }
 
         public void decreaseHunger(int amount)
@@ -259,6 +270,8 @@ namespace TextAdventure
                 this.hunger = 0;
 
             this.hunger -= hunger_decrease;
+
+            Program.addChange("hunger", 0 - (int)hunger_decrease);
         }
 
         public void setPosition(int x, int y)
@@ -276,6 +289,8 @@ namespace TextAdventure
         public void feed(int amount)
         {
 
+            Program.addChange("hunger", amount);
+
             if (this.hunger + amount > MAX_HUNGER)
                 this.hunger = MAX_HUNGER;
 
@@ -288,11 +303,16 @@ namespace TextAdventure
             if (this.mana + amount > MAX_MANA)
                 this.mana = MAX_MANA;
 
+            Program.addChange("mana", amount);
+
             this.mana += amount;
         }
 
         public void damage(int amount)
         {
+
+
+            Program.addChange("health", amount);
 
             this.health -= amount;
         }
@@ -315,6 +335,7 @@ namespace TextAdventure
         public void addXP(long amount)
         {
 
+            Program.addChange("xp", (int)amount);
             this.xp += amount;
         }
 
@@ -330,6 +351,8 @@ namespace TextAdventure
         public void heal(int amount)
         {
 
+            Program.addChange("health", amount);
+
             if (this.health > 100)
                 this.health = 100;
 
@@ -338,6 +361,8 @@ namespace TextAdventure
 
         public void replenish(float amount)
         {
+
+            Program.addChange("stanima", (int)amount);
 
             if (this.stanima + amount > MAX_STANIMA)
                 this.stanima = MAX_STANIMA;
@@ -363,7 +388,7 @@ namespace TextAdventure
                 this.inventory[item] = amount;
         }
 
-        public void removeItem(Items item, bool whole_item = false)
+        public void removeItem(Items item, bool whole_item = false, int amount=1)
         {
 
             if (this.inventory.ContainsKey(item))
@@ -374,8 +399,8 @@ namespace TextAdventure
                 else
                 {
 
-                    if (this.inventory[item] - 1 > 0)
-                        this.inventory[item] = this.inventory[item] - 1;
+                    if (this.inventory[item] - amount > 0)
+                        this.inventory[item] = this.inventory[item] - amount;
                     else
                         this.inventory.Remove(item);
                 }

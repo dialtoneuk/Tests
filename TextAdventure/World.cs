@@ -278,7 +278,7 @@ namespace TextAdventure
 
                 xcounter = 0;
 
-                if (ycounter > Program.WINDOW_HEIGHT - buffer_zone)
+                if (ycounter > Program.windowHeight - buffer_zone)
                     continue;
 
                 if (ycounter > consoleHeight - buffer_zone)
@@ -308,7 +308,7 @@ namespace TextAdventure
                         if (x % Player.CAMERA_ZOOM_FACTOR == 0)
                             continue;
 
-                    if (xcounter > Program.WINDOW_WIDTH - buffer_zone)
+                    if (xcounter > Program.windowWidth - buffer_zone)
                         continue;
 
                     if (xcounter > consoleWidth - buffer_zone)

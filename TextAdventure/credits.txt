@@ -1,25 +1,26 @@
 ﻿
-#----------------------------------------------------------------------#
-|  _               _       _______        _     _____  _____   _____   |
-| | |             | |     |__   __|      | |   |  __ \|  __ \ / ____|  |
-| | |    _   _  __| |___     | | _____  _| |_  | |__) | |__) | |  __   |
-| | |   | | | |/ _` / __|    | |/ _ \ \/ / __| |  _  /|  ___/| | |_ |  |
-| | |___| |_| | (_| \__ \    | |  __/>  <| |_  | | \ \| |    | |__| |  |			
-| |______\__, |\__,_|___/    |_|\___/_/\_\\__| |_|  \_\_|     \_____|  |
-|         __/ |                                                        |
-|        |___/     Created by Llydia "Lyds" Lancaster in 2020!         |
-|                                           Written in C#!             |
-#----------------------------------------------------------------------#
+ _______  _______  _       _________ _______  _______  _______  _______ _________          _______  _______  _______ 
+(  ____ )(  ____ \( (    /|\__   __/(  ____ \(  ____ \(  ___  )(  ____ \\__   __/|\     /|(  ___  )(  ____ )(  ____ \
+| (    )|| (    \/|  \  ( |   ) (   | (    \/| (    \/| (   ) || (    \/   ) (   | )   ( || (   ) || (    )|| (    \/
+| (____)|| (__    |   \ | |   | |   | (_____ | (_____ | |   | || (__       | |   | | _ | || (___) || (____)|| (__    
+|  _____)|  __)   | (\ \) |   | |   (_____  )(_____  )| |   | ||  __)      | |   | |( )| ||  ___  ||     __)|  __)   
+| (      | (      | | \   |   | |         ) |      ) || |   | || (         | |   | || || || (   ) || (\ (   | (      
+| )      | (____/\| )  \  |___) (___/\____) |/\____) || (___) || )         | |   | () () || )   ( || ) \ \__| (____/\
+|/       (_______/|/    )_)\_______/\_______)\_______)(_______)|/          )_(   (_______)|/     \||/   \__/(_______/ 2020
+                                                                                                                     
 
 Thanks!
 -------
-Programmed by Llydia Lancaster 2020.
-Help found on google and on stack overflow.
-Special thanks to Penisman, James and Saph and Eddie and Ro.
-Made this to test out C#.
+Programming
+    - Llydia Lancaster
+
+Music
+    - LLYDIA LANCASTER
+    - JellicaJake (@JellicaJake)
+    - FrownPaper
 
 
-Stuff I use
+Dependencies
 -----------
 FastNoise.cs by Jordan Peck (https://github.com/Auburn/FastNoise_CSharp)
 NAudio by Mark Heath (https://github.com/naudio/NAudio)
@@ -27,15 +28,32 @@ NAudio by Mark Heath (https://github.com/naudio/NAudio)
 
 Changelog
 ---------
+22/08/2020
+           + added crafting and a few recepies
+           ~ fixed various bugs
+21/08/2020 // Computer fixed!
+           + added two new songs (thanks Jellica!).
+           + added new commands to navigate through feedback pages.
+           + added feedback pages.
+           ~ fixed lots of issues with feedback losing information.
+           ~ updated credits.
+           ~ updated help.
+           ~ fixed an issue with help/credits cutting off lines of text
+           ~ fixed an issue with pages not displaying correctly.
+           ~ fixed various bugs and issues.
+           ~ encapsulised those variables!
+           ~ game will automatically resize its self to the maximum/best possible resolution for the computer    
+20/08/2020
+           + added new song.
 15/08/2020
            + added base claiming and "claim command".
-           + added new track
+           + added new song.
            ~ tweaked stuff and fixed various bugs
-           ~ added claim command
-           ~ fixed world generation to now define a foliage array equal to the size of the world to save memory
+           ~ added claim command.
+           ~ fixed world generation to now define a foliage array equal to the size of the world to save memory.
 12/08/2020
-           + added new song
-           + attempted to add world saving/loading, partially added but finishing at a later date
+           + added new song.
+           + attempted to add world saving/loading, partially added but finishing at a later date.
            + added the move system.
            + added newturn commands.
            + added settings for autoclear and autoturn.

@@ -1,191 +1,178 @@
-﻿
+﻿--------------
 Basic Commands
----------------
-
-> w/s/a/d left/right/up/down north/south/east/west
-Enter any of the following inputs to move in a direction. Moving uses up stanima and hunger.
-
-> <direction> <number_of_spaces>
-Moves in any direection a specified number of spaces, will move only one space if no number is given.
-* if a large number is entered you will move until a solid wall is met.
-
+--------------
+> w/s/a/d or left/right/up/down or north/south/east/west <number_of_spaces>
+ Moves in any direection a specified number of spaces, will move only one space if no number is given.
+  * if a large number is entered you will move until a solid wall is met.
+  * eg d 10 (right 10 spaces)
+>craft/nake <recepie_name>
+ Crafts an item using a recepie.
+>blueprints/recepies
+ Shows you what recepies you have learned.
+>blueprint/recepie <recepie_name>
+ Tells you how to craft a recepie.
 >use <item_name>
-Uses an item from your inventory. Does not take up a turn.
-
+ Uses an item from your inventory. Does not take up a turn.
 >inventory
-Displays your inventory.
-
+ Displays your inventory.
 >newturn/endturn/q/nextturn
-starts the next turn if all of your moves have been used
-
->cls/clear
-clears the feedback area of feedback
-
+ Starts the next turn if all of your moves have been used
 >unlock
-Unlocks a door, requires a key.
-
+ Unlocks a door, requires a key.
 >wait <number_of_turns>
-Wait a number of specified turns, if no number given will wait for one turn.
-
->info <range>
-Returns information on the nearest foliage available.
-
+ Wait a number of specified turns, if no number given will wait for one turn.
 >claim/capture/conqure
-Lets you claim a room as your own! this yields you a KEY and lots of XP!
-* waiting in your room yeilds twice as much stanima and health increase and no food reduction.
-
->back
-Goes back to your last position.
-
+ Lets you claim a room as your own! this yields you a KEY and lots of XP!
+  * waiting in your room yeilds twice as much stanima and health increase and no food reduction.
 >havest/p/pick/scavange
-Interact with foliage to replenish your hunger or gain XP. Each foliage gives a different reward.
-* b (berrys) B (blue berrys) T (Tree) O (Oak Tree) and many more for you to discover!
-
->zoom <1,2,3>
-Changes the view window to various levels of zoom/size. Kind of broken due to the fact its all text but hey I tried!
+ Interact with foliage to replenish your hunger or gain XP. Each foliage gives a different reward.
+  * b (berrys) B (blue berrys) T (Tree) O (Oak Tree) and many more for you to discover!
 
 
-
+-----------------
 Advanced Commands
----------------
-
+-----------------
 >plan <spaces>
-Tells you how much a move will cost in stanima and calories.
-
+ Tells you how much a move will cost in stanima and calories.
 >generate/n/newgame/g <number_of_rooms> <number_of_foliage> <world_width> <world_height> <perlin_noise_frequency>
-Generates a new world map.
-
+ Generates a new world map.
 >colours <colour_of_walls> <colour_of_floor>
-Sets the colours of the world. Number is integer value of ConsoleColor Enum. If this means nothing, max you can enter is 16.
-
+ Sets the colours of the world. Number is integer value of ConsoleColor Enum. Max you can enter is 16.
 >music <track>
-Plays a music track.
-
+ Plays a music track.
 >addxp/removexp <value>
-Adds or removes xp.
-
+ Adds or removes xp.
 >save <file_name>
-saves the world to file
-
+ Saves the world to file
 >load <file_name>
-loads a world from file
-
+ Loads a world from file
 >give <item>
-Gives an item (items: keys, health_potion, mana_potion.
+ Gives an item (items: keys, health_potion, mana_potion.
+>zoom <1,2,3>
+ Changes the view window to various levels of zoom/size. Kind of broken due to the fact its all text but hey I tried!
+>back
+ Goes back to your last position.
+>info <range>
+ Returns information on the nearest foliage available.
+>cls/clear
+ Clears the feedback area of feedback
 
 
-
-Developer Commands
----------------
-* these commands need to be enabled through the options and can break things!
-
->open
-Opens a door with out needing a key.
-
->tracks
-Displays a list of available musical tracks.
-
->foliage
-Displays a list of available foliage types.
-
->blocks
-Displays a list of available block types.
-
->structures
-Displays a list of available world structures.
-
-
-
->generate_doors
-Adds doors to rooms in the world.
-
->generate_foliage <count>
-Generate fresh foliage to the world, will delete old foliage.
-
->generate_rooms <count>
-Generate fresh rooms to the world, will delete old rooms.
-
->generate_structures <count>
-Adds new structures to the world, will not delete old structures.
-
->add_rooms <count>
-Adds new rooms to the world, will not delete old rooms.
-
->items
-Adds new rooms to the world, will not delete old rooms.
-
-
+----------------
 Options Commands
 ----------------
-
 >change <setting_name> <value>
-*bools do not need a value and are toggable, for instance just type change colours to flink on or off colours.
+ Changes a setting to a new value.
+ * bools do not need a value and are toggable, for instance just type change colours to flink on or off colours.
+>default
+ Resets settings.
 
 
-Page Commands
--------------
-
+-----------------------------------
+Page Commands and Feedback Commands
+-----------------------------------
 >back
-Moves back a page.
-
+ Moves back a page.
 >next/forward
-Moves forward a page.
-
+ Moves forward a page.
 >page <number>
-Goes to a specific page.
+ Goes to a specific page.
+>present/+
+ Moves forward a feedback page.
+>past/-
+ Moves backwards a feedback page.
+>latest/++/=
+ Moves to the latest feedback.
+>oldest/--
+ Moves to the oldest feedback.
+>autoscroll
+ Always scrolls to the latest feedback.
+>page <number>
+ Goes to a specific page.
 
 
+---------------
 Turns and moves
 ---------------
 Each action you do will take up a move. At the beginning of the game you are limited to only partaking in 4 moves before finishing
 a turn but later in the game you may upgrade this limit. Each turn an enemy or NPC can move towards you and attack you, 
 they cannot attack you or do anything to you until you've used your moves up.
-
-* Remember to type 'nextturn' or 'endturn' when all of your moves are over to finish the turn.
-* You will only use up a move when the action is successful except for when harvesting.
-* Viewing your inventory and any commands which do not move the player or afffect the world do not take up moves.
-
+ * Remember to type 'nextturn' or 'endturn' when all of your moves are over to finish the turn.
+ * You will only use up a move when the action is successful except for when harvesting.
+ * Viewing your inventory and any commands which do not move the player or afffect the world do not take up moves.
 
 
+--------
 Leveling
 --------
 By completing actions in the world, you will gain XP. XP is then divided up into levels. Having a high level gives benefits 
 such as less stanima degradation and less of a need to eat. You also do more damage to opponents. 
-
-+ Having a high level lets you eat less.
-+ You attack enemies with more damage.
-+ You use less stanima.
-+ You are really awesome.
+ * Having a high level lets you eat less.
+ * You attack enemies with more damage.
+ * You use less stanima.
 
 
+---------
 The World
 ---------
 The world around you is a bunch of rooms with water and other obstacles in your path. 
 Closed doors can be denoted by a capital D and can be opened using a key. Keys can be aquired by conquring rooms
 as well as trading and finding them naturally or crafting them. You can also find helpful items such as food and healing items in rooms, 
 but these items are guarded by goblins.
-
 * When you die, the world is lost.
 * The world is full of bushes and tress for you to scavange items from.
 * Use the info command to find out what a foliage is, then use the havest command on it!
 
 
+---------------------------------
 Hunger, Stanima, Mana and Healing
 ---------------------------------
 Your hunger, stanima, health and Mana bars can be found at the top of the window. Your hunger will decrease over time
 and when it hits zero, your health will start to decrease. Leveling up can make this happen slower. Your stanima will
 increase every round. Leveling up can make this happen faster.
-
 * Keeep an eye on your hunger! if it ever reaches zero you will start losing health.
 
 
-Inventory
----------------------------------
+----------------------
+Inventory and crafting
+----------------------
 Your inventory is infinite in every possible way. It can store as many items as you like and there are no item limit caps. Items
 can be used for benefits such as food, stanima or XP. Some items are special and cannot be used with the use command.
-
 * Keys cannot be used with the use command and must be used with the unlock command
 * Golden Apples are the best healing/stanima item in the game.
 * Some items give stanima when they are eaten.
 * You can play around with the 'use' command and it will only take a move if you succesfully use an item.
+
+You may also craft items with the 'craft/make' command. You can view all the recepies by typing 'recepies' or 'blueprints'. If you
+would then like to see how to craft one of these blueprints. You type 'blueprint' followed by the name of the recepie.
+* eg: blueprint nice_soup
+
+
+------------------
+Developer Commands
+------------------
+* these commands need to be enabled through the options and can break things!
+
+>open
+ Opens a door with out needing a key.
+>tracks
+ Displays a list of available musical tracks.
+>foliage
+ Displays a list of available foliage types.
+>blocks
+ Displays a list of available block types.
+>structures
+ Displays a list of available world structures.
+>generate_doors
+ Adds doors to rooms in the world.
+>generate_foliage <count>
+ Generate fresh foliage to the world, will delete old foliage.
+>generate_rooms <count>
+ Generate fresh rooms to the world, will delete old rooms.
+>generate_structures <count>
+ Adds new structures to the world, will not delete old structures.
+>add_rooms <count>
+ Adds new rooms to the world, will not delete old rooms.
+>items
+ Adds new rooms to the world, will not delete old rooms.
 
