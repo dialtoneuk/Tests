@@ -1,3 +1,4 @@
-﻿# LydsTextRPG
+﻿# LydsTextRPG/Lyds Text Adventure
 
-Work in progress.
+In order for this to build correctly you will need to download and add the following librarys as a reference
+``https://github.com/naudio/NAudio``

@@ -7,6 +7,7 @@ namespace TextAdventure
 
     public class World
     {
+
         public enum Blocks : int
         {
             WALL_INVISIBLE,
@@ -29,7 +30,6 @@ namespace TextAdventure
             SNOW,
             DEEP_SNOW,
         }
-
         public enum Foliage : int
         {
             NULL,
@@ -50,8 +50,8 @@ namespace TextAdventure
             PLANT_MANA,
             PLANT_OXYGEN,
             PLANT_XP,
+            PLANT_CHARGE
         }
-
         public enum Structures : int
         {
 
@@ -68,7 +68,6 @@ namespace TextAdventure
         {
             //
         };
-
         public static readonly Dictionary<Foliage, string> foliageTextures = new Dictionary<Foliage, string>
         {
             { Foliage.NULL, " " },
@@ -89,8 +88,144 @@ namespace TextAdventure
             { Foliage.PLANT_MANA, "M" },
             { Foliage.PLANT_OXYGEN, "+" },
             { Foliage.PLANT_XP, "$" },
+            { Foliage.PLANT_CHARGE, "C" },
         };
-
+        public static readonly Dictionary<Foliage, Dictionary<Player.Items, int>> foliageRewards = new Dictionary<Foliage, Dictionary<Player.Items, int>>
+        {
+            {
+                Foliage.TREE,
+                new Dictionary<Player.Items, int>()
+                {
+                    {Player.Items.WOOD, 20 }
+                }
+            },
+            {
+                Foliage.TREE_OAK,
+                new Dictionary<Player.Items, int>()
+                {
+                    {Player.Items.WOOD, 40 }
+                }
+            },
+            {
+                Foliage.TREE_APPLE,
+                new Dictionary<Player.Items, int>()
+                {
+                    {Player.Items.WOOD, 40 },
+                    {Player.Items.APPLE, 20 },
+                }
+            },
+            {
+                Foliage.TREE_PINE,
+                new Dictionary<Player.Items, int>()
+                {
+                    {Player.Items.WOOD, 80 }
+                }
+            },
+            {
+                Foliage.TREE_PEAR,
+                new Dictionary<Player.Items, int>()
+                {
+                    {Player.Items.WOOD, 20 },
+                    {Player.Items.PEAR, 25 }
+                }
+            },
+            {
+                Foliage.TREE_HONEY,
+                new Dictionary<Player.Items, int>()
+                {
+                    {Player.Items.WOOD, 20 },
+                    {Player.Items.HONEY, 35 }
+                }
+            },
+            {
+                Foliage.TREE_PLUM,
+                new Dictionary<Player.Items, int>()
+                {
+                    {Player.Items.WOOD, 20 },
+                    {Player.Items.PLUM, 35 }
+                }
+            },
+            {
+                Foliage.TREE_GOLDEN_APPLE,
+                new Dictionary<Player.Items, int>
+                {
+                    {Player.Items.LIQUID_EXPERIENCE, 2 },
+                    {Player.Items.GOLDEN_APPLE, 2 }
+                }
+            },
+            {
+                Foliage.PLANT_OXYGEN,
+                new Dictionary<Player.Items, int>()
+                {
+                    {Player.Items.PURE_OXYGEN, 40 },
+                    {Player.Items.TWIG, 10 }
+                }
+            },
+            {
+                Foliage.PLANT_MANA,
+                new Dictionary<Player.Items, int>()
+                {
+                    {Player.Items.TWIG, 20 },
+                    {Player.Items.PURE_MANA, 25 }
+                }
+            },
+            {
+                Foliage.PLANT_XP,
+                new Dictionary<Player.Items, int>()
+                {
+                    {Player.Items.TWIG, 20 },
+                    {Player.Items.LIQUID_EXPERIENCE, 35 }
+                }
+            },
+            {
+                Foliage.PLANT_CHARGE,
+                new Dictionary<Player.Items, int>()
+                {
+                    {Player.Items.LIQUID_STANIMA, 40 },
+                    {Player.Items.TWIG, 10 }
+                }
+            },
+            {
+                Foliage.PLANT_EGGPLANT,
+                new Dictionary<Player.Items, int>()
+                {
+                    {Player.Items.EGGPLANT, 2 },
+                    {Player.Items.TWIG, 40 }
+                }
+            },
+            { 
+                Foliage.BUSH_BERRIES, 
+                new Dictionary<Player.Items, int>
+                {
+                    {Player.Items.BERRY, 10 },
+                    {Player.Items.TWIG, 40 }
+                }
+            },
+            { 
+                Foliage.BUSH_BLACKBERRIES, 
+                new Dictionary<Player.Items, int>
+                {
+                    {Player.Items.TWIG, 40 },
+                    {Player.Items.BERRY, 20 }
+                } 
+            },
+            { 
+                Foliage.BUSH_BLUEBERRIES, 
+                new Dictionary<Player.Items, int>
+                {
+                    {Player.Items.TWIG, 40 },
+                    {Player.Items.BERRY, 30 }
+                } 
+            },
+            { 
+                Foliage.BUSH_STRAWBERRIES, 
+                new Dictionary<Player.Items, int>
+                {
+                    {Player.Items.TWIG, 40 },
+                    {Player.Items.BERRY, 40 }
+                }
+            }
+        };
         public static readonly Dictionary<Foliage, ConsoleColor> foliageColours = new Dictionary<Foliage, ConsoleColor>
         {
             { Foliage.NULL, ConsoleColor.Black },
@@ -111,8 +246,8 @@ namespace TextAdventure
             { Foliage.PLANT_MANA, ConsoleColor.Blue },
             { Foliage.PLANT_OXYGEN, ConsoleColor.Red },
             { Foliage.PLANT_XP, ConsoleColor.Cyan },
+            { Foliage.PLANT_CHARGE, ConsoleColor.Yellow },
         };
-
         public static readonly Dictionary<Blocks, string> blockTextures = new Dictionary<Blocks, string>
         {
             { Blocks.DEEP_WATER, "/" },
@@ -135,7 +270,6 @@ namespace TextAdventure
             { Blocks.WOOD, "=" },
             { Blocks.GRAVEL, "n" },
         };
-
         public Dictionary<Blocks, ConsoleColor> blockColours = new Dictionary<Blocks, ConsoleColor>
         {
             { Blocks.DEEP_WATER, ConsoleColor.DarkBlue },
@@ -154,9 +288,9 @@ namespace TextAdventure
             { Blocks.WOOD, ConsoleColor.DarkYellow },
         };
 
-        public const bool ROOM_SYMMETICAL = true;
-        public const int ROOM_MAX_SIZE = 28;
-        public const int ROOM_MIN_SIZE = 18;
+        public const bool ROOM_SYMMETICAL = false;
+        public const int ROOM_MAX_SIZE = 24;
+        public const int ROOM_MIN_SIZE = 14;
         public const int ROOM_MAX = 640;
         public const int ROOM_BUFFER = 1; //do not change
         public const int ROOM_DOOR_SIZE = 4;
@@ -170,6 +304,7 @@ namespace TextAdventure
         public const int STRUCTURE_MAX_SIZE = 16;
         public const float FREQUENCY_INTERVAL = 0.000090f;
 
+        private List<object[]> discoveryData;
         private int[,] worldData;
         private int[][] roomData;
         private uint[,] foliageData;
@@ -181,6 +316,68 @@ namespace TextAdventure
         private static int islandValue;
         private static int roomCount;
         private static int[] spawnRoom;
+        private static readonly string[] firstnames =
+        {
+            "Brown",
+            "Blue",
+            "Green",
+            "Red",
+            "Yellow",
+            "Old",
+            "New",
+            "Young",
+            "Classy",
+            "Creepy",
+            "Kind",
+            "Bubbling",
+            "Crystal",
+            "Purple",
+            "Butt",
+            "Great",
+            "South",
+            "North",
+            "East",
+            "West",
+            "Wood",
+            "Water",
+            "Bake",
+            "Kindle",
+            "Forgotten",
+            "Abandoned",
+            "Slimey",
+            "Barren",
+            "Poor",
+            "Lesser"
+        };
+        private static readonly string[] secondnames =
+        {
+            "Creek",
+            "Palace",
+            "Water",
+            "Side",
+            "Field",
+            "Way",
+            "Place",
+            "Docile",
+            "Battleground",
+            "Burial Site",
+            "Peaks",
+            "Castle",
+            "Pile",
+            "Hell",
+            "Lane",
+            "Heaven",
+            "Forest",
+            "Hill",
+            "Ruins",
+            "Alley",
+            "Abbey",
+            "Marker",
+            "Stead",
+            "Hamlet",
+            "Wood",
+            "River"
+         };
 
         public int[,] WorldData { get => worldData; }
         public int[][] RoomData { get => roomData; }
@@ -190,6 +387,7 @@ namespace TextAdventure
         public static int IslandValue { get => islandValue; }
         public static int RoomCount { get => roomCount; }
         public static int[] SpawnRoom { get => spawnRoom; set => spawnRoom = value; }
+        public List<object[]> DiscoveryData { get => discoveryData; }
 
         public World()
         {
@@ -212,52 +410,6 @@ namespace TextAdventure
             consoleHeight = Console.WindowHeight;
         }
 
-        /**
-        public void save(string file_name="world1")
-        {
-            //TODO: coming soon since this is pretty damn complex tbf
-        }
-
-        private void saveWorld(World world, string file_name = "world1")
-        {
-            XmlSerializer x = CreateOverrider();
-            Stream file = new FileStream($"saves/{file_name}", FileMode.Create, FileAccess.Write);
-            x.Serialize(file, world);
-            file.Close();
-        }
-
-        private World loadWorld(string file_name = "world1")
-        {
-
-            if (File.Exists($"saves/{file_name}"))
-            {
-                XmlSerializer x = CreateOverrider();
-                Stream file = new FileStream($"saves/{file_name}", FileMode.Create, FileAccess.Write);
-                World world = (World)x.Deserialize(file);
-                return (world);
-            }
-            else
-                throw new FileNotFoundException($"saves/{file_name} not found");
-        }
-
-        private static XmlSerializer CreateOverrider()
-        {
-          
-        XmlAttributes attrs = new XmlAttributes();
-
-            attrs = new XmlAttributes();
-            attrs.XmlIgnore = true;
-            xOver.Add(typeof(World), "structures", attrs);
-            xOver.Add(typeof(World), "blockColours", attrs);
-            xOver.Add(typeof(World), "blockTextures", attrs);
-            xOver.Add(typeof(World), "foliageColours", attrs);
-            xOver.Add(typeof(World), "foliageTextures", attrs);
-
-            XmlSerializer xSer = new XmlSerializer(typeof(World), xOver);
-            return xSer;
-        }
-        **/
-
         public static void printWorld(Player player, World world, int buffer_zone = 5)
         {
 
@@ -278,7 +430,7 @@ namespace TextAdventure
 
                 xcounter = 0;
 
-                if (ycounter > Program.WINDOW_HEIGHT - buffer_zone)
+                if (ycounter > Program.windowHeight - buffer_zone)
                     continue;
 
                 if (ycounter > consoleHeight - buffer_zone)
@@ -308,7 +460,7 @@ namespace TextAdventure
                         if (x % Player.CAMERA_ZOOM_FACTOR == 0)
                             continue;
 
-                    if (xcounter > Program.WINDOW_WIDTH - buffer_zone)
+                    if (xcounter > Program.windowWidth - buffer_zone)
                         continue;
 
                     if (xcounter > consoleWidth - buffer_zone)
@@ -343,8 +495,8 @@ namespace TextAdventure
                     {
                         Foliage foliage = world.getFoliage(x, y);
 
-                        Program.setColour(World.foliageColours[foliage]);
-                        Program.write(World.foliageTextures[foliage]);
+                        Program.setColour(foliageColours[foliage]);
+                        Program.write(foliageTextures[foliage]);
                     }
                     else
                     {
@@ -374,14 +526,14 @@ namespace TextAdventure
                             block = (Blocks)world.worldData[x, y];
 
                         if (world.isRoomCenter(x, y))
-                            if(world.getRoom(x,y)[4]==1)
+                            if (world.getRoom(x, y)[4] == 1)
                                 Program.write("C");
                             else
                                 Program.write("R");
                         else
                         {
                             Program.setColour(world.getColor(block));
-                            Program.write(World.blockTextures[block]);
+                            Program.write(blockTextures[block]);
                         }
                     }
 
@@ -405,7 +557,7 @@ namespace TextAdventure
 
                 Blocks[,] structure = new Blocks[STRUCTURE_MAX_SIZE, STRUCTURE_MAX_SIZE];
 
-                string file_name = "structures/" + Enum.GetName(typeof(Structures), s).ToLower() + ".st";
+                string file_name = "Structures/" + Enum.GetName(typeof(Structures), s).ToLower() + ".st";
 
                 if (System.IO.File.Exists(file_name))
                 {
@@ -538,6 +690,36 @@ namespace TextAdventure
             generateFoliage(foliage);
         }
 
+        public void placeDiscovarableZone(int startx, int starty, int width, int height, string name = "", int reward = 500, bool discovered = false)
+        {
+
+            if (discoveryData == null)
+                discoveryData = new List<object[]>();
+
+            if (name == "")
+                name = getRandomName();
+
+            discoveryData.Add(new object[]
+            {
+                startx,
+                starty,
+                width,
+                height,
+                name,
+                reward,
+                discovered
+            });
+
+            Program.setColour(ConsoleColor.Yellow);
+            Console.WriteLine("placed discovery {0} at {1}/{2}", name, startx, starty);
+        }
+
+        public void placeDiscoverableZoneBox(int[] box, string name = "", int reward = 500, bool discovered = false)
+        {
+
+            placeDiscovarableZone(box[0], box[1], box[2], box[3], name, reward, discovered);
+        }
+
         public void placeStructures(int amount = 12)
         {
 
@@ -595,10 +777,10 @@ namespace TextAdventure
                             worldData[location[0] + x, location[1] + y] = (int)structure[x, y];
                         }
 
-
-                amount--;
-                Program.setColour(ConsoleColor.Red);
+                placeDiscovarableZone(location[0], location[1], STRUCTURE_MAX_SIZE, STRUCTURE_MAX_SIZE);
+                Program.setColour(ConsoleColor.Green);
                 Console.WriteLine("placed structure at {0}/{1} | {2} left", location[0], location[1], amount);
+                --amount;
             }
 
             Program.setColour(ConsoleColor.Yellow);
@@ -654,13 +836,13 @@ namespace TextAdventure
 
                                     Foliage entity;
 
-                                    if (r.Next(60) < 30)
+                                    if (r.Next(1, 100) > 50)
                                     {
                                         var length = Enum.GetValues(typeof(Foliage)).Length;
                                         entity = (Foliage)Enum.GetValues(typeof(Foliage)).GetValue(r.Next(1, length - 1));
                                     }
                                     else
-                                        if (r.Next(10) > 5)
+                                    if (r.Next(10) > 5)
                                         entity = Foliage.TREE_OAK;
                                     else
                                         entity = Foliage.TREE;
@@ -770,7 +952,7 @@ namespace TextAdventure
                 for (int y = 0; y < worldHeight; y++)
                 {
                     if (worldData[x, y] == (int)Blocks.DOOR_CLOSED)
-                        if ((x + 1 < worldWidth && worldData[x + 1, y] == (int)Blocks.DOOR_CLOSED) 
+                        if ((x + 1 < worldWidth && worldData[x + 1, y] == (int)Blocks.DOOR_CLOSED)
                             || (x - 1 > 0 && worldData[x - 1, y] == (int)Blocks.DOOR_CLOSED))
                         {
                             if (y + 1 < worldHeight && worldData[x, y + 1] == (int)Blocks.WALL_SOLID)
@@ -778,7 +960,7 @@ namespace TextAdventure
                             else if (y - 1 > 0 && worldData[x, y - 1] == (int)Blocks.WALL_SOLID)
                                 worldData[x, y - 1] = (int)Blocks.DOOR_CLOSED;
                         }
-                        else if ((y + 1 < worldHeight && worldData[x, y + 1] == (int)Blocks.DOOR_CLOSED) 
+                        else if ((y + 1 < worldHeight && worldData[x, y + 1] == (int)Blocks.DOOR_CLOSED)
                             || (y - 1 > 0 && worldData[x, y - 1] == (int)Blocks.DOOR_CLOSED))
                         {
                             if (x + 1 < worldWidth && worldData[x + 1, y] == (int)Blocks.WALL_SOLID)
@@ -803,7 +985,7 @@ namespace TextAdventure
 
             islandValue = island_value;
 
-            noise.SetSeed((int)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()/2*r.Next(10,100));
+            noise.SetSeed((int)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 2 * r.Next(10, 100));
             noise.SetNoiseType(FastNoise.NoiseType.SimplexFractal);
             noise.SetInterp(FastNoise.Interp.Quintic);
             noise.SetFractalOctaves(6);
@@ -1024,7 +1206,7 @@ namespace TextAdventure
             roomCount++;
         }
 
-        public void saveRoomPosition(int roomx, int roomy, int room_width, int room_height, bool claimed = false)
+        public void saveRoomPosition(int roomx, int roomy, int room_width, int room_height, bool claimed = false, bool dicoverable = true)
         {
 
             int _ = 0;
@@ -1043,6 +1225,7 @@ namespace TextAdventure
                 spawnRoom = position;
 
             this.roomData[roomCount] = position;
+            placeDiscoverableZoneBox(position);
         }
 
         public void setBlock(int x, int y, Blocks block)
@@ -1067,6 +1250,11 @@ namespace TextAdventure
         {
 
             return ((Foliage)foliageData[x, y]);
+        }
+
+        public object[] getDiscovery(int key)
+        {
+            return (discoveryData[key]);
         }
 
         public int[] getRandomRoomSize()
@@ -1140,18 +1328,125 @@ namespace TextAdventure
             return Enum.GetNames(typeof(Blocks)).Length;
         }
 
+        public int getReward(int index)
+        {
+
+            return ((int)discoveryData[index][5]);
+        }
+
+        public int getReward(object[] objects)
+        {
+
+            return ((int)objects[5]);
+        }
+
+        public int discoverZone(Player player)
+        {
+
+            int key = 0;
+            foreach (object[] objects in discoveryData)
+            {
+
+                if (objects.Length < 4)
+                    throw new Exception("invalid discovery data in discovery data");
+
+                int[] box =
+                {
+                    (int)objects[0],
+                    (int)objects[1],
+                    (int)objects[2],
+                    (int)objects[3]
+                };
+
+                if (isInZone(player, box))
+                {
+
+                    objects[6] = true;
+                    discoveryData[key] = objects;
+                    return key;
+                }
+
+                key++;
+            }
+
+            throw new Exception("player is not in a room");
+        }
+
+        public string getRandomName()
+        {
+
+            Random r = new Random();
+
+            return (firstnames[r.Next(0, firstnames.Length - 1)] + " " + secondnames[r.Next(0, secondnames.Length - 1)]);
+        }
+
+        public string getName(object[] objects)
+        {
+
+            return ((string)objects[4]);
+        }
+
+        public string getName(int index)
+        {
+
+            return ((string)discoveryData[index][4]);
+        }
+
+        public bool newInteraction(ref Player player, int scope = 4)
+        {
+
+            World world = this;
+            Random r = new Random((int)DateTime.UtcNow.ToBinary()); ;
+
+            for (int y = 0 - scope; y < scope; y++)
+                for (int x = 0 - scope; x < scope; x++)
+                    if (x + player.Position[0] < world.WorldWidth && y + player.Position[1] < world.WorldHeight)
+                    {
+
+                        Foliage foliage;
+                        if (world.hasFoliage(player.Position[0] + x, player.Position[1] + y))
+                            foliage = world.getFoliage(player.Position[0] + x, player.Position[1] + y);
+                        else
+                            continue;
+
+                        if (foliageRewards.ContainsKey(foliage))
+                        {
+
+                            foreach (KeyValuePair<Player.Items, int> keyValuePair in foliageRewards[foliage])
+                            {
+                                int random = r.Next(1, keyValuePair.Value);
+                                player.addItem(keyValuePair.Key, random);
+                                Program.addFeedback("+ {0} x{1}", keyValuePair.Key, random);
+                            }
+
+                            world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
+                            return true;
+                        }
+                        else
+                        {
+                            int random = r.Next(6, 30);
+                            player.addXP(random);
+                            Program.addFeedback("+ {0} into xp {1}", foliage, random);
+                            world.removeFoliage(player.Position[0] + x, player.Position[1] + y);
+                            return true;
+                        }
+                    }
+
+            return false;
+        }
+
         public bool claimRoom(Player player)
         {
 
             foreach (int[] room in roomData)
-                if (isInRoom(player, room))
+                if (isInZone(player, room))
                 {
 
                     if (room[4] == 0)
                     {
                         room[4] = 1;
                         return true;
-                    }         
+                    }
                 }
 
             return false;
@@ -1163,28 +1458,57 @@ namespace TextAdventure
             foreach (int[] room in roomData)
             {
 
-                if (!isInRoom(player, room))
+                if (!isInZone(player, room))
                     continue;
 
                 if (room[4] == 1)
                     return true;
             }
-                
+
             return false;
         }
 
-        public bool isInRoom(Player player, int[] room)
+        public bool isInDiscoverableZone(Player player)
+        {
+
+            foreach (object[] objects in discoveryData)
+            {
+
+                if (objects.Length < 4)
+                    throw new Exception("invalid discovery data in discovery data");
+
+
+                int[] box =
+                {
+                    (int)objects[0],
+                    (int)objects[1],
+                    (int)objects[2],
+                    (int)objects[3]
+                };
+
+                if (isInZone(player, box))
+                    if ((bool)objects[6] == true)
+                        return false;
+                    else
+                        return true;
+            }
+
+            return false;
+        }
+
+        public bool isInZone(Player player, int[] box)
         {
 
 
-            if (player.Position[0] < (room[0]+room[2]/2) &&
-               player.Position[0] + 1 > (room[0]-room[2]/2) &&
-               player.Position[1] < (room[1]+room[3]/ 2) &&
-               player.Position[1] + 1 > (room[1]-room[3]/2))
+            if (player.Position[0] < (box[0] + box[2] / 2) &&
+               player.Position[0] + 1 > (box[0] - box[2] / 2) &&
+               player.Position[1] < (box[1] + box[3] / 2) &&
+               player.Position[1] + 1 > (box[1] - box[3] / 2))
                 return true;
 
             return false;
         }
+
 
         public bool roomClaimed(int key)
         {
@@ -1361,7 +1685,7 @@ namespace TextAdventure
             return (worldData[x, y] == (int)Blocks.DOOR_CLOSED);
         }
 
-        public bool canPlace(int[] dimensions, int extra_buffer=0)
+        public bool canPlace(int[] dimensions, int extra_buffer = 0)
         {
 
             return canPlace(dimensions[0], dimensions[1], dimensions[2], dimensions[3], extra_buffer);

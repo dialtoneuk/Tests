@@ -11,40 +11,44 @@ namespace TextAdventure
         public enum Tracks : int
         {
 
-            TRACK_ACIDHILLS,
-            TRACK_UNKNOWN,
-            TRACK_HIGHWAYS,
-            TRACK_1913,
-            TRACK_1851,
-            TRACK_1326,
-            TRACK_PETSCOP,
-            TRACK_MUGGY_SIGNALS,
-            TRACK_SEEDED_NUMBERS,
-            TRACK_2310,
-            TRACK_TANJENT,
-            TRACK_JELLICA,
-            TRACK_LIQUID_RHYTHM
+            ACIDHILLS,
+            UNKNOWN,
+            HIGHWAYS,
+            _1913,
+            _1851,
+            _1326,
+            PETSCOP,
+            MUGGY_SIGNALS,
+            SEEDED_NUMBERS,
+            _2310,
+            TANJENT,
+            JELLICA,
+            LIQUID_RHYTHM,
+            BUXTON,
+            BAD
         }
 
         private Dictionary<Tracks, string> trackFilenames = new Dictionary<Tracks, string>
         {
-            {Tracks.TRACK_UNKNOWN,"unknown.mp3" },
-            {Tracks.TRACK_ACIDHILLS,"acidhills.mp3" },
-            {Tracks.TRACK_HIGHWAYS,"highways.mp3" },
-            {Tracks.TRACK_1913,"1913.mp3" },
-            {Tracks.TRACK_1851,"1851_compressed.mp3" },
-            {Tracks.TRACK_1326,"1326_compressed.mp3" },
-            {Tracks.TRACK_PETSCOP,"petscop.mp3" },
-            {Tracks.TRACK_MUGGY_SIGNALS,"muggy_signals.mp3" },
-            {Tracks.TRACK_SEEDED_NUMBERS, "seeded_numbers.mp3" },
-            {Tracks.TRACK_2310, "2310.mp3" },
-            {Tracks.TRACK_TANJENT, "tanjent.mp3" },
-            {Tracks.TRACK_JELLICA, "jellica.mp3" },
-            {Tracks.TRACK_LIQUID_RHYTHM, "liquid_rhythm.mp3" },
+            {Tracks.UNKNOWN,"unknown.mp3" },
+            {Tracks.ACIDHILLS,"acidhills.mp3" },
+            {Tracks.HIGHWAYS,"highways.mp3" },
+            {Tracks._1913,"1913.mp3" },
+            {Tracks._1851,"1851_compressed.mp3" },
+            {Tracks._1326,"1326_compressed.mp3" },
+            {Tracks.PETSCOP,"petscop.mp3" },
+            {Tracks.MUGGY_SIGNALS,"muggy_signals.mp3" },
+            {Tracks.SEEDED_NUMBERS, "seeded_numbers.mp3" },
+            {Tracks._2310, "2310.mp3" },
+            {Tracks.TANJENT, "tanjent.mp3" },
+            {Tracks.JELLICA, "jellica.mp3" },
+            {Tracks.LIQUID_RHYTHM, "liquid_rhythm.mp3" },
+            {Tracks.BUXTON, "buxton.mp3" },
+            {Tracks.BAD, "bad.mp3" },
         };
 
-        public const int JUKEBOX_INTERVAL = 600;
-        public const float DEFAULT_VOLUME = 0.5f;
+        public const int JUKEBOX_INTERVAL = 1000;
+        public const float DEFAULT_VOLUME = 0.25f;
 
         protected Tracks currentTrack;
         protected AudioFileReader stream;
@@ -52,10 +56,10 @@ namespace TextAdventure
         protected DateTimeOffset later;
         protected static FadeInOutSampleProvider fade;
 
-        public Music(Tracks startingTrack = Tracks.TRACK_UNKNOWN)
+        public Music(Tracks startingTrack = Tracks.UNKNOWN)
         {
             this.currentTrack = startingTrack;
-            stream = new AudioFileReader("tracks/" + trackFilenames[this.currentTrack]);
+            stream = new AudioFileReader("Music/" + trackFilenames[this.currentTrack]);
             stream.Volume = DEFAULT_VOLUME;
         }
 
@@ -69,8 +73,9 @@ namespace TextAdventure
             {
 
                 Random r = new Random((int)DateTime.UtcNow.ToBinary());
+                r.Next();
 
-                if (r.Next(1, 100) > 75)
+                if (r.Next(1, 500) < 10)
                 {
 
                     var length = Enum.GetValues(typeof(Tracks)).Length;
@@ -126,7 +131,7 @@ namespace TextAdventure
             if (stream != null)
                 stream.Dispose();
 
-            stream = new AudioFileReader("tracks/" + trackFilenames[track]);
+            stream = new AudioFileReader("Music/" + trackFilenames[track]);
             stream.Volume = DEFAULT_VOLUME;
             fade = new FadeInOutSampleProvider(stream, true);
             fade.BeginFadeIn(2000);

@@ -1,30 +1,41 @@
-﻿
-                #----------------------------------------------------------------------#
-                |  _               _       _______        _     _____  _____   _____   |
-                | | |             | |     |__   __|      | |   |  __ \|  __ \ / ____|  |
-                | | |    _   _  __| |___     | | _____  _| |_  | |__) | |__) | |  __   |
-                | | |   | | | |/ _` / __|    | |/ _ \ \/ / __| |  _  /|  ___/| | |_ |  |
-                | | |___| |_| | (_| \__ \    | |  __/>  <| |_  | | \ \| |    | |__| |  |			
-                | |______\__, |\__,_|___/    |_|\___/_/\_\\__| |_|  \_\_|     \_____|  |
-                |         __/ |                                                        |
-                |        |___/     Created by Llydia "Lyds" Lancaster in 2020!         |
-                |                                           Written in C# <3!!         |
-                #----------------------------------------------------------------------#
-
-                              + PRESS THE FOLLOWING KEY WITH YOUR FINGER +
-
-                                                  n
-
-                                          * AND HIT ENTER! *
-
-                #----------------------------------------------------------------------#
-                                        + start a [n]ew game +
-              
-                                             ? [h]elp ?
-
-                                            - [o]ptions -
-
-                                            - [c]redits -
-
-                                             - [e]xit -
-                #----------------------------------------------------------------------#
+﻿                    #
+                    =                                                                 X0000KKKKXN 
+                    #                                                              NXKo,;;,,,,',xW
+                    =                                                           WWXo,,cOK0doo:..:K
+                    #                                                          Nd;;ck0OOkk0KXk,.'k
+                    =          _               _       _______        _      Nd;;ck0OOkk0KXk,.'k          _                  
+                    #         | |             | |     |__   __|      | |    Nd;/\ OO0OO| |0O'k           | |                  [alpha]
+                    =         | |    _   _  __| |___     | | _____  _| |_ Nd;;/  \ OO__| |_Ok _____ _ __ | |_ _   _ _ __ ___ 
+                    #         | |   | | | |/ _` / __|    | |/ _ \ \/ / __|N; / /\ \ / _` \ \ / / _ \ '_ \| __| | | | '__/ _ \
+                    =         | |___| |_| | (_| \__ \    | |  __/>  <| |_ ; / ____ \ (_| |\ V /  __/ | | | |_| |_| | | |  __/
+                    #         |______\__, |\__,_|___/    |_|\___/_/\_\\__|d/_/    \_\__,_| \_/ \___|_| |_|\__|\__,_|_|  \___|
+                    =                 __/ |  0,..,lol'..        k'..dXNNXkdoxXWNk,..:ook                                                                                         
+                    #                |___/   0,..,lol'..'     '..dXNNXkdoxXWN,..:ookN                                                                                   
+                    =                        0,..,lol'..'kWWk'..dXNNXkdoxXk,..:ookN     The Battle For the Realm Of Something   
+                    #                        Ko::,'',:cc;,;;lkOOkkkkk0KK0dcl:,',k                
+                    =                           X:..'loo:...:0KKOkkxkO00k,..;0XXW                
+                    #                           0,..'loo;...;ood0NNWNo..'cdoOW                   
+                    =                           Kc,;,,,,;;::;,,,:llll;'.;0                       
+                    #                          WXOOOl...;llc,........oOO0N                       
+                    =                          Nl..':ccc,...;cccccccc;,,c0                       
+                    #                      Xkddd:'',;::;....,::::::cc,'.,d00KN                   
+                    =                      k...'col:....oOOx,........;llc,..'k                   
+                    #             Ndcccccclc;;;,,,,,''':0  Xl''''''..,;;;'...x                                      
+                    =             O'.......:lll,...;OXXXW  WNXXXKKKKO;.......dW                  
+                    #            Wo....;::;'''',;:;dN               Nd;;;;;;;O                   
+                    =            K;...,lll:....dWWWW                 WNNNNNNNW                   
+                    #            k.....'''....'O                                                 
+                    =            o............;K                                                 
+                    #            0dooolllllllcxN                                   
+                    ¬
+                    *            [newgame]      
+                    ¬            [options]      
+                    +            [help] ! recommended      
+                    -            [credits] ! donate your eyes temporarily
+                    ¬                               by watching an ad!
+                    ¬            [structure_maker]
+                    =            [exit]
+                    3    
+                    3                                                                   COPYRIGHT 
+                    2                                                                   PENIS SOFTWARE 2020 
+                    1                                                                   (we cant back it up)
