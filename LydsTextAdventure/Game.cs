@@ -78,7 +78,7 @@ namespace LydsTextAdventure
                     command =>
                     {
                         this.currentState = States.EXIT;
-                    }   
+                    }
                 },
                 { "play",
                     command =>
@@ -94,9 +94,10 @@ namespace LydsTextAdventure
                             this.currentWorld = World.NewWorld(filename);
                             this.currentWorld.AddCommands(this);
                         }
-                            
+
                         this.currentWorld.GenerateWorld();
-                        this.currentState = States.GAME;     
+                        this.currentWorld.Save();
+                        this.currentState = States.GAME;
                     }
                 },
                 { "load",
@@ -113,14 +114,14 @@ namespace LydsTextAdventure
                             this.currentWorld = World.LoadWorld(filename);
 
                             if(this.currentWorld==null)
-                                Debug.Write("world does not exist {0}", filename);
+                                Debug.WriteLine("world does not exist {0}", filename);
                             else
                             {
                                 this.currentWorld.AddCommands(this);
                                 Debug.WriteLine("loaded world {0}", filename);
                                 this.currentState = States.GAME;
-                            }          
-                        }                      
+                            }
+                        }
                     }
                 },
                 { "default_settings",
@@ -155,12 +156,29 @@ namespace LydsTextAdventure
                         Debug.WriteLine("changed input type to {0}", type);
                     }
                 },
+                { "add_texture",
+                    command =>
+                    {
+
+                        if(command.Length<3)
+                            return;
+
+                        Block.AddTexture((Block.Types)command[1], command[2].ToString()[0]);
+                    }
+                },
+                { "save_textures",
+                    command =>
+                    {
+
+                       Block.SaveTextures();
+                    }
+                },
                 { "settings",
                     command =>
                     {
 
                         foreach(KeyValuePair<string,object> obj in Program.Settings.SettingsValues)
-                            Debug.WriteLine("{0} {1}", obj.Key, obj.Value);
+                            Console.WriteLine("{0} {1}", obj.Key, obj.Value);
                     }
     
                 }, 
@@ -178,6 +196,9 @@ namespace LydsTextAdventure
                             Program.Settings.SettingsValues[command[1].ToString()] = command[2];
                         else
                             Program.Settings.SettingsValues[(string)command[1]] = command[2];
+
+                        foreach(KeyValuePair<string,object> obj in Program.Settings.SettingsValues)
+                            Console.WriteLine("{0} {1}", obj.Key, obj.Value);
                     }
                 },
             };
@@ -197,6 +218,9 @@ namespace LydsTextAdventure
                     command =>
                     {
                         Console.WriteLine("fames: {0} / state: {1}", frames, currentState);
+
+                        if(this.currentWorld!=null)
+                            this.currentWorld.DrawWorld();
                     }
                 },
             };

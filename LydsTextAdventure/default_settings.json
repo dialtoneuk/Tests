@@ -2,9 +2,10 @@
   "auto_save": "1",
   "world_height": 1528,
   "world_width": 1528,
+  "world_depth":  6,
   "foliage_count": 12000,
   "room_count": 120,
-  "noise_frequency": 1,
+  "noise_frequency": 0.0100,
   "move_distance": 32,
   "harvest_distance": 8,
   "level_interval": 250,
@@ -24,6 +25,5 @@
   "generation_timeout": 250,
   "world_buffer": 4,
   "max_foliage": 92000,
-  "structure_size": 16,
-  "noise_frequency_denotion": 0.000090
+  "structure_size": 16
 }

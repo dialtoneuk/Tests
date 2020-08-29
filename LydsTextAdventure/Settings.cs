@@ -86,8 +86,6 @@ namespace LydsTextAdventure
 
             return 0.0;
         }
-
-
         public string GetStringOrEmpty(string key)
         {
 
