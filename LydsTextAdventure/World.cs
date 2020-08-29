@@ -22,9 +22,9 @@ namespace LydsTextAdventure
         protected int structureCount;
         protected int foliageCount;
 
-        private int[] worldData;
+        private int[,,] worldData;
 
-        protected int[] WorldData { get => worldData; set => worldData = value; }
+        protected int[,,] WorldData { get => worldData; set => worldData = value; }
 
         //constructor
         public World(int width, int height, int depth, string worldname="default")
@@ -67,8 +67,11 @@ namespace LydsTextAdventure
             });
         }
 
-        public void DrawWorld(int startx=0, int starty=0, int drawx=0, int drawy=0, int z=0)
+        public void DrawWorld(int startx=0, int starty=0, int drawx=0, int drawy=0, int z=1)
         {
+
+            if (z >= worldDepth)
+                z = worldDepth - 1;
 
             int max_width = Console.WindowWidth - 12;
             int max_height = Console.WindowHeight - 2;
@@ -100,7 +103,7 @@ namespace LydsTextAdventure
                         if (_z + 1 < worldDepth)
                             block = GetBlock(x, y, ++_z);
                         else
-                            break;
+                            block = Block.Types.BED_ROCK;
                     }
                    
                     if (Block.Textures != null && Block.Textures.ContainsKey(block))
@@ -134,57 +137,85 @@ namespace LydsTextAdventure
         }
 
         //Generates the world
-        public int[] GenerateWorld()
+        public int[,,] GenerateWorld()
         {
 
-            WorldData = new int[worldWidth * worldHeight * worldDepth];
+            WorldData = new int[worldWidth,worldHeight,worldDepth];
             FastNoise noise = new FastNoise();
+            Random r = new Random();
 
             noise.SetSeed(worldSeed);
             noise.SetNoiseType(FastNoise.NoiseType.SimplexFractal);
-            noise.SetInterp(FastNoise.Interp.Quintic);
-            noise.SetFractalOctaves(12);
-            noise.SetFractalGain(0.550f);
+            noise.SetInterp(FastNoise.Interp.Hermite);
+            noise.SetFractalOctaves(6);
+            noise.SetFractalGain(0.350f);
             noise.SetFrequency(Program.Settings.GetFloatOrZero("noise_frequency"));
 
             for (int x = 0; x < worldWidth; x++)
                 for (int y = 0; y < worldHeight; y++)
-                    for (int z = worldDepth; z > 0; z--)
+                    for (int z = 0; z < worldDepth; z++)
                     {
 
-                        float noiseValue = noise.GetPerlinFractal((float)x, (float)y, (float)z) * Enum.GetValues(typeof(Block.Types)).Length + 1;
+                        float noiseValue = noise.GetPerlinFractal((float)x, (float)y, (float)z) * (Enum.GetValues(typeof(Block.Types)).Length + worldDepth);
+                        noiseValue = noiseValue * 1.5f;
+                        
+                        if(z==0)
+                            SetBlock(x, y, z, Block.Types.AIR);
 
-                        switch(Math.Abs(Math.Floor(noiseValue)))
+                        if (r.Next(1, 100) < 50)
+                            noiseValue = (float)Math.Floor(noiseValue);
+                        else
+                            noiseValue = (float)Math.Round(noiseValue);
+
+                        if (z == 1)
                         {
-
-                            case 0.0:
-                                WorldData[z * (y + worldHeight * x)] = (int)Block.Types.AIR;
-                                break;
-                            case 1.0:
-                                WorldData[z * (y + worldHeight * x)] = (int)Block.Types.SNOW;
-                                break;
-                            case 2.0:
-                                WorldData[z * (y + worldHeight * x)] = (int)Block.Types.STONE;
-                                break;
-                            case 3.0:
-                                WorldData[z * (y + worldHeight * x)] = (int)Block.Types.GRASS;
-                                break;
-                            case 4.0:
-                                WorldData[z * (y + worldHeight * x)] = (int)Block.Types.DIRT;
-                                break;
-                            case 5.0:
-                                WorldData[z * (y + worldHeight * x)] = (int)Block.Types.SAND;
-                                break;
-                            case 6.0:
-                                WorldData[z * (y + worldHeight * x)] = (int)Block.Types.WATER;
-                                break;
-                            case 7.0:
-                                WorldData[z * (y + worldHeight * x)] = (int)Block.Types.DEEP_WATER;
-                                break;
+                            switch (Math.Abs(noiseValue))
+                            {
+                                case 0.0f:
+                                    SetBlock(x, y, z, Block.Types.SNOW);
+                                    break;
+                                case 1.0f:
+                                    SetBlock(x, y, z, Block.Types.STONE);
+                                    break;
+                                case 2.0f:
+                                    SetBlock(x, y, z, Block.Types.MOUNTAIN_GRASS);
+                                    break;
+                                case 3.0f:
+                                    SetBlock(x, y, z, Block.Types.GRASS);
+                                    break;
+                                case 4.0f:
+                                    SetBlock(x, y, z, Block.Types.DIRT);
+                                    break;
+                                case 5.0f:
+                                    SetBlock(x, y, z, Block.Types.SAND);
+                                    break;
+                                case 7.0f:
+                                case 6.0f:
+                                    SetBlock(x, y, z, Block.Types.WATER);
+                                    break;
+                                case 8.0f:
+                                case 9.0f:
+                                    SetBlock(x, y, z, Block.Types.DEEP_WATER);
+                                    break;
+                                case 10.0f:
+                                    SetBlock(x, y, z, Block.Types.TRENCH);
+                                    break;
+                            }
                         }
+                        else if (z == worldDepth - 1)
+                            SetBlock(x, y, z, Block.Types.BED_ROCK);
+                        else
+                        if (z > 1)
+                        {
+                            if (noiseValue < 0.75f)
+                                SetBlock(x, y, z, Block.Types.STONE);
+                            else if (noiseValue < 0.35f)
+                                SetBlock(x, y, z, Block.Types.DIRT);
+                            else
+                                SetBlock(x, y, z, Block.Types.STONE);
+                        }            
                     }
                            
-
             Debug.WriteLine("generated new world");
             return WorldData;
         }
@@ -192,7 +223,13 @@ namespace LydsTextAdventure
         public Block.Types GetBlock(int x, int y, int z)
         {
 
-            return (Block.Types)(WorldData[z * (y + worldHeight * x)]);
+            return (Block.Types)WorldData[x,y,z];
+        }
+
+        public void SetBlock(int x, int y, int z, Block.Types block )
+        {
+
+            WorldData[x,y,z] = (int)block;
         }
 
         //Saves the world
@@ -262,7 +299,7 @@ namespace LydsTextAdventure
             Stream stream = new FileStream(filename, FileMode.Open, FileAccess.ReadWrite);
 
             World world = NewWorld();
-            world.WorldData = (int[])formatter.Deserialize(stream);
+            world.WorldData = (int[,,])formatter.Deserialize(stream);
             stream.Close();
 
             return world;

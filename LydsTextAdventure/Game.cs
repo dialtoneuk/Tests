@@ -166,6 +166,45 @@ namespace LydsTextAdventure
                         Block.AddTexture((Block.Types)command[1], command[2].ToString()[0]);
                     }
                 },
+                { "modify_texture",
+                    command =>
+                    {
+
+                        if(command.Length<3)
+                            return;
+
+                        Block.Types type = (Block.Types)command[1];
+                        char character = command[2].ToString()[0];
+
+                        if(Block.Textures.ContainsKey((Block.Types)command[1]))
+                            Block.Textures[type] = character;
+
+                        Debug.WriteLine("modified texture {0} {1}", type, character);
+                    }
+                },
+                { "textures",
+                    command =>
+                    {
+
+                        var elements = Enum.GetNames(typeof(Block.Types));
+
+
+                        int key=0;
+                        foreach(string name in elements)
+                        {
+
+                            char texture;
+                            if(Block.Textures.ContainsKey((Block.Types)key))
+                                texture =  Block.Textures[(Block.Types)key];
+                            else
+                                texture = 'X';
+
+                            Console.WriteLine("{0} {1} {2}", name, key, texture);
+                            key++;
+                        }
+                         
+                    }
+                },
                 { "save_textures",
                     command =>
                     {

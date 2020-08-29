@@ -30,7 +30,10 @@ namespace LydsTextAdventure
             SAND,
             WATER,
             SNOW,
-            DEEP_WATER
+            DEEP_WATER,
+            BED_ROCK,
+            MOUNTAIN_GRASS,
+            TRENCH
         }
 
         public readonly Dictionary<Types, bool> Solids = new Dictionary<Types, bool>
