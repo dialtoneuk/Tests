@@ -85,6 +85,8 @@ namespace LydsTextAdventure
                     {
 
                         string filename = "default";
+
+                        //roso easier unbox check
                         if(command.Length>1)
                             if(typeof(int)!=command[1].GetType())
                                 filename = (string)command[1];
@@ -114,11 +116,10 @@ namespace LydsTextAdventure
                             this.currentWorld = World.LoadWorld(filename);
 
                             if(this.currentWorld==null)
-                                Debug.WriteLine("world does not exist {0}", filename);
+                                Debug.WriteLine("world does not exist {0}", (object)filename);
                             else
                             {
                                 this.currentWorld.AddCommands(this);
-                                Debug.WriteLine("loaded world {0}", filename);
                                 this.currentState = States.GAME;
                             }
                         }
@@ -177,9 +178,13 @@ namespace LydsTextAdventure
                         char character = command[2].ToString()[0];
 
                         if(Block.Textures.ContainsKey((Block.Types)command[1]))
+                        {
                             Block.Textures[type] = character;
+                            Debug.WriteLine("modified texture {0} {1}", type, character);
+                        }                  
+                        else
+                           Console.WriteLine("texture not already present, add_texture instead");
 
-                        Debug.WriteLine("modified texture {0} {1}", type, character);
                     }
                 },
                 { "textures",
@@ -197,7 +202,7 @@ namespace LydsTextAdventure
                             if(Block.Textures.ContainsKey((Block.Types)key))
                                 texture =  Block.Textures[(Block.Types)key];
                             else
-                                texture = 'X';
+                                texture = 'N';
 
                             Console.WriteLine("{0} {1} {2}", name, key, texture);
                             key++;

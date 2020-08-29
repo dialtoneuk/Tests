@@ -246,7 +246,7 @@ namespace LydsTextAdventure
             formatter.Serialize(stream, worldData);
             stream.Close();
 
-            Debug.WriteLine("saved world {0}", worldName);
+            Debug.WriteLine("saved world {0}", (object)worldName);
         }
 
         //Gets world parameters in the form of an object
@@ -295,12 +295,14 @@ namespace LydsTextAdventure
             if (!File.Exists(filename))
                 return null;
 
-
             Stream stream = new FileStream(filename, FileMode.Open, FileAccess.ReadWrite);
 
             World world = NewWorld();
             world.WorldData = (int[,,])formatter.Deserialize(stream);
             stream.Close();
+
+
+            Debug.WriteLine("loaded world {0}", (object)world.worldName);
 
             return world;
         }
