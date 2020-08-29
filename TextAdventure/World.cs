@@ -289,10 +289,10 @@ namespace TextAdventure
         };
 
         public const bool ROOM_SYMMETICAL = false;
-        public const int ROOM_MAX_SIZE = 24;
-        public const int ROOM_MIN_SIZE = 14;
+        public const int ROOM_MAX_SIZE = 22;
+        public const int ROOM_MIN_SIZE = 12;
         public const int ROOM_MAX = 640;
-        public const int ROOM_BUFFER = 1; //do not change
+        public const int ROOM_BUFFER = 2; //do not change
         public const int ROOM_DOOR_SIZE = 4;
         public const int WORLD_MAX = 5000;
         public const int WORLD_GENERATION_TIMEOUT = 120; //seconds

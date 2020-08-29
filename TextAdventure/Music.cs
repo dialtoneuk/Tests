@@ -25,7 +25,8 @@ namespace TextAdventure
             JELLICA,
             LIQUID_RHYTHM,
             BUXTON,
-            BAD
+            BAD,
+			CRYSTAL_FORESTS
         }
 
         private Dictionary<Tracks, string> trackFilenames = new Dictionary<Tracks, string>
@@ -45,6 +46,7 @@ namespace TextAdventure
             {Tracks.LIQUID_RHYTHM, "liquid_rhythm.mp3" },
             {Tracks.BUXTON, "buxton.mp3" },
             {Tracks.BAD, "bad.mp3" },
+            {Tracks.CRYSTAL_FORESTS, "crystal_forests.mp3" },
         };
 
         public const int JUKEBOX_INTERVAL = 1000;

@@ -703,7 +703,7 @@ namespace TextAdventure
                     switch(keyValuePair.Key)
                     {
                         case YielType.STANIMA:
-                            charge(keyValuePair.Value);
+                            replenish(keyValuePair.Value);
                             Program.addFeedback("+ S {0}", keyValuePair.Value);
                             break;
                         case YielType.HEALTH:
@@ -716,6 +716,10 @@ namespace TextAdventure
                             break;
                         case YielType.XP:
                             addXP(keyValuePair.Value);
+                            Program.addFeedback("+ xp {0}", keyValuePair.Value);
+                            break;
+                        case YielType.MANA:
+                            charge(keyValuePair.Value);
                             Program.addFeedback("+ xp {0}", keyValuePair.Value);
                             break;
                         default:

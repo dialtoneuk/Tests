@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -24,16 +27,34 @@ namespace LydsTextAdventure
             SHORT_HAND
         }
 
-        public readonly Dictionary<string, Action<object[]>> commands;
-        public readonly Dictionary<States, Action<object[]>> draw;
-
         //default state
         protected States currentState = States.UNKNOWN;
+        //default input type
         protected InputType inputType = InputType.NORMAL;
+        protected World currentWorld;
+        protected readonly Dictionary<string, Action<object[]>> commands;
+        protected readonly Dictionary<States, Action<object[]>> draw;
 
         //actual command string
         private string command;
         private int frames = 0;
+
+        public static Dictionary<string, string[]> abbreviations = new Dictionary<string, string[]>
+        {
+            {"exit",new string[]{
+                "e",
+            }},
+            {"play",new string[]{
+                "p",
+                "n"
+            }},
+            {"load",new string[]{
+                "l",
+            }},
+            {"input_type",new string[]{
+                "i",
+            }}
+        };
 
         /**
          *  The main logic for the commands and drawing is programmed here inside lambda functions,
@@ -62,7 +83,54 @@ namespace LydsTextAdventure
                 { "play",
                     command =>
                     {
-                        this.currentState = States.GAME;
+
+                        string filename = "default";
+                        if(command.Length>1)
+                            if(typeof(int)!=command[1].GetType())
+                                filename = (string)command[1];
+
+                        if(this.currentWorld==null)
+                        {
+                            this.currentWorld = World.NewWorld(filename);
+                            this.currentWorld.AddCommands(this);
+                        }
+                            
+                        this.currentWorld.GenerateWorld();
+                        this.currentState = States.GAME;     
+                    }
+                },
+                { "load",
+                    command =>
+                    {
+                        string filename = "default";
+                        if(command.Length>1)
+                            if(typeof(int)!=command[1].GetType())
+                                filename = (string)command[1];
+
+                        if(this.currentWorld==null)
+                        {
+
+                            this.currentWorld = World.LoadWorld(filename);
+
+                            if(this.currentWorld==null)
+                                Debug.Write("world does not exist {0}", filename);
+                            else
+                            {
+                                this.currentWorld.AddCommands(this);
+                                Debug.WriteLine("loaded world {0}", filename);
+                                this.currentState = States.GAME;
+                            }          
+                        }                      
+                    }
+                },
+                { "default_settings",
+                    command =>
+                    {
+
+                        File.WriteAllText("user_settings.json", File.ReadAllText("default_settings.json"));
+                        Program.RefreshSettings();
+
+                        Debug.WriteLine("settings reset");
                     }
                 },
                 { "menu",
@@ -71,25 +139,47 @@ namespace LydsTextAdventure
                         this.currentState = States.MENU;
                     }
                 },
-                { "move",
-                    command =>
-                    {
-                          
-                    }
-                },
                 { "input_type",
                     command =>
                     {
+
                         InputType type;
-                        if(command.Length>1)
+                        if(command.Length>1&&typeof(int)==command[1].GetType())
                             type = (InputType)command[1];
                         else
                             type = InputType.NORMAL;
 
                         inputType = type;
-                        Console.WriteLine("changed input type to {0}", type);
+
+                        Program.Settings.SettingsValues["input_type"] = (int)type;
+                        Debug.WriteLine("changed input type to {0}", type);
                     }
-                }
+                },
+                { "settings",
+                    command =>
+                    {
+
+                        foreach(KeyValuePair<string,object> obj in Program.Settings.SettingsValues)
+                            Debug.WriteLine("{0} {1}", obj.Key, obj.Value);
+                    }
+    
+                }, 
+                { "change",
+                    command =>
+                    {
+
+                        if(command.Length<3)
+                            return;
+
+                        if(!Program.Settings.SettingsValues.ContainsKey((string)command[1]))
+                            return;
+
+                        if(command[2].GetType() == typeof(int))
+                            Program.Settings.SettingsValues[command[1].ToString()] = command[2];
+                        else
+                            Program.Settings.SettingsValues[(string)command[1]] = command[2];
+                    }
+                },
             };
 
             this.draw = new Dictionary<States, Action<object[]>>
@@ -116,6 +206,10 @@ namespace LydsTextAdventure
         public void Start()
         {
 
+            Console.Title = "Lyds Text Adventure";
+
+            inputType = (InputType)Program.Settings.GetIntOrZero("input_type");
+
             while(currentState!=States.EXIT)
             {
                 //clear screen
@@ -127,12 +221,24 @@ namespace LydsTextAdventure
                 //Draw
                 Draw();
 
-                //we read the command
-                this.command = ReadLine(inputType);
+
+                if(currentState!=States.EXIT)
+                    //we read the command
+                    this.command = ReadLine(inputType);
 
                 //frames counter
                 frames++;
             }
+
+            if (Program.Settings.IsChecked("auto_save"))
+                if (this.currentWorld != null)
+                    this.currentWorld.Save();
+        }
+
+        public void AddCommand(string command, Action<object[]> action)
+        {
+
+            this.commands[command] = action;
         }
 
         //just sets the current state to exit which stops the loop
@@ -146,7 +252,7 @@ namespace LydsTextAdventure
         {
 
             if (!draw.ContainsKey(currentState))
-                Console.WriteLine("! invalid state {0} !", currentState);
+                Debug.WriteLine("! invalid state {0} !", currentState);
             else
                 draw[currentState](Parse(this.command));
         }
@@ -157,21 +263,57 @@ namespace LydsTextAdventure
 
             object[] command = Parse(_command);
 
+            if (command.Length == 0)
+                return false;
+
             if(inputType == InputType.NORMAL)
             {
-                if (command.Length == 0)
-                    return false;
 
                 if (!commands.ContainsKey((string)command[0]))
-                    Console.WriteLine("! invalid command {0} !", command[0]);
+                    Debug.WriteLine("! invalid command {0} !", command[0]);
                 else
                 {
                     commands[(string)command[0]](command);
                     return true;
                 }
             }
+
+            if(inputType == InputType.SHORT_HAND)
+            {
+
+                string actualCommand = GetCommandFromShorthand(command);
+
+                if (actualCommand == null)
+                    Debug.WriteLine("! invalid shorthand command {0} !", command[0]);
+                else
+                {
+                    if (!commands.ContainsKey(actualCommand))
+                        Debug.WriteLine("! invalid command {0} !", actualCommand);
+                    else
+                    {
+
+                        commands[actualCommand](command);
+                        return true;
+                    }
+                }
+            }
     
             return false;
+        }
+
+        private string GetCommandFromShorthand(object[] command)
+        {
+
+            foreach (KeyValuePair<string, string[]> keyValue in abbreviations)
+            {
+
+                foreach (string shorthand in keyValue.Value)
+                    if(command.Length!=0)
+                        if (command[0].ToString().StartsWith(shorthand[0]))
+                            return keyValue.Key;
+            }
+
+            return null;
         }
 
         //parses a command in various different ways
@@ -195,11 +337,14 @@ namespace LydsTextAdventure
                     object[] array = new object[objects.Length];
                     array[0] = objects[0];
 
-                    if (int.TryParse(objects[1], out int result))
-                        array[1] = result;
-
-                    for (int i = 2; i < objects.Length; i++)
-                        array[i] = objects[i];
+                    for (int i = 1; i < objects.Length; i++)
+                        if (Regex.IsMatch((string)objects[i], @"^\d+$"))
+                            if (int.TryParse((string)objects[i], out int result))
+                                array[i] = result;
+                            else
+                                array[i] = objects[i];
+                        else
+                            array[i] = objects[i];
 
                     return array;
                 }
@@ -225,10 +370,22 @@ namespace LydsTextAdventure
                 foreach (string parse in numbers)
                 {
 
-                    if (int.TryParse(parse, out int result))
-                        array[counter] = result;
+                    if (parse == ""||parse==null)
+                        continue;
 
-                    counter++;
+                    if (int.TryParse(parse, out int result))
+                    {
+
+#pragma warning disable CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
+                        if (result != null)
+#pragma warning restore CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
+                        {
+                            array[counter] = result;
+                            counter++;
+                        }
+                    }
+                    else
+                        throw new ApplicationException();
                 }
 
                 return array;
