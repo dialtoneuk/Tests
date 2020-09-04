@@ -9,6 +9,8 @@ using System.Text.Json;
 
 namespace LydsTextAdventure
 {
+
+    [Serializable]
     public class World : Command
     {
 
@@ -41,7 +43,7 @@ namespace LydsTextAdventure
         static World()
         {
 
-            Game.abbreviations.Add("save", new string[]
+            Game.Abbreviations.Add("save", new string[]
             {
                 "s"
             });
@@ -60,11 +62,6 @@ namespace LydsTextAdventure
             {
                 Console.WriteLine("{0} {1} {2} {3} {4} {5}", GetWorldParameters());
             });
-
-            game.AddCommand("save", (command) =>
-            {
-                Save();
-            });
         }
 
         public void DrawWorld(int startx=0, int starty=0, int drawx=0, int drawy=0, int z=1)
@@ -73,59 +70,102 @@ namespace LydsTextAdventure
             if (z >= worldDepth)
                 z = worldDepth - 1;
 
-            int max_width = Console.WindowWidth - 12;
-            int max_height = Console.WindowHeight - 2;
+            int max_width, max_height = Program.Settings.GetIntOrZero("world_draw_height") - Program.Settings.GetIntOrZero("window_buffer");
 
-            for (int y = 0; y < worldHeight - drawy; y++)
+            if (!Program.Settings.IsChecked("auto_scale"))
+                max_width = Program.Settings.GetIntOrZero("world_draw_width");
+            else
+                max_width = Program.Settings.GetIntOrZero("window_width") - Program.Settings.GetIntOrZero("feedback_width");
+            
+            int drawny = 0;
+            int drawnx;
+
+            Console.SetCursorPosition(drawx, drawy);
+
+            for (int y = 0; y < worldHeight; y++)
             {
-                for (int x = 0; x < worldWidth - drawx; x++)
+
+                if (y < starty)
+                    continue;
+
+                drawnx = 0;
+
+                for (int x = 0; x < worldWidth; x++)
                 {
 
-                    if ((drawy + y) > worldHeight || (drawx + x) > worldWidth)
-                        if(x%2==0)
-                            Console.Write("\\");
-                          else
-                            Console.Write("/");
+                    if(x>startx)
+                    {
+                      
+                        if(Program.CurrentGame.CurrentPlayer.GetX()==x&& Program.CurrentGame.CurrentPlayer.GetY() == y)
+                        {
+                            Program.CurrentGame.CurrentPlayer.DrawPlayer();
+                            drawnx++;
+                        }
+                           
+                        if ((starty + y) < 0
+                       || (startx + x) < 0
+                       || (starty + y) > worldHeight
+                       || (startx + x) > worldWidth)
+                        {
 
+                            if (x % 2 == 0)
+                                Console.Write("\\");
+                            else
+                                Console.Write("/");
 
-                    if ((drawy + y) < 0 || (drawx + x) < 0)
-                        if (x % 2 == 0)
-                            Console.Write("\\");
+                            if (drawnx > max_width)
+                                break;
+                        }
                         else
-                            Console.Write("/");
+                        {
 
+                            if (drawnx > max_width)
+                                break;
 
-                    Block.Types block = GetBlock(x, y, z);
+                            Block.Types block = GetBlock(startx + x, starty + y, z);
 
-                    int _z = z;
-                    while(block == Block.Types.AIR)
-                    {
-                        if (_z + 1 < worldDepth)
-                            block = GetBlock(x, y, ++_z);
-                        else
-                            block = Block.Types.BED_ROCK;
+                            int _z = z;
+                            while (block == Block.Types.AIR)
+                            {
+                                if (_z + 1 < worldDepth)
+                                    block = GetBlock(starty + x, startx + y, ++_z);
+                                else
+                                    block = Block.Types.BED_ROCK;
+                            }
+
+                            if (Block.Textures != null && Block.Textures.ContainsKey(block))
+                                Console.Write(Block.Textures[block]);
+                            else if (block == Block.Types.AIR)
+                                Console.Write(" ");
+                            else
+                            {
+
+                                Debug.WriteLine("no texture for {0}", block);
+                                Console.Write("X");
+                            }
+                        }
+
+                        drawnx++;
                     }
-                   
-                    if (Block.Textures != null && Block.Textures.ContainsKey(block))
-                        Console.Write(Block.Textures[block]);
-                    else if(block == Block.Types.AIR)
-                        Console.Write(" ");
-                    else
-                    {
-
-                        Debug.WriteLine("no texture for {0}", block);
-                        Console.Write("X");
-                    }
-
-                    if (x >= max_width)
-                    {
-                        Console.SetCursorPosition(startx, starty + (y + 1));
-                        break;
-                    }                  
                 }
 
-                if (y >= max_height)
+                if (drawny < max_height)
+                {
+
+                    if (drawnx != 0)
+                    {
+
+                        Console.WriteLine();
+                        drawny++;
+                    }
+                    
+                }
+                else
+                {
+
+                    Console.WriteLine();
                     break;
+                }
             }                  
         }
 
@@ -156,8 +196,8 @@ namespace LydsTextAdventure
                     for (int z = 0; z < worldDepth; z++)
                     {
 
-                        float noiseValue = noise.GetPerlinFractal((float)x, (float)y, (float)z) * (Enum.GetValues(typeof(Block.Types)).Length + worldDepth);
-                        noiseValue = noiseValue * 1.5f;
+                        float noiseValue = noise.GetPerlinFractal((float)x, (float)y, (float)z) * (Enum.GetValues(typeof(Block.Types)).Length);
+                        noiseValue = noiseValue * 1.25f;
                         
                         if(z==0)
                             SetBlock(x, y, z, Block.Types.AIR);
@@ -172,33 +212,37 @@ namespace LydsTextAdventure
                             switch (Math.Abs(noiseValue))
                             {
                                 case 0.0f:
-                                    SetBlock(x, y, z, Block.Types.SNOW);
+                                    SetBlock(x, y, z, Block.Types.WATER);
                                     break;
                                 case 1.0f:
-                                    SetBlock(x, y, z, Block.Types.STONE);
+                                    SetBlock(x, y, z, Block.Types.SAND);
                                     break;
                                 case 2.0f:
-                                    SetBlock(x, y, z, Block.Types.MOUNTAIN_GRASS);
-                                    break;
-                                case 3.0f:
                                     SetBlock(x, y, z, Block.Types.GRASS);
                                     break;
+                                case 3.0f:
+                                    SetBlock(x, y, z, Block.Types.MOUNTAIN_GRASS);
+                                    break;
                                 case 4.0f:
-                                    SetBlock(x, y, z, Block.Types.DIRT);
+                                    SetBlock(x, y, z, Block.Types.GRASS);
                                     break;
                                 case 5.0f:
                                     SetBlock(x, y, z, Block.Types.SAND);
                                     break;
                                 case 7.0f:
-                                case 6.0f:
                                     SetBlock(x, y, z, Block.Types.WATER);
                                     break;
-                                case 8.0f:
-                                case 9.0f:
+                                case 6.0f:
                                     SetBlock(x, y, z, Block.Types.DEEP_WATER);
                                     break;
+                                case 8.0f:
+                                    SetBlock(x, y, z, Block.Types.SAND);
+                                    break;
+                                case 9.0f:
+                                    SetBlock(x, y, z, Block.Types.DIRT);
+                                    break;
                                 case 10.0f:
-                                    SetBlock(x, y, z, Block.Types.TRENCH);
+                                    SetBlock(x, y, z, Block.Types.STONE);
                                     break;
                             }
                         }
@@ -243,7 +287,7 @@ namespace LydsTextAdventure
 
             Stream stream = new FileStream(filename, FileMode.Create, FileAccess.Write);
 
-            formatter.Serialize(stream, worldData);
+            formatter.Serialize(stream, this);
             stream.Close();
 
             Debug.WriteLine("saved world {0}", (object)worldName);
@@ -286,21 +330,20 @@ namespace LydsTextAdventure
         //Loads a world from the worldname
         public static World LoadWorld(string worldname="default")
         {
+
             IFormatter formatter = new BinaryFormatter();
             string filename = String.Format("saves/{0}.world", worldname);
 
             if (!Directory.Exists("saves/"))
-                Directory.CreateDirectory("saves/");
+                throw new ApplicationException();
 
             if (!File.Exists(filename))
                 return null;
 
             Stream stream = new FileStream(filename, FileMode.Open, FileAccess.ReadWrite);
+            World world = (World)formatter.Deserialize(stream);
 
-            World world = NewWorld();
-            world.WorldData = (int[,,])formatter.Deserialize(stream);
             stream.Close();
-
 
             Debug.WriteLine("loaded world {0}", (object)world.worldName);
 

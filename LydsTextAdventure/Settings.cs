@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace LydsTextAdventure
 {
-    public class Settings
+    public class Settings : Command
     {
         private string filename;
         private Dictionary<string, object> settings;
@@ -19,6 +19,46 @@ namespace LydsTextAdventure
         {
 
             this.filename = filename;
+        }
+
+        public void AddCommands(Game game)
+        {
+
+            Dictionary<string, Action<object[]>> commands = new Dictionary<string, Action<object[]>>()
+            {
+                { "default_settings",
+                    command =>
+                    {
+
+                        File.WriteAllText("user_settings.json", File.ReadAllText("default_settings.json"));
+                        Program.RefreshSettings();
+
+                        Debug.WriteLine("settings reset");
+                    }
+                },
+                { "change",
+                    command =>
+                    {
+
+                        if(command.Length<3)
+                            return;
+
+                        if(!Program.Settings.SettingsValues.ContainsKey((string)command[1]))
+                            return;
+
+                        if(Game.CommandIsInt(command[1]))
+                            Program.Settings.SettingsValues[command[1].ToString()] = command[2];
+                        else
+                            Program.Settings.SettingsValues[(string)command[1]] = command[2];
+
+                        foreach(KeyValuePair<string,object> obj in Program.Settings.SettingsValues)
+                            Console.WriteLine("{0} {1}", obj.Key, obj.Value);
+                    }
+                }
+            };
+
+            foreach (KeyValuePair<string, Action<object[]>> action in commands)
+                game.AddCommand(action.Key, action.Value);
         }
 
         public void Save()

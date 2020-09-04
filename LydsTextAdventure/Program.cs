@@ -10,6 +10,8 @@ namespace LydsTextAdventure
 
         private static Settings settings;
 
+        public static Game CurrentGame;
+
         static Program()
         {
 
@@ -33,8 +35,8 @@ namespace LydsTextAdventure
 
         static void Main(string[] args)
         {
-            Game game = new Game();
-            game.Start();
+            CurrentGame = new Game();
+            CurrentGame.Start();
 
             if(Program.Settings.IsChecked("auto_save"))
                 Program.Settings.Save();

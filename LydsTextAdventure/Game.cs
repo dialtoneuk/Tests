@@ -31,7 +31,8 @@ namespace LydsTextAdventure
         protected States currentState = States.UNKNOWN;
         //default input type
         protected InputType inputType = InputType.NORMAL;
-        protected World currentWorld;
+        private World currentWorld;
+        private Player currentPlayer;
         protected readonly Dictionary<string, Action<object[]>> commands;
         protected readonly Dictionary<States, Action<object[]>> draw;
 
@@ -39,7 +40,7 @@ namespace LydsTextAdventure
         private string command;
         private int frames = 0;
 
-        public static Dictionary<string, string[]> abbreviations = new Dictionary<string, string[]>
+        public static Dictionary<string, string[]> Abbreviations = new Dictionary<string, string[]>
         {
             {"exit",new string[]{
                 "e",
@@ -49,12 +50,15 @@ namespace LydsTextAdventure
                 "n"
             }},
             {"load",new string[]{
-                "l",
+                "o",
             }},
             {"input_type",new string[]{
                 "i",
             }}
         };
+
+        public Player CurrentPlayer { get => currentPlayer; }
+        public World CurrentWorld { get => currentWorld; }
 
         /**
          *  The main logic for the commands and drawing is programmed here inside lambda functions,
@@ -88,7 +92,7 @@ namespace LydsTextAdventure
 
                         //roso easier unbox check
                         if(command.Length>1)
-                            if(typeof(int)!=command[1].GetType())
+                            if(CommandIsValidString(command[0]))
                                 filename = (string)command[1];
 
                         if(this.currentWorld==null)
@@ -102,12 +106,20 @@ namespace LydsTextAdventure
                         this.currentState = States.GAME;
                     }
                 },
+                {
+                    "save",
+                    command =>
+                    {
+                        if(this.currentWorld!=null)
+                            this.currentWorld.Save();
+                    }
+                },
                 { "load",
                     command =>
                     {
                         string filename = "default";
                         if(command.Length>1)
-                            if(typeof(int)!=command[1].GetType())
+                            if(CommandIsValidString(command[1]))
                                 filename = (string)command[1];
 
                         if(this.currentWorld==null)
@@ -125,96 +137,10 @@ namespace LydsTextAdventure
                         }
                     }
                 },
-                { "default_settings",
-                    command =>
-                    {
-
-                        File.WriteAllText("user_settings.json", File.ReadAllText("default_settings.json"));
-                        Program.RefreshSettings();
-
-                        Debug.WriteLine("settings reset");
-                    }
-                },
                 { "menu",
                     command =>
                     {
                         this.currentState = States.MENU;
-                    }
-                },
-                { "input_type",
-                    command =>
-                    {
-
-                        InputType type;
-                        if(command.Length>1&&typeof(int)==command[1].GetType())
-                            type = (InputType)command[1];
-                        else
-                            type = InputType.NORMAL;
-
-                        inputType = type;
-
-                        Program.Settings.SettingsValues["input_type"] = (int)type;
-                        Debug.WriteLine("changed input type to {0}", type);
-                    }
-                },
-                { "add_texture",
-                    command =>
-                    {
-
-                        if(command.Length<3)
-                            return;
-
-                        Block.AddTexture((Block.Types)command[1], command[2].ToString()[0]);
-                    }
-                },
-                { "modify_texture",
-                    command =>
-                    {
-
-                        if(command.Length<3)
-                            return;
-
-                        Block.Types type = (Block.Types)command[1];
-                        char character = command[2].ToString()[0];
-
-                        if(Block.Textures.ContainsKey((Block.Types)command[1]))
-                        {
-                            Block.Textures[type] = character;
-                            Debug.WriteLine("modified texture {0} {1}", type, character);
-                        }                  
-                        else
-                           Console.WriteLine("texture not already present, add_texture instead");
-
-                    }
-                },
-                { "textures",
-                    command =>
-                    {
-
-                        var elements = Enum.GetNames(typeof(Block.Types));
-
-
-                        int key=0;
-                        foreach(string name in elements)
-                        {
-
-                            char texture;
-                            if(Block.Textures.ContainsKey((Block.Types)key))
-                                texture =  Block.Textures[(Block.Types)key];
-                            else
-                                texture = 'N';
-
-                            Console.WriteLine("{0} {1} {2}", name, key, texture);
-                            key++;
-                        }
-                         
-                    }
-                },
-                { "save_textures",
-                    command =>
-                    {
-
-                       Block.SaveTextures();
                     }
                 },
                 { "settings",
@@ -225,26 +151,71 @@ namespace LydsTextAdventure
                             Console.WriteLine("{0} {1}", obj.Key, obj.Value);
                     }
     
-                }, 
-                { "change",
+                },
+                { "input_type",
                     command =>
                     {
 
-                        if(command.Length<3)
-                            return;
-
-                        if(!Program.Settings.SettingsValues.ContainsKey((string)command[1]))
-                            return;
-
-                        if(command[2].GetType() == typeof(int))
-                            Program.Settings.SettingsValues[command[1].ToString()] = command[2];
+                        InputType type;
+                        if(command.Length>1&&CommandIsInt(command[0]))
+                            type = (InputType)command[1];
                         else
-                            Program.Settings.SettingsValues[(string)command[1]] = command[2];
+                            type = InputType.NORMAL;
 
-                        foreach(KeyValuePair<string,object> obj in Program.Settings.SettingsValues)
-                            Console.WriteLine("{0} {1}", obj.Key, obj.Value);
+                        inputType = type;
+
+                        Program.Settings.SettingsValues["input_type"] = (int)type;
+                        Debug.WriteLine("changed input type to {0}", type);
                     }
                 },
+                {"commands",
+                     commands =>
+                     {
+
+                   
+
+                         foreach(KeyValuePair<string,Action<object[]>> keyValuePair in this.commands)
+                             Console.WriteLine("{0} {1}", keyValuePair.Key, keyValuePair.Value.GetHashCode());
+
+                             Console.ReadKey();
+                     }
+                },
+                {"abbreviations",
+                     commands =>
+                     {
+
+
+
+                         foreach(KeyValuePair<string,string[]> keyValuePair in Game.Abbreviations)
+                             Console.WriteLine("{0} {1}", keyValuePair.Key, keyValuePair.Value.ToString());
+
+
+                         Console.ReadKey();
+                     }
+                },
+                {"rescale",
+                    commands =>
+                    {
+                        if(commands.Length==0)
+                        {
+                            if(Program.Settings.IsChecked("auto_size"))
+                            {
+                                 Program.Settings.SettingsValues.Add("window_height", (int)Console.LargestWindowHeight - Program.Settings.GetIntOrZero("window_buffer"));
+                                Program.Settings.SettingsValues.Add("window_width", (int)Console.LargestWindowWidth - Program.Settings.GetIntOrZero("window_buffer"));
+
+                                Console.SetWindowSize(Program.Settings.GetIntOrZero("window_width"), Program.Settings.GetIntOrZero("window_height"));
+                            }
+                        }
+                        else
+                        {
+
+                            if(CommandIsInt(command[0]))
+                                if(command.Length>1)
+                                    if(CommandIsInt(command[1]))
+                                        Console.SetWindowSize(command[0] + Program.Settings.GetIntOrZero("window_buffer"), command[1] + Program.Settings.GetIntOrZero("window_buffer"));
+                        }
+                    }
+                }
             };
 
             this.draw = new Dictionary<States, Action<object[]>>
@@ -263,8 +234,17 @@ namespace LydsTextAdventure
                     {
                         Console.WriteLine("fames: {0} / state: {1}", frames, currentState);
 
-                        if(this.currentWorld!=null)
-                            this.currentWorld.DrawWorld();
+                        int width; 
+
+                        if(Program.Settings.IsChecked("auto_scale"))
+                            width = Program.Settings.GetIntOrZero("world_draw_width");
+                        else
+                            width = Program.Settings.GetIntOrZero("window_width") - Program.Settings.GetIntOrZero("feedback_width");
+
+                        if(this.currentWorld!=null&&this.currentPlayer!=null)
+                            this.currentWorld.DrawWorld(this.currentPlayer.GetX() - (width/2) - 1, this.currentPlayer.GetY() - (Program.Settings.GetIntOrZero("world_draw_height")/2)-1);
+
+                
                     }
                 },
             };
@@ -278,17 +258,49 @@ namespace LydsTextAdventure
 
             inputType = (InputType)Program.Settings.GetIntOrZero("input_type");
 
+            if (Program.Settings.IsChecked("developer_commands"))
+                Block.AddDeveloperCommands(this);
+
+            if(Program.Settings.IsChecked("auto_scale"))
+            {
+
+                Program.Settings.SettingsValues.Add("window_height", (int)Console.LargestWindowHeight - Program.Settings.GetIntOrZero("window_buffer"));
+                Program.Settings.SettingsValues.Add("window_width", (int)Console.LargestWindowWidth - Program.Settings.GetIntOrZero("window_buffer"));
+
+                Console.SetWindowSize(Program.Settings.GetIntOrZero("window_width"), Program.Settings.GetIntOrZero("window_height"));
+            }
+
+            if (this.currentPlayer == null)
+            {
+                string playerName;
+                if (Program.Settings.SettingsValues.ContainsKey("player_name"))
+                    playerName = Program.Settings.GetStringOrEmpty("player_name");
+                else
+                    playerName = Program.Settings.GetStringOrEmpty("default_player_name");
+
+                Debug.WriteLine("loading player data for {0}", (object)playerName);
+
+                if (File.Exists("players/" + playerName + ".player"))
+                    this.currentPlayer = Player.Load(playerName);
+                else
+                    this.currentPlayer = new Player(playerName);
+
+                this.currentPlayer.AddCommands(this);
+            }
+               
+            Program.Settings.AddCommands(this);
+
             while(currentState!=States.EXIT)
             {
                 //clear screen
                 Console.Clear();
+                Console.SetCursorPosition(0, 0);
 
                 //Process command
                 ProcessCommand(this.command);
 
                 //Draw
                 Draw();
-
 
                 if(currentState!=States.EXIT)
                     //we read the command
@@ -299,8 +311,14 @@ namespace LydsTextAdventure
             }
 
             if (Program.Settings.IsChecked("auto_save"))
+            {
+
                 if (this.currentWorld != null)
                     this.currentWorld.Save();
+
+                if (this.currentPlayer != null)
+                    this.currentPlayer.Save();
+            }
         }
 
         public void AddCommand(string command, Action<object[]> action)
@@ -372,7 +390,7 @@ namespace LydsTextAdventure
         private string GetCommandFromShorthand(object[] command)
         {
 
-            foreach (KeyValuePair<string, string[]> keyValue in abbreviations)
+            foreach (KeyValuePair<string, string[]> keyValue in Abbreviations)
             {
 
                 foreach (string shorthand in keyValue.Value)
@@ -481,6 +499,29 @@ namespace LydsTextAdventure
                 line = Console.ReadKey().ToString();
 
             return line;
+        }
+
+        public static bool CommandIsInt(object command)
+        {
+
+            return (typeof(int) == command.GetType());
+        }
+
+
+        public static bool CommandIsString(object command)
+        {
+
+            return (typeof(string) == command.GetType());
+        }
+
+        public static bool CommandIsValidString(object command)
+        {
+
+            if (CommandIsString(command))
+                if (command.ToString().Trim().Length != 0)
+                    return true;
+
+            return false;
         }
     }
 }

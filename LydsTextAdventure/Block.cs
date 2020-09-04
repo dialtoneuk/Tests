@@ -6,11 +6,12 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.Json;
+using static LydsTextAdventure.Game;
 
 namespace LydsTextAdventure
 {
 
-    public class Block
+    public class Block : Command
     {
 
         //add new blocks to the end of this enum else expect issues
@@ -51,6 +52,80 @@ namespace LydsTextAdventure
 
         public static Dictionary<Types, char> Textures;
 
+        public void AddCommands(Game game)
+        {
+
+            Dictionary<string, Action<object[]>> commands = new Dictionary<string, Action<object[]>>()
+            {
+                { "add_texture",
+                    command =>
+                    {
+
+                        if(command.Length<3)
+                            return;
+
+                        Block.AddTexture((Block.Types)command[1], command[2].ToString()[0]);
+                    }
+                },
+                { "modify_texture",
+                    command =>
+                    {
+
+                        if(command.Length<3)
+                            return;
+
+                        if(!Game.CommandIsInt(command[1]))
+                            return;
+
+                        Block.Types type = (Block.Types)command[1];
+                        char character = command[2].ToString()[0];
+
+                        if(Block.Textures.ContainsKey((Block.Types)command[1]))
+                        {
+                            Block.Textures[type] = character;
+                            Debug.WriteLine("modified texture {0} {1}", type, character);
+                        }
+                        else
+                           Console.WriteLine("texture not already present, add_texture instead");
+
+                    }
+                },
+                { "textures",
+                    command =>
+                    {
+
+                        var elements = Enum.GetNames(typeof(Block.Types));
+
+
+                        int key=0;
+                        foreach(string name in elements)
+                        {
+
+                            char texture;
+                            if(Block.Textures.ContainsKey((Block.Types)key))
+                                texture =  Block.Textures[(Block.Types)key];
+                            else
+                                texture = 'N';
+
+                            Console.WriteLine("{0} {1} {2}", name, key, texture);
+                            key++;
+                        }
+
+                    }
+                },
+                { "save_textures",
+                    command =>
+                    {
+
+                       Block.SaveTextures();
+                    }
+                },
+            };
+
+            foreach (KeyValuePair<string, Action<object[]>> action in commands)
+                game.AddCommand(action.Key, action.Value);
+        }
+
         static Block()
         {
 
@@ -68,6 +143,13 @@ namespace LydsTextAdventure
 
                 Debug.WriteLine("loaded {0}", (object)filename);
             }
+        }
+
+        public static void AddDeveloperCommands(Game game)
+        {
+
+            Block block = new Block();
+            block.AddCommands(game);
         }
 
         public static void SaveTextures()
